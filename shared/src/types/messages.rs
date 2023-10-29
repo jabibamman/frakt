@@ -29,4 +29,3 @@ pub struct FragmentResult {
     pub pixel_data: PixelData,
     pub pixel_intensity: Vec<PixelIntensity>,
 }
-
