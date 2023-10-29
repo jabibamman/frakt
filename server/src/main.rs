@@ -1,3 +1,3 @@
 fn main() {
-println!("[SERVER] Hello, world!");
+    println!("[SERVER] Hello, world!");
 }
