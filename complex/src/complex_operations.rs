@@ -37,3 +37,79 @@ impl ComplexOperations for Complex {
         self.magnitude_squared().sqrt()
     }
 }
+
+
+#[cfg(test)]
+mod complex_tests {
+    use super::*;
+
+    #[test]
+    fn test_add() {
+        let a = Complex::new(1.0, 2.0);
+        let b = Complex::new(2.0, 3.0);
+        let result = a.add(&b);
+
+        assert_eq!(result.re, 3.0);
+        assert_eq!(result.im, 5.0);
+    }
+
+    #[test]
+    fn test_mul() {
+        let a = Complex::new(1.0, 2.0);
+        let b = Complex::new(2.0, 3.0);
+        let result = a.mul(&b);
+
+        assert_eq!(result.re, -4.0);
+        assert_eq!(result.im, 7.0);
+    }
+
+    #[test]
+    fn test_square() {
+        let a = Complex::new(1.0, 2.0);
+        let result = a.square();
+
+        assert_eq!(result.re, -3.0);
+        assert_eq!(result.im, 4.0);
+    }
+
+    #[test]
+    fn test_magnitude_squared() {
+        let a = Complex::new(1.0, 2.0);
+        let result = a.magnitude_squared();
+
+        assert_eq!(result, 5.0);
+    }
+
+    #[test]
+    fn test_norm() {
+        let a = Complex::new(1.0, 2.0);
+        let result = a.norm();
+
+        assert_eq!(result, 5.0f64.sqrt());
+    }
+
+    #[test]
+    fn test_new() {
+        let a = Complex::new(1.0, 2.0);
+
+        assert_eq!(a.re, 1.0);
+        assert_eq!(a.im, 2.0);
+    }
+
+    #[test]
+    fn test_new_with_zero() {
+        let a = Complex::new(0.0, 0.0);
+
+        assert_eq!(a.re, 0.0);
+        assert_eq!(a.im, 0.0);
+    }
+
+    #[test]
+    fn test_new_with_negative() {
+        let a = Complex::new(-1.0, -2.0);
+
+        assert_eq!(a.re, -1.0);
+        assert_eq!(a.im, -2.0);
+    }
+
+}
