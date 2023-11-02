@@ -1,8 +1,8 @@
 mod julia;
-use complex::complex_operations::ComplexOperations;
-use shared::types::{complex::Complex, julia_descriptor::JuliaDescriptor, resolution::Resolution};
 use crate::julia::generate_julia_set;
+use complex::complex_operations::ComplexOperations;
 use complex::julia_descriptor_impl::JuliaOperations;
+use shared::types::{complex::Complex, julia_descriptor::JuliaDescriptor, resolution::Resolution};
 
 fn main() {
     let c = Complex::new(-0.9, 0.27015);
@@ -11,6 +11,9 @@ fn main() {
 
     match generate_julia_set(&descriptor, &resolution).save("target/julia.png") {
         Ok(_) => println!("L'image du Julia Set a été sauvegardée !"),
-        Err(e) => println!("Erreur lors de la sauvegarde de l'image du Julia Set : {}", e),
+        Err(e) => println!(
+            "Erreur lors de la sauvegarde de l'image du Julia Set : {}",
+            e
+        ),
     }
 }

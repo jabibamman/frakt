@@ -1,8 +1,7 @@
-use shared::types::julia_descriptor::{JuliaDescriptor};
 use crate::complex_operations::ComplexOperations;
 use shared::types::complex::Complex;
+use shared::types::julia_descriptor::JuliaDescriptor;
 use shared::types::resolution::Resolution;
-
 
 pub trait JuliaOperations {
     fn to_complex(&self, x: u16, y: u16, resolution: &Resolution) -> Complex;
@@ -43,7 +42,6 @@ impl JuliaOperations for JuliaDescriptor {
     fn divergence_threshold_square(&self) -> f64 {
         self.divergence_threshold_square
     }
-
 
     fn max_iteration(&self) -> u16 {
         self.max_iteration
