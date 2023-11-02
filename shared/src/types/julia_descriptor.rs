@@ -5,4 +5,3 @@ pub struct JuliaDescriptor {
     pub divergence_threshold_square: f64,
     pub max_iteration: u16,
 }
-

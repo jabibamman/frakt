@@ -1,2 +1,2 @@
-pub mod julia;
 pub mod client;
+pub mod julia;
