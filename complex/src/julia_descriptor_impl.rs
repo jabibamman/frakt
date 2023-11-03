@@ -4,15 +4,23 @@ use shared::types::julia_descriptor::JuliaDescriptor;
 use shared::types::resolution::Resolution;
 
 pub trait JuliaOperations {
+    fn new(c: Complex, divergence_threshold_square: f64, max_iteration: u16) -> Self;
     fn to_complex(&self, x: u16, y: u16, resolution: &Resolution) -> Complex;
     fn iterate_complex_point(&self, complex_point: &Complex) -> u16;
-    fn new(c: Complex, divergence_threshold_square: f64, max_iteration: u16) -> Self;
     fn divergence_threshold_square(&self) -> f64;
     fn max_iteration(&self) -> u16;
     fn c(&self) -> &Complex;
 }
 
 impl JuliaOperations for JuliaDescriptor {
+    fn new(c: Complex, divergence_threshold_square: f64, max_iteration: u16) -> Self {
+        Self {
+            c,
+            divergence_threshold_square,
+            max_iteration,
+        }
+    }
+
     fn to_complex(&self, x: u16, y: u16, resolution: &Resolution) -> Complex {
         let re = (x as f64 / resolution.nx as f64) * 4.0 - 2.0;
         let im = (y as f64 / resolution.ny as f64) * 4.0 - 2.0;
@@ -29,14 +37,6 @@ impl JuliaOperations for JuliaDescriptor {
         }
 
         iterations
-    }
-
-    fn new(c: Complex, divergence_threshold_square: f64, max_iteration: u16) -> Self {
-        Self {
-            c,
-            divergence_threshold_square,
-            max_iteration,
-        }
     }
 
     fn divergence_threshold_square(&self) -> f64 {
