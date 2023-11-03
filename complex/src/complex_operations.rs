@@ -3,6 +3,7 @@ use shared::types::complex::Complex;
 pub trait ComplexOperations {
     fn new(re: f64, im: f64) -> Self;
     fn add(&self, other: &Self) -> Self;
+    fn sub(&self, other: &Self) -> Self;
     fn mul(&self, other: &Self) -> Self;
     fn square(&self) -> Self;
     fn magnitude_squared(&self) -> f64;
@@ -17,6 +18,8 @@ impl ComplexOperations for Complex {
     fn add(&self, other: &Self) -> Self {
         Complex::new(self.re + other.re, self.im + other.im)
     }
+
+    fn sub(&self, other: &Self) -> Self { Complex::new(self.re - other.re, self.im - other.im) }
 
     fn mul(&self, other: &Self) -> Self {
         Complex::new(
@@ -45,12 +48,32 @@ mod complex_tests {
 
     #[test]
     fn test_add() {
-        let a = Complex::new(1.0, 2.0);
-        let b = Complex::new(2.0, 3.0);
+        let a = Complex::new(-2.0, 5.0);
+        let b = Complex::new(1.0, -3.0);
         let result = a.add(&b);
 
-        assert_eq!(result.re, 3.0);
-        assert_eq!(result.im, 5.0);
+        assert_eq!(result.re, -1.0);
+        assert_eq!(result.im, 2.0);
+    }
+
+    #[test]
+    fn test_add_with_wikipedia_example() {
+        let a = Complex::new(-2.0, 5.0);
+        let b = Complex::new(1.0, -3.0);
+        let result = a.add(&b);
+
+        assert_eq!(result.re, -1.0);
+        assert_eq!(result.im, 2.0);
+    }
+
+    #[test]
+    fn test_sub_with_wikipedia_example() {
+        let a = Complex::new(-2.0, 5.0);
+        let b = Complex::new(1.0, -3.0);
+        let result = a.sub(&b);
+
+        assert_eq!(result.re, -3.0);
+        assert_eq!(result.im, 8.0);
     }
 
     #[test]
@@ -61,6 +84,16 @@ mod complex_tests {
 
         assert_eq!(result.re, -4.0);
         assert_eq!(result.im, 7.0);
+    }
+
+    #[test]
+    fn test_mul_with_wikipedia_example() {
+        let a = Complex::new(-2.0, 5.0);
+        let b = Complex::new(1.0, -3.0);
+        let result = a.mul(&b);
+
+        assert_eq!(result.re, 13.0);
+        assert_eq!(result.im, 11.0);
     }
 
     #[test]
