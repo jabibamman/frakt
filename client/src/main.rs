@@ -1,11 +1,11 @@
-mod julia;
 mod image;
+mod julia;
 
+use crate::image::open_image;
+use crate::julia::generate_julia_set;
 use complex::complex_operations::ComplexOperations;
 use complex::julia_descriptor_impl::JuliaOperations;
 use shared::types::{complex::Complex, julia_descriptor::JuliaDescriptor, resolution::Resolution};
-use crate::julia::generate_julia_set;
-use crate::image::open_image;
 
 fn main() {
     let c = Complex::new(-0.9, 0.27015);
