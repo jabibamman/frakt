@@ -38,7 +38,6 @@ impl ComplexOperations for Complex {
     }
 }
 
-
 #[cfg(test)]
 mod complex_tests {
     use super::*;
@@ -111,5 +110,4 @@ mod complex_tests {
         assert_eq!(a.re, -1.0);
         assert_eq!(a.im, -2.0);
     }
-
 }
