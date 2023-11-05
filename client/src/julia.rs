@@ -1,7 +1,9 @@
 use complex::julia_descriptor_impl::JuliaOperations;
 use image::{ImageBuffer, Rgb};
+use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::Julia;
 use shared::types::messages::FragmentTask;
+use complex::complex_operations::ComplexOperations;
 
 pub fn generate_julia_set(
     fragment_task: FragmentTask,
@@ -11,11 +13,23 @@ pub fn generate_julia_set(
         Julia(julia_descriptor) => julia_descriptor,
     };
     let resolution = &fragment_task.resolution;
+    let range = &fragment_task.range;
+
+    // 2nd version of complex point calculation
+    //let scale_x = (range.max.x - range.min.x) / resolution.nx as f64;
+    //let scale_y = (range.max.y - range.min.y) / resolution.ny as f64;
 
     let mut img = ImageBuffer::new(resolution.nx.into(), resolution.ny.into());
 
+
     for (x, y, pixel) in img.enumerate_pixels_mut() {
         let complex_point = descriptor.to_complex(x as u16, y as u16, resolution);
+
+        // 2nd version of complex point calculation TODO: talk about it with the group
+        //let scaled_x = x as f64 * scale_x + range.min.x;
+        //let scaled_y = y as f64 * scale_y + range.min.y;
+        //let complex_point = Complex::new(scaled_x, scaled_y);
+
         let iterations = descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
         *pixel = Rgb([
             iterations_to_color(iterations, fragment_task.max_iteration),
@@ -23,7 +37,7 @@ pub fn generate_julia_set(
             0,
         ]);
     }
-
+    
     img
 }
 
