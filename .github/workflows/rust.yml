@@ -20,7 +20,30 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Build
+
+      - name: List directory content
+        run: ls -la
+
+      - name: Build client
+        working-directory: ./client
         run: cargo build --verbose
-      - name: Run tests
+
+      - name: Build complex
+        working-directory: ./complex
+        run: cargo build --verbose
+
+      - name: Build shared
+        working-directory: ./shared
+        run: cargo build --verbose
+
+      - name: Run tests for client
+        working-directory: ./client
+        run: cargo test --verbose
+
+      - name: Run tests for complex
+        working-directory: ./complex
+        run: cargo test --verbose
+
+      - name: Run tests for shared
+        working-directory: ./shared
         run: cargo test --verbose

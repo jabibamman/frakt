@@ -1,2 +1,2 @@
-pub mod calculations;
 pub mod client;
+pub mod julia;
