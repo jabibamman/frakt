@@ -1,13 +1,11 @@
+use complex::complex_operations::ComplexOperations;
 use complex::julia_descriptor_impl::JuliaOperations;
 use image::{ImageBuffer, Rgb};
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::Julia;
 use shared::types::messages::FragmentTask;
-use complex::complex_operations::ComplexOperations;
 
-pub fn generate_julia_set(
-    fragment_task: FragmentTask,
-) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
+pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let descriptor = &fragment_task.fractal.fractal_type;
     let descriptor = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
@@ -21,7 +19,6 @@ pub fn generate_julia_set(
 
     let mut img = ImageBuffer::new(resolution.nx.into(), resolution.ny.into());
 
-
     for (x, y, pixel) in img.enumerate_pixels_mut() {
         let complex_point = descriptor.to_complex(x as u16, y as u16, resolution);
 
@@ -30,14 +27,15 @@ pub fn generate_julia_set(
         //let scaled_y = y as f64 * scale_y + range.min.y;
         //let complex_point = Complex::new(scaled_x, scaled_y);
 
-        let iterations = descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
+        let iterations =
+            descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
         *pixel = Rgb([
             iterations_to_color(iterations, fragment_task.max_iteration),
             0,
             0,
         ]);
     }
-    
+
     img
 }
 

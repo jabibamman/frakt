@@ -7,7 +7,7 @@ use crate::types::u8data::U8Data;
 #[derive(Debug, Clone, PartialEq)]
 pub struct FragmentRequest {
     worker_name: String,
-    maximal_work_load: u32
+    maximal_work_load: u32,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -16,7 +16,7 @@ pub struct FragmentTask {
     pub fractal: FractalDescriptor,
     pub max_iteration: u16,
     pub resolution: Resolution,
-    pub range: Range
+    pub range: Range,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -24,5 +24,5 @@ pub struct FragmentResult {
     id: U8Data,
     resolution: Resolution,
     range: Range,
-    pixels: PixelData
+    pixels: PixelData,
 }
