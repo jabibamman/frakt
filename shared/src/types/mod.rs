@@ -1,4 +1,5 @@
 pub mod complex;
+pub mod iterated_sinz;
 pub mod julia_descriptor;
 pub mod messages;
 pub mod pixel_data;
