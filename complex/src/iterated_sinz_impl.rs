@@ -4,36 +4,47 @@ use shared::types::iterated_sinz::IteratedSinZ;
 use shared::types::resolution::Resolution;
 
 pub trait IteratedSinZOperations {
-    fn new(c: Complex, divergence_threshold_square: f64, max_iteration: u16) -> Self;
+    fn new(c: Complex) -> Self;
     fn to_complex(&self, x: u16, y: u16, resolution: &Resolution) -> Complex;
     fn iterate_complex_point(&self, complex_point: &Complex) -> u16;
-    fn divergence_threshold_square(&self) -> f64;
     fn max_iteration(&self) -> u16;
     fn c(&self) -> &Complex;
 }
 
 impl IteratedSinZOperations for IteratedSinZ {
-    fn new(c: Complex, divergence_threshold_square: f64, max_iteration: u16) -> Self {
-        todo!()
+    fn new(c: Complex) -> Self {
+        Self {
+            c,
+        }
     }
 
     fn to_complex(&self, x: u16, y: u16, resolution: &Resolution) -> Complex {
-        todo!()
+        let re = (x as f64 / resolution.nx as f64) * 4.0 - 2.0;
+        let im = (y as f64 / resolution.ny as f64) * 4.0 - 2.0;
+        Complex::new(re, im)
     }
 
-    fn iterate_complex_point(&self, complex_point: &Complex) -> u16 {
-        todo!()
-    }
+    fn iterate_complex_point(&self, mut complex_point: &Complex) -> u16 {
+        let mut iterations = 0;
 
-    fn divergence_threshold_square(&self) -> f64 {
-        todo!()
+        while complex_point.norm().square() > 50 {
+            //!todo(use sin that way :)
+            // let nb = 0.5;
+            // nb.sin();
+            complex_point = complex_point.norm().square();
+            iterations += 1;
+        }
+
+        iterations
     }
 
     fn max_iteration(&self) -> u16 {
-        todo!()
+        //todo!(use |zn|^2 > 50)
+        50
     }
 
+    ///Return the complex stored in IteratedSinZ
     fn c(&self) -> &Complex {
-        todo!()
+        &self.c
     }
 }

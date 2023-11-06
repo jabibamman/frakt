@@ -8,6 +8,7 @@ pub trait ComplexOperations {
     fn square(&self) -> Self;
     fn magnitude_squared(&self) -> f64;
     fn norm(&self) -> f64;
+    fn sin(&self) -> Self;
 }
 
 impl ComplexOperations for Complex {
@@ -40,6 +41,10 @@ impl ComplexOperations for Complex {
 
     fn norm(&self) -> f64 {
         self.magnitude_squared().sqrt()
+    }
+
+    fn sin(&self) -> Self {
+        todo!()
     }
 }
 
