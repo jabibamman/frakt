@@ -9,6 +9,7 @@ pub trait ComplexOperations {
     fn magnitude_squared(&self) -> f64;
     fn norm(&self) -> f64;
     fn sin(&self) -> Self;
+    fn exp(&self) -> Self;
 }
 
 impl ComplexOperations for Complex {
@@ -43,13 +44,29 @@ impl ComplexOperations for Complex {
         self.magnitude_squared().sqrt()
     }
 
+    ///(exp(iz) - exp(-iz)) / 2i
     fn sin(&self) -> Self {
-        todo!()
+        let mut mul_pos_i = self.mul(&Complex::new(0.0, 1.0));
+        let mut mul_neg_i = self.mul(&Complex::new(0.0, -1.0));
+
+        mul_pos_i = mul_pos_i.exp();
+        mul_neg_i = mul_neg_i.exp();
+
+        let calcul_top = mul_pos_i.sub(&mul_neg_i);
+        Complex::new(calcul_top.im / 2.0, (-calcul_top.re) / 2.0)
+    }
+
+    ///exp(a+ib) = exp(a) * exp(ib) = exp(a) * (cos(b) + isin(b))
+    fn exp(&self) -> Self {
+        let exp_re = Complex::new(self.re.exp(), 0.0);
+        let exp_im = Complex::new(self.im.cos(), self.im.sin());
+        exp_re.mul(&exp_im)
     }
 }
 
 #[cfg(test)]
 mod complex_tests {
+    use std::f64::consts::PI;
     use super::*;
 
     #[test]
@@ -125,6 +142,62 @@ mod complex_tests {
         let result = a.norm();
 
         assert_eq!(result, 5.0f64.sqrt());
+    }
+
+    #[test]
+    fn test_exp_where_im_equal_0() {
+        let a = Complex::new(0.0, 0.0);
+        let result = a.exp();
+
+        assert_eq!(result.re, 1.0);
+        assert_eq!(result.im, 0.0);
+    }
+
+    #[test]
+    fn test_exp_where_im_equal_half_pi() {
+        let a = Complex::new(0.0, PI/2.0);
+        let result = a.exp();
+
+        assert_eq!((result.re * 100000.0).round() / 100000.0, 0.0);
+        assert_eq!((result.im * 100000.0).round() / 100000.0, 1.0);
+    }
+
+    #[test]
+    fn test_exp_where_im_equal_minus_half_pi() {
+        let a = Complex::new(0.0, -PI/2.0);
+        let result = a.exp();
+
+        assert_eq!((result.re * 100000.0).round() / 100000.0, 0.0);
+        assert_eq!((result.im * 100000.0).round() / 100000.0, -1.0);
+    }
+
+    #[test]
+    fn test_exp_where_im_equal_pi() {
+        let a = Complex::new(0.0, PI);
+        let result = a.exp();
+
+        assert_eq!((result.re * 100000.0).round() / 100000.0, -1.0);
+        assert_eq!((result.im * 100000.0).round() / 100000.0, 0.0);
+    }
+
+    #[test]
+    fn test_exp_where_im_equal_minus_pi() {
+        let a = Complex::new(0.0, -PI);
+        let result = a.exp();
+
+        assert_eq!((result.re * 100000.0).round() / 100000.0, -1.0);
+        assert_eq!((result.im * 100000.0).round() / 100000.0, 0.0);
+    }
+
+    #[test]
+    fn test_exp_z_mul_exp_minus_z_equal_1() {
+        let z = Complex::new(353.5, -4520.3);
+        let left = z.exp();
+        let right = z.mul(&Complex::new(-1.0, 0.0)).exp();
+        let result = left.mul(&right);
+
+        assert_eq!((result.re * 100000.0).round() / 100000.0, 1.0);
+        assert_eq!((result.im * 100000.0).round() / 100000.0, 0.0);
     }
 
     #[test]

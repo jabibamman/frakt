@@ -24,14 +24,15 @@ impl IteratedSinZOperations for IteratedSinZ {
         Complex::new(re, im)
     }
 
-    fn iterate_complex_point(&self, mut complex_point: &Complex) -> u16 {
+    fn iterate_complex_point(&self, complex_point: &Complex) -> u16 {
+        let mut z = complex_point.clone();
         let mut iterations = 0;
 
-        while complex_point.norm().square() > 50 {
+        while complex_point.norm().sqrt() > 50.0 {
             //!todo(use sin that way :)
             // let nb = 0.5;
             // nb.sin();
-            complex_point = complex_point.norm().square();
+            z = z.sin().mul(&self.c);
             iterations += 1;
         }
 
