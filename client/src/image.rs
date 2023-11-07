@@ -20,3 +20,4 @@ pub fn open_image(path: &str) -> () {
         println!("OS not supported");
     }
 }
+
