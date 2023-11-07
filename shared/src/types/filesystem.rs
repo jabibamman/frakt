@@ -3,3 +3,14 @@ pub enum DirType {
     Workspace,
 }
 
+pub enum FileType {
+    File,
+    Directory,
+}
+
+pub enum FileExtension {
+    PNG,
+    JPG,
+    JPEG,
+}
+
