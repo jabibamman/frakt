@@ -1,6 +1,12 @@
-use std::process::Command;
+use std::{process::Command};
+
+use shared::utils::filesystem::dir_exists;
 
 pub fn open_image(path: &str) -> () {
+    if !dir_exists(path) { 
+        return;
+     }
+    
     if cfg!(target_os = "windows") {
         Command::new("cmd")
             .args(&["/c", "start", path])
