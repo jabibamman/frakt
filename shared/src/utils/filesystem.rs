@@ -1,4 +1,4 @@
-use std::{path::PathBuf, env};
+use std::{env, path::PathBuf};
 
 use crate::types::filesystem::{DirType, FileExtension};
 
@@ -14,8 +14,14 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
 
 pub fn get_dir_str(dir_type: DirType) -> String {
     match dir_type {
-        DirType::Current => get_current_working_dir().expect("Failed to get the current directory").display().to_string(),
-        DirType::Workspace => get_workspace_dir().expect("Failed to get the workspace directory").display().to_string(),
+        DirType::Current => get_current_working_dir()
+            .expect("Failed to get the current directory")
+            .display()
+            .to_string(),
+        DirType::Workspace => get_workspace_dir()
+            .expect("Failed to get the workspace directory")
+            .display()
+            .to_string(),
     }
 }
 
@@ -32,15 +38,13 @@ pub fn dir_exists(path: &str) -> bool {
     path_buf.exists() && path_buf.is_dir()
 }
 
-
 #[cfg(test)]
 mod tests {
-use super::*;
-use tempfile::tempdir;
-use std::path::PathBuf;
-use super::dir_exists;
-use tempfile::NamedTempFile;
-
+    use super::dir_exists;
+    use super::*;
+    use std::path::PathBuf;
+    use tempfile::tempdir;
+    use tempfile::NamedTempFile;
 
     #[test]
     fn test_dir_exists_with_tempfile() {
@@ -50,7 +54,11 @@ use tempfile::NamedTempFile;
         let temp_file = NamedTempFile::new_in(&temp_dir).expect("Failed to create a NamedTempFile");
         let temp_file_path = temp_file.path();
 
-        assert!(dir_exists(temp_path.to_str().expect("Failed to convert path to string")));
+        assert!(dir_exists(
+            temp_path
+                .to_str()
+                .expect("Failed to convert path to string")
+        ));
         assert!(temp_file_path.exists());
     }
 
@@ -89,6 +97,4 @@ use tempfile::NamedTempFile;
         let extension = get_extension_str(FileExtension::JPEG);
         assert_eq!(extension, "jpeg");
     }
-
 }
-
