@@ -26,6 +26,6 @@ fn iterations_to_color(iterations: u16, max_iterations: u16) -> u8 {
     if iterations == max_iterations {
         0
     } else {
-        ((iterations as f64 / max_iterations as f64) * 255.0) as u8
+        ((iterations as f64 / max_iterations as f64) * 255.0 * 5.0) as u8 // (to edit the intensity of the fractal, you could modify 12.0)
     }
 }
