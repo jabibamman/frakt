@@ -29,25 +29,34 @@ pub fn get_extension_str(extension: FileExtension) -> &'static str {
 
 pub fn dir_exists(path: &str) -> bool {
     let path_buf = PathBuf::from(path);
-    path_buf.exists()
+    path_buf.exists() && path_buf.is_dir()
 }
 
 
 #[cfg(test)]
 mod tests {
 use super::*;
-use std::fs::File;
 use tempfile::tempdir;
+use std::path::PathBuf;
+use super::dir_exists;
+use tempfile::NamedTempFile;
+
 
     #[test]
     fn test_dir_exists_with_tempfile() {
-        let temp_dir = tempdir().unwrap();
-        let file_path = temp_dir.path().join("test.txt");
-        File::create(file_path.clone()).unwrap();
+        let temp_dir = tempdir().expect("Failed to create a temporary directory");
+        let temp_path = temp_dir.path();
 
-        assert!(dir_exists(file_path.to_str().unwrap()));
+        let temp_file = NamedTempFile::new_in(&temp_dir).expect("Failed to create a NamedTempFile");
+        let temp_file_path = temp_file.path();
 
-        temp_dir.close().unwrap();
+        assert!(dir_exists(temp_path.to_str().expect("Failed to convert path to string")));
+        assert!(temp_file_path.exists());
+    }
+
+    #[test]
+    fn test_dir_without_tempfile() {
+        let file_path = PathBuf::from("test.txt");
         assert!(!dir_exists(file_path.to_str().unwrap()));
     }
 
