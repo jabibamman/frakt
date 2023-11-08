@@ -28,10 +28,7 @@ impl IteratedSinZOperations for IteratedSinZDescriptor {
         let mut z = complex_point.clone();
         let mut iterations = 0;
 
-        while complex_point.norm().sqrt() > 50.0 {
-            //!todo(use sin that way :)
-            // let nb = 0.5;
-            // nb.sin();
+        while complex_point.norm().sqrt() > self.max_iteration() {
             z = z.sin().mul(&self.c);
             iterations += 1;
         }
@@ -39,9 +36,9 @@ impl IteratedSinZOperations for IteratedSinZDescriptor {
         iterations
     }
 
-    fn max_iteration(&self) -> u16 {
-        //todo!(use |zn|^2 > 50)
-        50
+    ///Fixed to 50
+    fn max_iteration(&self) -> f64 {
+        50.0
     }
 
     ///Return the complex stored in IteratedSinZ
