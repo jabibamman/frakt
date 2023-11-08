@@ -15,7 +15,11 @@ use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_str, get_extension_str, get_file_path};
 
 fn main() {
-    let img_path = get_file_path("julia", get_dir_str(), get_extension_str(FileExtension::PNG));
+    let img_path = get_file_path(
+        "julia",
+        get_dir_str(),
+        get_extension_str(FileExtension::PNG),
+    );
     let fragment_task: FragmentTask = FragmentTask {
         id: U8Data {
             offset: 0,

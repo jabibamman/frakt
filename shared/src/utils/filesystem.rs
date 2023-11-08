@@ -1,6 +1,6 @@
 use std::{env, path::PathBuf};
 
-use crate::types::filesystem::{FileExtension};
+use crate::types::filesystem::FileExtension;
 
 use rand::random;
 
@@ -21,10 +21,14 @@ pub fn get_dir_str() -> String {
             .display()
             .to_string()
     } else {
-        format!("{}/target", get_workspace_dir().expect("Failed to get the workspace directory").display())
+        format!(
+            "{}/target",
+            get_workspace_dir()
+                .expect("Failed to get the workspace directory")
+                .display()
+        )
     }
 }
-
 
 pub fn get_extension_str(extension: FileExtension) -> &'static str {
     match extension {
@@ -34,7 +38,7 @@ pub fn get_extension_str(extension: FileExtension) -> &'static str {
     }
 }
 
-pub fn get_file_path(filename:&str, path_str:String, extension: &str) -> String {   
+pub fn get_file_path(filename: &str, path_str: String, extension: &str) -> String {
     format!(
         "{}/{}-{}.{}",
         path_str,
