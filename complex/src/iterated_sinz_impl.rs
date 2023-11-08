@@ -1,7 +1,6 @@
 use crate::complex_operations::ComplexOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::IteratedSinZDescriptor;
-use shared::types::iterated_sinz::IteratedSinZ;
 use shared::types::resolution::Resolution;
 
 pub trait IteratedSinZOperations {
