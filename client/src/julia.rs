@@ -13,19 +13,15 @@ pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, V
     let resolution = &fragment_task.resolution;
     let range = &fragment_task.range;
 
-    // 2nd version of complex point calculation
-    //let scale_x = (range.max.x - range.min.x) / resolution.nx as f64;
-    //let scale_y = (range.max.y - range.min.y) / resolution.ny as f64;
+    let scale_x = (range.max.x - range.min.x) / resolution.nx as f64;
+    let scale_y = (range.max.y - range.min.y) / resolution.ny as f64;
 
     let mut img = ImageBuffer::new(resolution.nx.into(), resolution.ny.into());
 
     for (x, y, pixel) in img.enumerate_pixels_mut() {
-        let complex_point = descriptor.to_complex(x as u16, y as u16, resolution);
-
-        // 2nd version of complex point calculation TODO: talk about it with the group
-        //let scaled_x = x as f64 * scale_x + range.min.x;
-        //let scaled_y = y as f64 * scale_y + range.min.y;
-        //let complex_point = Complex::new(scaled_x, scaled_y);
+        let scaled_x = x as f64 * scale_x + range.min.x;
+        let scaled_y = y as f64 * scale_y + range.min.y;
+        let complex_point = Complex::new(scaled_x, scaled_y);
 
         let iterations =
             descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
