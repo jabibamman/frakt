@@ -1,6 +1,6 @@
 pub mod complex;
-pub mod iterated_sinz;
-pub mod julia_descriptor;
+pub mod filesystem;
+pub mod fractal_descriptor;
 pub mod messages;
 pub mod pixel_data;
 pub mod pixel_intensity;
