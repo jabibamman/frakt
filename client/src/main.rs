@@ -3,25 +3,49 @@ mod julia;
 
 use crate::image::open_image;
 use crate::julia::generate_julia_set;
-use complex::complex_operations::ComplexOperations;
-use complex::julia_descriptor_impl::JuliaOperations;
-use shared::types::filesystem::{DirType, FileExtension};
-use shared::types::{complex::Complex, julia_descriptor::JuliaDescriptor, resolution::Resolution};
+
+use shared::types::fractal_descriptor::FractalType::Julia;
+use shared::types::fractal_descriptor::{FractalDescriptor, JuliaDescriptor};
+use shared::types::messages::FragmentTask;
+use shared::types::point::Point;
+use shared::types::range::Range;
+use shared::types::u8data::U8Data;
+use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_str, get_extension_str};
+use shared::types::filesystem::{DirType, FileExtension};
 
 fn main() {
-    let c = Complex::new(-0.9, 0.27015);
-    let descriptor = JuliaDescriptor::new(c, 4.0, 500);
-    let resolution = Resolution { nx: 800, ny: 800 };
-
     let img_path = format!(
         "{}/target/julia.{}",
         get_dir_str(DirType::Workspace),
         get_extension_str(FileExtension::PNG)
     );
+    let fragment_task: FragmentTask = FragmentTask {
+        id: U8Data {
+            offset: 0,
+            count: 16,
+        },
+        fractal: FractalDescriptor {
+            fractal_type: Julia(JuliaDescriptor {
+                c: Complex {
+                    re: 0.285,
+                    im: 0.013,
+                },
+                divergence_threshold_square: 4.0,
+            }),
+        },
+        max_iteration: 64,
+        resolution: Resolution { nx: 300, ny: 300 },
+        range: Range {
+            min: Point { x: -1.2, y: 0.0 },
+            max: Point {
+                x: -0.6,
+                y: 0.60000000000000001,
+            },
+        },
+    };
 
-    println!("{}", img_path.as_str());
-    match generate_julia_set(&descriptor, &resolution).save(img_path.clone().as_str()) {
+    match generate_julia_set(fragment_task).save(img_path.clone().as_str()) {
         Ok(_) => println!("L'image du Julia Set a été sauvegardée !"),
         Err(e) => println!(
             "Erreur lors de la sauvegarde de l'image du Julia Set : {}",
