@@ -13,4 +13,3 @@ pub enum FileExtension {
     JPG,
     JPEG,
 }
-
