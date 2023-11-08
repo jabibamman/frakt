@@ -1,5 +1,6 @@
 use crate::complex_operations::ComplexOperations;
 use shared::types::complex::Complex;
+use shared::types::fractal_descriptor::IteratedSinZDescriptor;
 use shared::types::iterated_sinz::IteratedSinZ;
 use shared::types::resolution::Resolution;
 
@@ -11,7 +12,7 @@ pub trait IteratedSinZOperations {
     fn c(&self) -> &Complex;
 }
 
-impl IteratedSinZOperations for IteratedSinZ {
+impl IteratedSinZOperations for IteratedSinZDescriptor {
     fn new(c: Complex) -> Self {
         Self {
             c,

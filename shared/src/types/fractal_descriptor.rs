@@ -3,6 +3,7 @@ use crate::types::complex::Complex;
 #[derive(Debug, Clone, PartialEq)]
 pub enum FractalType {
     Julia(JuliaDescriptor),
+    IteratedSinZ(IteratedSinZDescriptor),
     //Mandelbrot(MandelbrotDescriptor),
     //...
 }
@@ -11,6 +12,11 @@ pub enum FractalType {
 pub struct JuliaDescriptor {
     pub c: Complex,
     pub divergence_threshold_square: f64,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct IteratedSinZDescriptor {
+    pub c: Complex,
 }
 
 #[derive(Debug, Clone, PartialEq)]

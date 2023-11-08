@@ -2,13 +2,14 @@ use complex::complex_operations::ComplexOperations;
 use complex::julia_descriptor_impl::JuliaOperations;
 use image::{ImageBuffer, Rgb};
 use shared::types::complex::Complex;
-use shared::types::fractal_descriptor::FractalType::Julia;
+use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia};
 use shared::types::messages::FragmentTask;
 
 pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let descriptor = &fragment_task.fractal.fractal_type;
     let descriptor = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
+        IteratedSinZ(iterated_sinz_descriptor) => iterated_sinz_descriptor
     };
     let resolution = &fragment_task.resolution;
     let range = &fragment_task.range;
