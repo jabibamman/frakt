@@ -3,6 +3,8 @@ mod julia;
 
 use crate::image::open_image;
 use crate::julia::generate_julia_set;
+
+use shared::types::filesystem::{DirType, FileExtension};
 use shared::types::fractal_descriptor::FractalType::Julia;
 use shared::types::fractal_descriptor::{FractalDescriptor, JuliaDescriptor};
 use shared::types::messages::FragmentTask;
@@ -10,9 +12,14 @@ use shared::types::point::Point;
 use shared::types::range::Range;
 use shared::types::u8data::U8Data;
 use shared::types::{complex::Complex, resolution::Resolution};
+use shared::utils::filesystem::{get_dir_str, get_extension_str};
 
 fn main() {
-    let img_path = "target/julia.png";
+    let img_path = format!(
+        "{}/target/julia.{}",
+        get_dir_str(DirType::Workspace),
+        get_extension_str(FileExtension::PNG)
+    );
     let fragment_task: FragmentTask = FragmentTask {
         id: U8Data {
             offset: 0,
@@ -38,7 +45,7 @@ fn main() {
         },
     };
 
-    match generate_julia_set(fragment_task).save(img_path) {
+    match generate_julia_set(fragment_task).save(img_path.clone().as_str()) {
         Ok(_) => println!("L'image du Julia Set a été sauvegardée !"),
         Err(e) => println!(
             "Erreur lors de la sauvegarde de l'image du Julia Set : {}",
@@ -46,5 +53,5 @@ fn main() {
         ),
     }
 
-    open_image(img_path);
+    open_image(img_path.as_str());
 }
