@@ -4,6 +4,7 @@ mod julia;
 use crate::image::open_image;
 use crate::julia::generate_julia_set;
 
+use shared::types::filesystem::{DirType, FileExtension};
 use shared::types::fractal_descriptor::FractalType::Julia;
 use shared::types::fractal_descriptor::{FractalDescriptor, JuliaDescriptor};
 use shared::types::messages::FragmentTask;
@@ -12,7 +13,6 @@ use shared::types::range::Range;
 use shared::types::u8data::U8Data;
 use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_str, get_extension_str};
-use shared::types::filesystem::{DirType, FileExtension};
 
 fn main() {
     let img_path = format!(
