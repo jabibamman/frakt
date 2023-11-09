@@ -5,8 +5,8 @@ use crate::image::open_image;
 use crate::julia::generate_julia_set;
 
 use shared::types::filesystem::{DirType, FileExtension};
-use shared::types::fractal_descriptor::FractalType::Julia;
-use shared::types::fractal_descriptor::{FractalDescriptor, JuliaDescriptor};
+use shared::types::fractal_descriptor::FractalType::{IteratedSinZ};
+use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
 use shared::types::messages::FragmentTask;
 use shared::types::point::Point;
 use shared::types::range::Range;
@@ -17,21 +17,21 @@ use shared::utils::filesystem::{get_dir_str, get_extension_str};
 fn main() {
     let img_path = format!(
         "{}/target/julia.{}",
-        get_dir_str(DirType::Workspace),
+        get_dir_str(DirType::Current),
         get_extension_str(FileExtension::PNG)
     );
+    println!("{}", img_path);
     let fragment_task: FragmentTask = FragmentTask {
         id: U8Data {
             offset: 0,
             count: 16,
         },
         fractal: FractalDescriptor {
-            fractal_type: Julia(JuliaDescriptor {
+            fractal_type: IteratedSinZ(IteratedSinZDescriptor {
                 c: Complex {
-                    re: 0.285,
-                    im: 0.013,
-                },
-                divergence_threshold_square: 4.0,
+                    re: 0.2,
+                    im: 1.0,
+                }
             }),
         },
         max_iteration: 64,

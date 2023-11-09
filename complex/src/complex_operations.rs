@@ -44,16 +44,10 @@ impl ComplexOperations for Complex {
         self.magnitude_squared().sqrt()
     }
 
-    ///(exp(iz) - exp(-iz)) / 2i
+    ///Re(Sin(z)) = Sin(a) * Cosh(b)
+    ///Im(Sin(z)) = Cos(a) * Sinh(b)
     fn sin(&self) -> Self {
-        let mut mul_pos_i = self.mul(&Complex::new(0.0, 1.0));
-        let mut mul_neg_i = self.mul(&Complex::new(0.0, -1.0));
-
-        mul_pos_i = mul_pos_i.exp();
-        mul_neg_i = mul_neg_i.exp();
-
-        let calcul_top = mul_pos_i.sub(&mul_neg_i);
-        Complex::new(calcul_top.im / 2.0, (-calcul_top.re) / 2.0)
+        Complex::new(self.re.sin() * self.im.cosh(), self.re.cos() * self.im.sinh())
     }
 
     ///exp(a+ib) = exp(a) * exp(ib) = exp(a) * (cos(b) + isin(b))
@@ -66,8 +60,13 @@ impl ComplexOperations for Complex {
 
 #[cfg(test)]
 mod complex_tests {
-    use std::f64::consts::PI;
+    use std::f64::consts::{E, PI};
     use super::*;
+
+    fn round(value: &f64) -> f64 {
+        let accuracy = 10000000.0;
+        (value * accuracy).round() / accuracy
+    }
 
     #[test]
     fn test_add() {
@@ -137,6 +136,14 @@ mod complex_tests {
     }
 
     #[test]
+    fn test_magnitude_squared() {
+        let a = Complex::new(1.0, 2.0);
+        let result = a.magnitude_squared();
+
+        assert_eq!(result, 5.0);
+    }
+
+    #[test]
     fn test_norm() {
         let a = Complex::new(1.0, 2.0);
         let result = a.norm();
@@ -158,8 +165,8 @@ mod complex_tests {
         let a = Complex::new(0.0, PI/2.0);
         let result = a.exp();
 
-        assert_eq!((result.re * 100000.0).round() / 100000.0, 0.0);
-        assert_eq!((result.im * 100000.0).round() / 100000.0, 1.0);
+        assert_eq!(round(&result.re), 0.0);
+        assert_eq!(round(&result.im), 1.0);
     }
 
     #[test]
@@ -167,8 +174,8 @@ mod complex_tests {
         let a = Complex::new(0.0, -PI/2.0);
         let result = a.exp();
 
-        assert_eq!((result.re * 100000.0).round() / 100000.0, 0.0);
-        assert_eq!((result.im * 100000.0).round() / 100000.0, -1.0);
+        assert_eq!(round(&result.re), 0.0);
+        assert_eq!(round(&result.im), -1.0);
     }
 
     #[test]
@@ -176,8 +183,8 @@ mod complex_tests {
         let a = Complex::new(0.0, PI);
         let result = a.exp();
 
-        assert_eq!((result.re * 100000.0).round() / 100000.0, -1.0);
-        assert_eq!((result.im * 100000.0).round() / 100000.0, 0.0);
+        assert_eq!(round(&result.re), -1.0);
+        assert_eq!(round(&result.im), 0.0);
     }
 
     #[test]
@@ -185,8 +192,8 @@ mod complex_tests {
         let a = Complex::new(0.0, -PI);
         let result = a.exp();
 
-        assert_eq!((result.re * 100000.0).round() / 100000.0, -1.0);
-        assert_eq!((result.im * 100000.0).round() / 100000.0, 0.0);
+        assert_eq!(round(&result.re), -1.0);
+        assert_eq!(round(&result.im), 0.0);
     }
 
     #[test]
@@ -196,8 +203,28 @@ mod complex_tests {
         let right = z.mul(&Complex::new(-1.0, 0.0)).exp();
         let result = left.mul(&right);
 
-        assert_eq!((result.re * 100000.0).round() / 100000.0, 1.0);
-        assert_eq!((result.im * 100000.0).round() / 100000.0, 0.0);
+        assert_eq!(round(&result.re), 1.0);
+        assert_eq!(round(&result.im), 0.0);
+    }
+
+    #[test]
+    fn test_exp_with_reel_1() {
+        let z = Complex::new(1.0, PI);
+        let result = z.exp();
+
+        let minus_exp = -E;
+        assert_eq!(round(&result.re), round(&minus_exp));
+        assert_eq!(round(&result.im), 0.0);
+    }
+
+    #[test]
+    fn test_exp_with_reel_2() {
+        let z = Complex::new(2.0, PI/4.0);
+        let result = z.exp();
+
+        let exp_value = E.powi(2) / 2.0_f64.sqrt();
+        assert_eq!(result.re, result.im);
+        assert_eq!(round(&result.re), round(&exp_value));
     }
 
     #[test]
