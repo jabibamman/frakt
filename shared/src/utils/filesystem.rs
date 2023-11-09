@@ -1,6 +1,8 @@
 use std::{env, path::PathBuf};
 
-use crate::types::filesystem::{DirType, FileExtension};
+use crate::types::filesystem::FileExtension;
+
+use rand::random;
 
 fn get_current_working_dir() -> std::io::Result<PathBuf> {
     env::current_dir()
@@ -12,16 +14,19 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
     Ok(path_buf)
 }
 
-pub fn get_dir_str(dir_type: DirType) -> String {
-    match dir_type {
-        DirType::Current => get_current_working_dir()
+pub fn get_dir_str() -> String {
+    if cfg!(not(debug_assertions)) {
+        get_current_working_dir()
             .expect("Failed to get the current directory")
             .display()
-            .to_string(),
-        DirType::Workspace => get_workspace_dir()
-            .expect("Failed to get the workspace directory")
-            .display()
-            .to_string(),
+            .to_string()
+    } else {
+        format!(
+            "{}/target",
+            get_workspace_dir()
+                .expect("Failed to get the workspace directory")
+                .display()
+        )
     }
 }
 
@@ -31,6 +36,16 @@ pub fn get_extension_str(extension: FileExtension) -> &'static str {
         FileExtension::JPG => "jpg",
         FileExtension::JPEG => "jpeg",
     }
+}
+
+pub fn get_file_path(filename: &str, path_str: String, extension: &str) -> String {
+    format!(
+        "{}/{}-{}.{}",
+        path_str,
+        filename,
+        random::<u32>(),
+        extension
+    )
 }
 
 pub fn dir_exists(path: &str) -> bool {
@@ -70,13 +85,13 @@ mod tests {
 
     #[test]
     fn test_get_dir_str_current() {
-        let current_dir = get_dir_str(DirType::Current);
+        let current_dir = get_dir_str();
         assert_ne!(current_dir, "");
     }
 
     #[test]
     fn test_get_dir_str_workspace() {
-        let workspace_dir = get_dir_str(DirType::Workspace);
+        let workspace_dir = get_dir_str();
         assert_ne!(workspace_dir, "");
     }
 
