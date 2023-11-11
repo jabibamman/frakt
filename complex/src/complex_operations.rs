@@ -8,6 +8,7 @@ pub trait ComplexOperations {
     fn square(&self) -> Self;
     fn magnitude_squared(&self) -> f64;
     fn norm(&self) -> f64;
+    fn div(&self,other:&self) -> self;
 }
 
 impl ComplexOperations for Complex {
@@ -41,6 +42,15 @@ impl ComplexOperations for Complex {
     fn norm(&self) -> f64 {
         self.magnitude_squared().sqrt()
     }
+    fn div(&self,other:&self) -> self{
+        let denominator = other.magnitude_squared();
+        Complex::new(
+            (self.re * other.re + self.im * other.im) / denominator,
+            (self.im * other.re - self.re * other.im) / denominator,
+        )
+
+    }
+
 }
 
 #[cfg(test)]

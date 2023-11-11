@@ -12,7 +12,6 @@ impl MandelbrotOperations for MandelbrotDescriptor {
         Self {
         }
     }
-
     fn iterate_complex_point(&self, complex_point: &Complex) -> u16 {
         let mut z = Complex::new(0.0, 0.0);
         let mut iterations = 0;
