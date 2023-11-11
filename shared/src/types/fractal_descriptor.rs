@@ -15,8 +15,6 @@ pub struct JuliaDescriptor {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct MandelbrotDescriptor {
-    pub divergence_threshold_square: f64,
-    pub max_iteration: u16,
 }
 
 #[derive(Debug, Clone, PartialEq)]
