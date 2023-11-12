@@ -42,3 +42,45 @@ fn iterations_to_color(iterations: u16, max_iterations: u16) -> u8 {
         ((iterations as f64 / max_iterations as f64) * 255.0 * 5.0) as u8 // (to edit the intensity of the fractal, you could modify 12.0)
     }
 }
+
+
+#[cfg(test)]
+mod julia_descriptor_tests {
+    use shared::types::u8data::U8Data;
+
+    use super::*;
+
+    #[test]
+    fn test_generate_julia_set() {
+        let fragment_task = FragmentTask {
+            fractal: Julia(JuliaDescriptor {
+                c: Complex::new(-0.8, 0.156),
+            }),
+            resolution: Resolution {
+                nx: 800,
+                ny: 600,
+            },
+            range: Range {
+                min: Complex::new(-2.0, -1.5),
+                max: Complex::new(2.0, 1.5),
+            },
+            max_iteration: 100,
+            id: U8Data(0),
+        };
+
+        let result = generate_julia_set(fragment_task);
+
+        assert_eq!(result.dimensions(), (800, 600));
+    }
+
+    #[test]
+    fn test_iterations_to_color() {
+
+        let iterations = 50;
+        let max_iterations = 100;
+
+        let result = iterations_to_color(iterations, max_iterations);
+
+        assert!(result <= 255);
+    }
+}
