@@ -15,7 +15,7 @@ Ensure you have Rust and Cargo installed on your system.
 To clone the repository, run the following command:
 
 ```bash
-git clone https://your-git-repo/frakt.git
+git clone https://jabibamman/frakt.git
 cd frakt
 ```
 
