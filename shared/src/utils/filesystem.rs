@@ -12,7 +12,7 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
     Ok(get_current_working_dir()?)
 }
 
-pub fn get_dir_str() -> PathBuf {
+pub fn get_dir_path_buf() -> PathBuf {
     if cfg!(not(debug_assertions)) {
         get_current_working_dir().expect("Failed to get the current directory")
     } else {
@@ -74,13 +74,13 @@ mod tests {
 
     #[test]
     fn test_get_dir_str_current() {
-        let current_dir = get_dir_str();
+        let current_dir = get_dir_path_buf().to_str().unwrap_or_default().to_string();
         assert_ne!(current_dir, "");
     }
 
     #[test]
     fn test_get_dir_str_workspace() {
-        let workspace_dir = get_dir_str();
+        let workspace_dir = get_dir_path_buf().to_str().unwrap_or_default().to_string();
         assert_ne!(workspace_dir, "");
     }
 
