@@ -9,9 +9,7 @@ fn get_current_working_dir() -> std::io::Result<PathBuf> {
 }
 
 pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
-    let mut path_buf = get_current_working_dir()?;
-    path_buf.pop();
-    Ok(path_buf)
+    Ok(get_current_working_dir()?)
 }
 
 pub fn get_dir_str() -> String {
@@ -22,7 +20,7 @@ pub fn get_dir_str() -> String {
             .to_string()
     } else {
         format!(
-            "{}/target",
+            "{}\\target",
             get_workspace_dir()
                 .expect("Failed to get the workspace directory")
                 .display()
@@ -40,7 +38,7 @@ pub fn get_extension_str(extension: FileExtension) -> &'static str {
 
 pub fn get_file_path(filename: &str, path_str: String, extension: &str) -> String {
     format!(
-        "{}/{}-{}.{}",
+        "{}\\{}-{}.{}",
         path_str,
         filename,
         random::<u32>(),
