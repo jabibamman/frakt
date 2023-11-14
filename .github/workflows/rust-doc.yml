@@ -3,7 +3,7 @@ name: RustDoc Deployment
 on:
   push:
     branches:
-      - doc/publish-doc
+      - master
 
 jobs:
   deploy-docs:
@@ -21,4 +21,5 @@ jobs:
         with:
           deploy_key: ${{ secrets.DEPLOY_KEY }}
           publish_dir: ./target/doc
+          commit_message: ${{ github.event.head_commit.message }}
         
