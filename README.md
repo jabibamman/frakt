@@ -81,6 +81,20 @@ To build and the complex library (used by other components):
 cargo build -p complex
 ```
 
+## Documentation
+
+To generate documentation for all packages without including dependencies (recommended):
+
+```bash
+cargo doc --no-deps --open
+```
+
+To generate documentation for all packages including dependencies:
+
+```bash
+cargo doc --open
+```
+
 ## Contributing
 
 Contributions are welcome. Please follow standard contribution guidelines for pull requests.

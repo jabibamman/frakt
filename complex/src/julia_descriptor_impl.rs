@@ -3,11 +3,21 @@ use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::JuliaDescriptor;
 use shared::types::resolution::Resolution;
 
+/// Provides operations specific to the Julia fractal.
 pub trait JuliaOperations {
+    /// Constructs a new `JuliaDescriptor` with the specified complex number and divergence threshold.
     fn new(c: Complex, divergence_threshold_square: f64) -> Self;
+
+    /// Converts pixel coordinates to a complex number based on the resolution.
     fn to_complex(&self, x: u16, y: u16, resolution: &Resolution) -> Complex;
+
+    /// Iterates over a complex point and returns the number of iterations before it diverges.
     fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> u16;
+
+    /// Returns the square of the divergence threshold.
     fn divergence_threshold_square(&self) -> f64;
+
+    /// Returns a reference to the complex number `c` used in the Julia fractal formula.
     fn c(&self) -> &Complex;
 }
 
