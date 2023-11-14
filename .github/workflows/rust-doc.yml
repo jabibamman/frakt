@@ -1,0 +1,24 @@
+name: RustDoc Deployment
+
+on:
+  push:
+    branches:
+      - doc/publish-doc
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+      - name: Build RustDoc
+        run: cargo doc --no-deps
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.DEPLOY_KEY }}
+          publish_dir: ./target/doc
+        
