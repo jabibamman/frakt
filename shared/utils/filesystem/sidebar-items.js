@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["dir_exists","get_dir_path_buf","get_extension_str","get_file_path","get_workspace_dir"]};
