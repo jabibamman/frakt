@@ -35,7 +35,7 @@ fn main() {
             }),
         },
         max_iteration: 64,
-        resolution: Resolution { nx: 1080, ny: 1920 },
+        resolution: Resolution { nx: 480, ny: 854 },
         range: Range {
             min: Point { x: -2.0, y: -3.55556 },
             max: Point { x: 2.0, y: 3.55556, },
