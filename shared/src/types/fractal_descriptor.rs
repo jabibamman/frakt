@@ -1,7 +1,7 @@
 use crate::types::complex::Complex;
 
 /// Represents the type of fractal to be generated.
-/// 
+///
 /// Variants:
 /// - `Julia(JuliaDescriptor)`: Represents a Julia fractal with its specific descriptor.
 /// - `Mandelbrot(MandelbrotDescriptor)`: Represents a Mandelbrot fractal (currently commented out).
@@ -25,7 +25,7 @@ pub struct JuliaDescriptor {
 }
 
 /// Describes parameters specific to a Mandelbrot fractal.
-/// 
+///
 /// Attributes:
 /// - `divergence_threshold_square`: The square of the divergence threshold. Points whose magnitude square exceeds this threshold are considered to diverge.
 /// - `max_iteration`: Maximum number of iterations to determine whether a point diverges.
