@@ -1,5 +1,5 @@
 /// Provides functions for file system operations, focusing on directories and file extensions.
-/// Includes utilities for working with the current working directory, workspace directory, 
+/// Includes utilities for working with the current working directory, workspace directory,
 /// and checking if a directory exists.
 use std::{env, path::PathBuf};
 
@@ -7,7 +7,7 @@ use crate::types::filesystem::FileExtension;
 
 use rand::random;
 
-/// Returns the current working directory as a `PathBuf`. 
+/// Returns the current working directory as a `PathBuf`.
 /// Propagates any errors encountered.
 fn get_current_working_dir() -> std::io::Result<PathBuf> {
     env::current_dir()
@@ -59,8 +59,7 @@ pub fn dir_exists(path: &str) -> bool {
     path_buf.exists() && path_buf.is_dir()
 }
 
-
-/// The module includes tests for each utility function, ensuring their correct functionality. 
+/// The module includes tests for each utility function, ensuring their correct functionality.
 /// These tests cover scenarios like checking if a directory exists, getting directory strings in different modes,
 ///  and validating file extension strings.
 #[cfg(test)]

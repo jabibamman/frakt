@@ -24,7 +24,6 @@ pub trait ComplexOperations {
     fn norm(&self) -> f64;
 }
 
-
 impl ComplexOperations for Complex {
     fn new(re: f64, im: f64) -> Self {
         Complex { re, im }
