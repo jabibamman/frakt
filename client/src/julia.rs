@@ -25,20 +25,39 @@ pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, V
 
         let iterations =
             descriptor.iterate_complex_point(&complex_point);
-        *pixel = Rgb([
-            iterations_to_color(iterations, fragment_task.max_iteration),
-            0,
-            0,
-        ]);
+        *pixel = Rgb(color((iterations as f32) / 255.0));
     }
 
     img
 }
 
-fn iterations_to_color(iterations: u16, max_iterations: u16) -> u8 {
-    if iterations == max_iterations {
-        0
-    } else {
-        ((iterations as f64 / max_iterations as f64) * 255.0) as u8 // (to edit the intensity of the fractal, you could modify 12.0)
+
+fn color(t: f32) -> [u8; 3] {
+    let a = (0.5, 0.5, 0.5);
+    let b = (0.5, 0.5, 0.5);
+    let c = (1.0, 1.0, 1.0);
+    let d = (0.0, 0.10, 0.20);
+    let r = b.0 * (6.28318 * (c.0 * t + d.0)).cos() + a.0;
+    let g = b.1 * (6.28318 * (c.1 * t + d.1)).cos() + a.1;
+    let b = b.2 * (6.28318 * (c.2 * t + d.2)).cos() + a.2;
+    [(255.0 * r) as u8, (255.0 * g) as u8, (255.0 * b) as u8]
+}
+
+
+fn iterations_to_color(mut iterations: u16, max_iterations: u16) -> u8 {
+    iterations *= 5;
+    if iterations > 255 {
+        255
     }
+    else {
+        iterations as u8
+    }
+
+
+
+    // if iterations == max_iterations {
+    //     0
+    // } else {
+    //     ((iterations / max_iterations) * 255) as u8 // (to edit the intensity of the fractal, you could modify 12.0)
+    // }
 }

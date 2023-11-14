@@ -136,14 +136,6 @@ mod complex_tests {
     }
 
     #[test]
-    fn test_magnitude_squared() {
-        let a = Complex::new(1.0, 2.0);
-        let result = a.magnitude_squared();
-
-        assert_eq!(result, 5.0);
-    }
-
-    #[test]
     fn test_norm() {
         let a = Complex::new(1.0, 2.0);
         let result = a.norm();

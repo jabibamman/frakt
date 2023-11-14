@@ -35,13 +35,10 @@ fn main() {
             }),
         },
         max_iteration: 64,
-        resolution: Resolution { nx: 300, ny: 300 },
+        resolution: Resolution { nx: 1080, ny: 1920 },
         range: Range {
-            min: Point { x: -1.2, y: 0.0 },
-            max: Point {
-                x: -0.6,
-                y: 0.60000000000000001,
-            },
+            min: Point { x: -2.0, y: -3.55556 },
+            max: Point { x: 2.0, y: 3.55556, },
         },
     };
 

@@ -29,8 +29,9 @@ impl IteratedSinZOperations for IteratedSinZDescriptor {
         let mut iterations = 0;
         let max = 256;
 
-        while complex_point.norm().powi(2) < self.max_iteration() as f64 && iterations < max {
-            z = z.sin().mul(&self.c);
+        while z.im.abs() < self.max_iteration() as f64 && iterations < max {
+            z = z.sin();
+            z = z.mul(&self.c);
             iterations += 1;
         }
 
@@ -45,5 +46,22 @@ impl IteratedSinZOperations for IteratedSinZDescriptor {
     ///Return the complex stored in IteratedSinZ
     fn c(&self) -> &Complex {
         &self.c
+    }
+}
+
+
+#[cfg(test)]
+mod iterated_sinz_tests {
+    use shared::types::complex::Complex;
+    use shared::types::fractal_descriptor::IteratedSinZDescriptor;
+    use crate::complex_operations::ComplexOperations;
+    use crate::iterated_sinz_impl::IteratedSinZOperations;
+
+    #[test]
+    fn test_max_iteration_return_50() {
+        let c = Complex::new(4.5, -65.7);
+        let iterated_sinz = IteratedSinZDescriptor::new(c);
+
+        assert_eq!(iterated_sinz.max_iteration(), 50);
     }
 }
