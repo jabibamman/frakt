@@ -5,6 +5,17 @@ use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::Julia;
 use shared::types::messages::FragmentTask;
 
+/// Generates an image of the Julia set fractal based on the provided fragment task.
+///
+/// # Arguments
+/// * `fragment_task`: A `FragmentTask` containing details such as the fractal type, resolution, and range.
+///
+/// # Returns
+/// Returns an `ImageBuffer` containing the generated Julia set fractal.
+///
+/// # Details
+/// This function scales the coordinates based on the provided resolution and range, computes the number of
+/// iterations for each pixel, and then maps these iterations to a color value.
 pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let descriptor = &fragment_task.fractal.fractal_type;
     let descriptor = match descriptor {
