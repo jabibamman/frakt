@@ -12,19 +12,13 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
     Ok(get_current_working_dir()?)
 }
 
-pub fn get_dir_str() -> String {
+pub fn get_dir_path_buf() -> PathBuf {
     if cfg!(not(debug_assertions)) {
-        get_current_working_dir()
-            .expect("Failed to get the current directory")
-            .display()
-            .to_string()
+        get_current_working_dir().expect("Failed to get the current directory")
     } else {
-        format!(
-            "{}\\target",
-            get_workspace_dir()
-                .expect("Failed to get the workspace directory")
-                .display()
-        )
+        let mut workspace_dir = get_workspace_dir().expect("Failed to get the workspace directory");
+        workspace_dir.push("target");
+        workspace_dir
     }
 }
 
@@ -36,14 +30,11 @@ pub fn get_extension_str(extension: FileExtension) -> &'static str {
     }
 }
 
-pub fn get_file_path(filename: &str, path_str: String, extension: &str) -> String {
-    format!(
-        "{}\\{}-{}.{}",
-        path_str,
-        filename,
-        random::<u32>(),
-        extension
-    )
+pub fn get_file_path(filename: &str, path: PathBuf, extension: &str) -> String {
+    let mut path_buf = path;
+    let file_name_with_extension = format!("{}-{}.{}", filename, random::<u32>(), extension);
+    path_buf.push(file_name_with_extension);
+    path_buf.to_str().unwrap_or_default().to_string()
 }
 
 pub fn dir_exists(path: &str) -> bool {
@@ -83,13 +74,13 @@ mod tests {
 
     #[test]
     fn test_get_dir_str_current() {
-        let current_dir = get_dir_str();
+        let current_dir = get_dir_path_buf().to_str().unwrap_or_default().to_string();
         assert_ne!(current_dir, "");
     }
 
     #[test]
     fn test_get_dir_str_workspace() {
-        let workspace_dir = get_dir_str();
+        let workspace_dir = get_dir_path_buf().to_str().unwrap_or_default().to_string();
         assert_ne!(workspace_dir, "");
     }
 
