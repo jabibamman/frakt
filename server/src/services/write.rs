@@ -12,14 +12,6 @@ use std::io::Write;
 /// # Return
 /// 
 /// * `Result<TcpStream, std::io::Error>` - TcpStream
-/// 
-/// # Example
-/// 
-/// ```rust
-/// use server::services::write::write;
-/// 
-/// let stream = write(stream, "Hello World !");
-/// ```
 pub fn write(mut stream: TcpStream, message: &str) -> Result<TcpStream> {
 
     stream.write(format!("${}", message).as_bytes())?;
