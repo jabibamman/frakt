@@ -20,7 +20,7 @@ use server::services::{connect::connect, write::write};
 /// ```
 ///
 /// # Panic
-///    
+///
 /// * `std::io::Error` - If the connection failed
 ///
 pub fn connect_server(host: &str, port: &str) -> std::io::Result<std::net::TcpStream> {
