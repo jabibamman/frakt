@@ -4,7 +4,6 @@ use image::{ImageBuffer, Rgb};
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::Julia;
 use shared::types::messages::FragmentTask;
-use shared::types::u8data::U8Data;
 
 pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let descriptor = &fragment_task.fractal.fractal_type;
