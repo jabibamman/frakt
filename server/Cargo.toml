@@ -9,3 +9,6 @@ edition = "2021"
 [dependencies]
 complex = { path = "../complex" }
 shared = { path = "../shared" }
+
+[lib]
+path = "src/lib.rs"
