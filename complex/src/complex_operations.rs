@@ -233,7 +233,7 @@ mod complex_tests {
         let result = z.exp();
 
         let exp_value = E.powi(2) / 2.0_f64.sqrt();
-        assert_eq!(result.re, result.im);
+        assert_eq!(round(&result.re), round(&result.im));
         assert_eq!(round(&result.re), round(&exp_value));
     }
 
