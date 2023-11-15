@@ -61,7 +61,10 @@ impl ComplexOperations for Complex {
     ///Re(Sin(z)) = Sin(a) * Cosh(b)
     ///Im(Sin(z)) = Cos(a) * Sinh(b)
     fn sin(&self) -> Self {
-        Complex::new(self.re.sin() * self.im.cosh(), self.re.cos() * self.im.sinh())
+        Complex::new(
+            self.re.sin() * self.im.cosh(),
+            self.re.cos() * self.im.sinh(),
+        )
     }
 
     ///exp(a+ib) = exp(a) * exp(ib) = exp(a) * (cos(b) + isin(b))
@@ -74,8 +77,8 @@ impl ComplexOperations for Complex {
 
 #[cfg(test)]
 mod complex_tests {
-    use std::f64::consts::{E, PI};
     use super::*;
+    use std::f64::consts::{E, PI};
 
     // Series of tests for each operation, verifying the correctness
     // of complex number arithmetic such as addition, subtraction,
@@ -172,7 +175,7 @@ mod complex_tests {
 
     #[test]
     fn test_exp_where_im_equal_half_pi() {
-        let a = Complex::new(0.0, PI/2.0);
+        let a = Complex::new(0.0, PI / 2.0);
         let result = a.exp();
 
         assert_eq!(round(&result.re), 0.0);
@@ -181,7 +184,7 @@ mod complex_tests {
 
     #[test]
     fn test_exp_where_im_equal_minus_half_pi() {
-        let a = Complex::new(0.0, -PI/2.0);
+        let a = Complex::new(0.0, -PI / 2.0);
         let result = a.exp();
 
         assert_eq!(round(&result.re), 0.0);
@@ -229,7 +232,7 @@ mod complex_tests {
 
     #[test]
     fn test_exp_with_reel_2() {
-        let z = Complex::new(2.0, PI/4.0);
+        let z = Complex::new(2.0, PI / 4.0);
         let result = z.exp();
 
         let exp_value = E.powi(2) / 2.0_f64.sqrt();

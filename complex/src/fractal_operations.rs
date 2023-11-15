@@ -1,6 +1,6 @@
+use crate::complex_operations::ComplexOperations;
 use shared::types::complex::Complex;
 use shared::types::resolution::Resolution;
-use crate::complex_operations::ComplexOperations;
 
 pub trait FractalOperations {
     /// Converts pixel coordinates to a complex number based on the resolution.

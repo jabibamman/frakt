@@ -1,7 +1,7 @@
 use crate::complex_operations::ComplexOperations;
+use crate::fractal_operations::FractalOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::JuliaDescriptor;
-use crate::fractal_operations::FractalOperations;
 
 /// Provides operations specific to the Julia fractal.
 pub trait JuliaOperations {
@@ -11,7 +11,6 @@ pub trait JuliaOperations {
     /// Returns the square of the divergence threshold.
     fn divergence_threshold_square(&self) -> f64;
 }
-
 
 impl FractalOperations for JuliaDescriptor {
     fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> u16 {
@@ -30,7 +29,6 @@ impl FractalOperations for JuliaDescriptor {
         &self.c
     }
 }
-
 
 impl JuliaOperations for JuliaDescriptor {
     fn new(c: Complex, divergence_threshold_square: f64) -> Self {

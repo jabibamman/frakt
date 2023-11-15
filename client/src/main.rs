@@ -5,7 +5,7 @@ use crate::image::open_image;
 use crate::julia::generate_julia_set;
 
 use shared::types::filesystem::FileExtension;
-use shared::types::fractal_descriptor::FractalType::{IteratedSinZ};
+use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
 use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
 use shared::types::messages::FragmentTask;
 use shared::types::point::Point;
@@ -28,17 +28,17 @@ fn main() {
         },
         fractal: FractalDescriptor {
             fractal_type: IteratedSinZ(IteratedSinZDescriptor {
-                c: Complex {
-                    re: 0.2,
-                    im: 1.0,
-                }
+                c: Complex { re: 0.2, im: 1.0 },
             }),
         },
         max_iteration: 64,
         resolution: Resolution { nx: 1080, ny: 1920 },
         range: Range {
-            min: Point { x: -2.0, y: -3.55556 },
-            max: Point { x: 2.0, y: 3.55556, },
+            min: Point {
+                x: -2.0,
+                y: -3.55556,
+            },
+            max: Point { x: 2.0, y: 3.55556 },
         },
     };
 
