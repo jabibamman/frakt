@@ -13,8 +13,12 @@ use shared::types::range::Range;
 use shared::types::u8data::U8Data;
 use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
+use cli::parser::{CliArgs, Parser};
+
 
 fn main() {
+    let args : CliArgs = CliArgs::parse();
+    print!("hostname : {}\nname : {}\nport : {}\n", args.hostname, args.worker_name, args.port);
     let img_path = get_file_path(
         "julia",
         get_dir_path_buf(),
