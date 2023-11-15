@@ -2,7 +2,7 @@ use crate::types::complex::Complex;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum FractalType {
-    //Julia(JuliaDescriptor),
+    Julia(JuliaDescriptor),
     IteratedSinZ(IteratedSinZDescriptor),
     //Mandelbrot(MandelbrotDescriptor),
     //...
