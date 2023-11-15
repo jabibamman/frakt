@@ -1,2 +1,3 @@
-pub mod client;
+pub mod networking;
+pub mod image;
 pub mod julia;
