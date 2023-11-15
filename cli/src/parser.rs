@@ -1,5 +1,15 @@
 pub use clap::Parser;
 
+
+/// # Command line arguments for the CLI
+/// 
+/// > This struct is used to parse the command line arguments
+/// 
+/// ## Example
+/// 
+/// ```sh
+/// worker -H 192.168.1.0 -P 3000 -N my_group_name
+/// ```
 #[derive(Parser, Debug)]
 pub struct CliArgs {
     #[clap(
