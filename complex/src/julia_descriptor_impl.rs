@@ -3,8 +3,12 @@ use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::JuliaDescriptor;
 use crate::fractal_operations::FractalOperations;
 
-trait JuliaOperations {
+/// Provides operations specific to the Julia fractal.
+pub trait JuliaOperations {
+    /// Constructs a new `JuliaDescriptor` with the specified complex number and divergence threshold.
     fn new(c: Complex, divergence_threshold_square: f64) -> Self;
+
+    /// Returns the square of the divergence threshold.
     fn divergence_threshold_square(&self) -> f64;
 }
 

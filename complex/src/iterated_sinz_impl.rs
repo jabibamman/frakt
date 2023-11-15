@@ -3,8 +3,11 @@ use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::IteratedSinZDescriptor;
 use crate::fractal_operations::FractalOperations;
 
+/// Provides operations specific to the Iterated Sin(z) fractal.
 pub trait IteratedSinZOperations {
+    /// Constructs a new `IteratedSinZDescriptor` with the specified complex number and divergence threshold.
     fn new(c: Complex) -> Self;
+
     fn max_iteration(&self) -> u16;
 }
 

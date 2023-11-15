@@ -1,12 +1,26 @@
 use shared::types::complex::Complex;
 
+/// Provides a set of operations for complex number arithmetic.
 pub trait ComplexOperations {
+    /// Constructs a new complex number.
     fn new(re: f64, im: f64) -> Self;
+
+    /// Adds two complex numbers and returns the result.
     fn add(&self, other: &Self) -> Self;
+
+    /// Subtracts another complex number from this one and returns the result.
     fn sub(&self, other: &Self) -> Self;
+
+    /// Multiplies two complex numbers and returns the result.
     fn mul(&self, other: &Self) -> Self;
+
+    /// Squares the complex number and returns the result.
     fn square(&self) -> Self;
+
+    /// Returns the squared magnitude of the complex number.
     fn magnitude_squared(&self) -> f64;
+
+    /// Returns the Euclidean norm (magnitude) of the complex number.
     fn norm(&self) -> f64;
     fn sin(&self) -> Self;
     fn exp(&self) -> Self;
@@ -62,6 +76,10 @@ impl ComplexOperations for Complex {
 mod complex_tests {
     use std::f64::consts::{E, PI};
     use super::*;
+
+    // Series of tests for each operation, verifying the correctness
+    // of complex number arithmetic such as addition, subtraction,
+    // multiplication, squaring, and calculation of magnitude and norm.
 
     fn round(value: &f64) -> f64 {
         let accuracy = 10000000.0;
