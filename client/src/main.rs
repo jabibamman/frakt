@@ -15,11 +15,22 @@ use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 fn main() {
-    let img_path = get_file_path(
-        "julia",
-        get_dir_path_buf(),
-        get_extension_str(FileExtension::PNG),
-    );
+    let img_path = match get_dir_path_buf() {
+        Ok(dir_path_buf) => {
+            match get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG)) {
+                Ok(img_path) => img_path,
+                Err(e) => {
+                    eprintln!("Erreur lors de la récupération du chemin du fichier : {}", e);
+                    return;
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Erreur lors de la récupération du répertoire : {}", e);
+            return; 
+        }
+    };
+    
     let fragment_task: FragmentTask = FragmentTask {
         id: U8Data {
             offset: 0,
