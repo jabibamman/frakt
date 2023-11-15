@@ -53,5 +53,9 @@ fn main() {
         ),
     }
 
-    open_image(img_path.as_str());
+    match open_image(img_path.as_str()) {
+        Ok(_) => println!("L'image du Julia Set a été ouverte !"),
+        Err(e) => println!("Erreur lors de l'ouverture de l'image du Julia Set : {}", e),
+    }
 }
+        

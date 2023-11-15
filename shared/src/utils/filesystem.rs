@@ -56,7 +56,8 @@ pub fn get_file_path(filename: &str, path: PathBuf, extension: &str) -> String {
 /// Returns `true` if the path exists and is a directory, `false` otherwise.
 pub fn dir_exists(path: &str) -> bool {
     let path_buf = PathBuf::from(path);
-    path_buf.exists() && path_buf.is_dir()
+
+    path_buf.exists()
 }
 
 /// The module includes tests for each utility function, ensuring their correct functionality.
