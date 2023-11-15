@@ -1,10 +1,10 @@
 use complex::complex_operations::ComplexOperations;
+use complex::fractal_operations::FractalOperations;
+use complex::iterated_sinz_impl::IteratedSinZOperations;
 use image::{ImageBuffer, Rgb};
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia};
-use complex::iterated_sinz_impl::IteratedSinZOperations;
 use shared::types::messages::FragmentTask;
-use complex::fractal_operations::FractalOperations;
 
 /// Generates an image of the Julia set fractal based on the provided fragment task.
 ///
@@ -36,13 +36,13 @@ pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, V
         let scaled_y = y as f64 * scale_y + range.min.y;
         let complex_point = Complex::new(scaled_x, scaled_y);
 
-        let iterations = descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
+        let iterations =
+            descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
         *pixel = Rgb(color((iterations as f32) / 255.0));
     }
 
     img
 }
-
 
 ///Gets a number between 0 and 1 and return the color that correspond to its intensity
 fn color(intensity: f32) -> [u8; 3] {
@@ -50,12 +50,14 @@ fn color(intensity: f32) -> [u8; 3] {
     let bright_color = (0.5, 0.5, 0.5);
     let frequency_change = (1.0, 1.0, 1.0);
     let base_color = (0.1, 0.2, 0.3);
-    let r = bright_color.0 * (6.28318 * (frequency_change.0 * intensity + base_color.0)).cos() + brightness.0;
-    let g = bright_color.1 * (6.28318 * (frequency_change.1 * intensity + base_color.1)).cos() + brightness.1;
-    let b = bright_color.2 * (6.28318 * (frequency_change.2 * intensity + base_color.2)).cos() + brightness.2;
+    let r = bright_color.0 * (6.28318 * (frequency_change.0 * intensity + base_color.0)).cos()
+        + brightness.0;
+    let g = bright_color.1 * (6.28318 * (frequency_change.1 * intensity + base_color.1)).cos()
+        + brightness.1;
+    let b = bright_color.2 * (6.28318 * (frequency_change.2 * intensity + base_color.2)).cos()
+        + brightness.2;
     [(255.0 * r) as u8, (255.0 * g) as u8, (255.0 * b) as u8]
 }
-
 
 fn iterations_to_color(mut iterations: u16, max_iterations: u16) -> u8 {
     if iterations == max_iterations {

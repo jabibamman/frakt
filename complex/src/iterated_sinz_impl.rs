@@ -1,7 +1,7 @@
 use crate::complex_operations::ComplexOperations;
+use crate::fractal_operations::FractalOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::IteratedSinZDescriptor;
-use crate::fractal_operations::FractalOperations;
 
 /// Provides operations specific to the Iterated Sin(z) fractal.
 pub trait IteratedSinZOperations {
@@ -10,7 +10,6 @@ pub trait IteratedSinZOperations {
 
     fn max_iteration(&self) -> u16;
 }
-
 
 impl FractalOperations for IteratedSinZDescriptor {
     fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> u16 {
@@ -34,9 +33,7 @@ impl FractalOperations for IteratedSinZDescriptor {
 
 impl IteratedSinZOperations for IteratedSinZDescriptor {
     fn new(c: Complex) -> Self {
-        Self {
-            c,
-        }
+        Self { c }
     }
 
     ///Fixed to 50
@@ -45,13 +42,12 @@ impl IteratedSinZOperations for IteratedSinZDescriptor {
     }
 }
 
-
 #[cfg(test)]
 mod iterated_sinz_tests {
-    use shared::types::complex::Complex;
-    use shared::types::fractal_descriptor::IteratedSinZDescriptor;
     use crate::complex_operations::ComplexOperations;
     use crate::iterated_sinz_impl::IteratedSinZOperations;
+    use shared::types::complex::Complex;
+    use shared::types::fractal_descriptor::IteratedSinZDescriptor;
 
     #[test]
     fn test_max_iteration_return_50() {
