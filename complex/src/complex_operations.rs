@@ -9,6 +9,7 @@ pub trait ComplexOperations {
     fn magnitude_squared(&self) -> f64;
     fn norm(&self) -> f64;
     fn div(&self,other:&self) -> self;
+    fn abs(&self) -> f64;
 }
 
 impl ComplexOperations for Complex {
@@ -50,6 +51,10 @@ impl ComplexOperations for Complex {
         )
 
     }
+    fn abs(&self) -> f64 {
+        self.norm()
+    }
+
 
 }
 
