@@ -4,10 +4,11 @@ use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia};
 use complex::iterated_sinz_impl::IteratedSinZOperations;
 use shared::types::messages::FragmentTask;
+use complex::fractal_operations::FractalOperations;
 
 pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let descriptor = &fragment_task.fractal.fractal_type;
-    let descriptor = match descriptor {
+    let descriptor: &dyn FractalOperations = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
         IteratedSinZ(iterated_sinz_descriptor) => iterated_sinz_descriptor,
     };
