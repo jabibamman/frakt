@@ -5,9 +5,9 @@ use shared::types::fractal_descriptor::NewtonRaphsonZ4Descriptor;
 
 pub trait NewtonRaphsonOperations {
     fn new() -> Self;
-    fn iterate_complex_point(&self, complex_point: &Complex) -> u16;
     fn pz(&self,z: Complex) -> Complex;
     fn pz_prime(&self, z:Complex) -> Complex;
+    fn iterate_complex_point(&self, complex_point: &Complex) -> u16;
 }
 
 impl NewtonRaphsonOperations for NewtonRaphsonZ3Descriptor {
@@ -34,7 +34,8 @@ impl NewtonRaphsonOperations for NewtonRaphsonZ3Descriptor {
         let mut z0 = Complex::new(1.0, 0.0);
         let mut iterations = 0;
         let mut z1 = z0.sub(&self.pz(&z0).div(&self.pz_prime(&z0))).add(complex_point);
-      while (z1-z0).abs().squar()< 1 {
+        let e: f64 = std::f64::consts::E;
+      while (z1-z0).abs().squar()< 1 * e - 6  {
             z0=z1;
             z1=z0.sub(&self.pz(&z0).div(&self.pz_prime(&z0))).add(complex_point);
             iterations += 1;
@@ -67,7 +68,8 @@ impl NewtonRaphsonOperations for NewtonRaphsonZ4Descriptor {
         let mut z0 = Complex::new(1.0, 0.0);
         let mut iterations = 0;
         let mut z1 = z0.sub(&self.pz(&z0).div(&self.pz_prime(&z0))).add(complex_point);
-        while (z1-z0).abs().squar()< 1 {
+        let e: f64 = std::f64::consts::E;
+        while (z1-z0).abs().squar()< 1 * e -6 {
             z0=z1;
             z1=z0.sub(&self.pz(&z0).div(&self.pz_prime(&z0))).add(complex_point);
             iterations += 1;

@@ -4,7 +4,7 @@ use crate::types::complex::Complex;
 pub enum FractalType {
     Julia(JuliaDescriptor),
     Mandelbrot(MandelbrotDescriptor),
-    NewtonraphsonZ3(NewtonRaphsonZ3Descriptor),
+    NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor),
     NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor)
 
 }
@@ -23,8 +23,10 @@ pub struct MandelbrotDescriptor {
 pub struct FractalDescriptor {
     pub fractal_type: FractalType,
 }
+#[derive(Debug, Clone, PartialEq)]
 pub struct NewtonRaphsonZ3Descriptor{
 }
+#[derive(Debug, Clone, PartialEq)]
 pub struct NewtonRaphsonZ4Descriptor{
 }
 
