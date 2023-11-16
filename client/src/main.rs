@@ -20,7 +20,7 @@ fn main() {
         get_dir_path_buf(),
         get_extension_str(FileExtension::PNG),
     );
-    println!("{}", img_path);
+
     let fragment_task: FragmentTask = FragmentTask {
         id: U8Data {
             offset: 0,
