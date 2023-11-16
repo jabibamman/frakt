@@ -102,11 +102,9 @@ pub fn get_extension_str(extension: FileExtension) -> &'static str {
 /// }
 /// ```
 pub fn get_file_path(filename: &str, path: PathBuf, extension: &str) -> Result<String, String> {
-    let mut path_buf = path;
     let file_name_with_extension = format!("{}-{}.{}", filename, random::<u32>(), extension);
-    path_buf.push(file_name_with_extension);
-
-    path_buf.to_str()
+    let new_path = path.join(file_name_with_extension);
+    new_path.to_str()
         .ok_or_else(|| "Failed to convert the path to a string".to_string())
         .map(|s| s.to_string())
 }
