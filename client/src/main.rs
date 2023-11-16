@@ -28,7 +28,10 @@ fn main() -> io::Result<()> {
             match get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG)) {
                 Ok(img_path) => img_path,
                 Err(e) => {
-                    eprintln!("Erreur lors de la récupération du chemin du fichier : {}", e);
+                    eprintln!(
+                        "Erreur lors de la récupération du chemin du fichier : {}",
+                        e
+                    );
                     return Ok(());
                 }
             }
@@ -38,8 +41,7 @@ fn main() -> io::Result<()> {
             return Ok(());
         }
     };
-    
-    
+
     let fragment_task: FragmentTask = FragmentTask {
         id: U8Data {
             offset: 0,
@@ -77,11 +79,10 @@ fn main() -> io::Result<()> {
         Ok(_) => {
             println!("L'image du Julia Set a été ouverte !");
             Ok(())
-        },
+        }
         Err(e) => {
             println!("Erreur lors de l'ouverture de l'image du Julia Set : {}", e);
             Err(e)
-        },        
+        }
     }
 }
-        

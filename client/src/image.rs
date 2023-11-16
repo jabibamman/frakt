@@ -1,5 +1,5 @@
-use std::process::Command;
 use std::io;
+use std::process::Command;
 
 use shared::utils::filesystem::dir_exists;
 
@@ -31,13 +31,14 @@ use shared::utils::filesystem::dir_exists;
 /// ```
 pub fn open_image(path: &str) -> Result<(), io::Error> {
     if !dir_exists(path) {
-        return Err(io::Error::new(io::ErrorKind::NotFound, "Image file not found"));
+        return Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            "Image file not found",
+        ));
     }
 
     let result = if cfg!(target_os = "windows") {
-        Command::new("cmd")
-            .args(&["/c", "start", path])
-            .spawn()
+        Command::new("cmd").args(&["/c", "start", path]).spawn()
     } else if cfg!(target_os = "linux") {
         Command::new("xdg-open").arg(path).spawn()
     } else if cfg!(target_os = "macos") {

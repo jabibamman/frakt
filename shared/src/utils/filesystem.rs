@@ -1,8 +1,8 @@
+use crate::types::filesystem::FileExtension;
 /// Provides functions for file system operations, focusing on directories and file extensions.
 /// Includes utilities for working with the current working directory, workspace directory,
 /// and checking if a directory exists.
-use std::{env, path::PathBuf, io};
-use crate::types::filesystem::FileExtension;
+use std::{env, io, path::PathBuf};
 
 use rand::random;
 
@@ -19,7 +19,7 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
 }
 
 /// Returns a `PathBuf` representing a directory path.
-/// 
+///
 /// This function determines the appropriate directory path based on the current
 /// mode (debug or release) and an optional workspace directory.
 /// In release mode, it returns the current working directory.
@@ -48,7 +48,10 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
 /// This function uses a recursive approach in debug mode to determine the workspace
 /// directory. It may append "target" to the workspace directory in this case.
 pub fn get_dir_path_buf() -> std::result::Result<PathBuf, io::Error> {
-    fn recursive_get_dir_path_buf(is_debug_mode: bool, workspace_dir: Option<PathBuf>) -> std::result::Result<PathBuf, io::Error> {
+    fn recursive_get_dir_path_buf(
+        is_debug_mode: bool,
+        workspace_dir: Option<PathBuf>,
+    ) -> std::result::Result<PathBuf, io::Error> {
         if !is_debug_mode {
             get_current_working_dir()
         } else {
@@ -104,7 +107,8 @@ pub fn get_extension_str(extension: FileExtension) -> &'static str {
 pub fn get_file_path(filename: &str, path: PathBuf, extension: &str) -> Result<String, String> {
     let file_name_with_extension = format!("{}-{}.{}", filename, random::<u32>(), extension);
     let new_path = path.join(file_name_with_extension);
-    new_path.to_str()
+    new_path
+        .to_str()
         .ok_or_else(|| "Failed to convert the path to a string".to_string())
         .map(|s| s.to_string())
 }
@@ -124,11 +128,10 @@ pub fn dir_exists(path: &str) -> bool {
 mod tests {
     use super::dir_exists;
     use super::*;
+    use std::io::{self, ErrorKind};
     use std::path::PathBuf;
     use tempfile::tempdir;
     use tempfile::NamedTempFile;
-    use std::io::{self, ErrorKind};
-
 
     #[test]
     fn test_dir_exists_with_tempfile() -> Result<(), Box<dyn std::error::Error>> {
@@ -136,56 +139,61 @@ mod tests {
         let temp_path = temp_dir.path();
         let temp_file = NamedTempFile::new_in(&temp_dir)?;
         let temp_file_path = temp_file.path();
-        let path_str = temp_path.to_str().ok_or("Failed to convert path to string")?;
+        let path_str = temp_path
+            .to_str()
+            .ok_or("Failed to convert path to string")?;
 
         assert!(dir_exists(path_str));
         assert!(temp_file_path.exists());
-    
+
         Ok(())
     }
-    
 
     #[test]
     fn test_dir_without_tempfile() -> Result<(), Box<dyn std::error::Error>> {
         let file_path = PathBuf::from("test.txt");
-        let file_path_str = file_path.to_str().ok_or("Failed to convert path to string")?;
+        let file_path_str = file_path
+            .to_str()
+            .ok_or("Failed to convert path to string")?;
         assert!(!dir_exists(file_path_str));
-    
+
         Ok(())
     }
 
     #[test]
     fn test_get_dir_str_current() -> Result<(), Box<dyn std::error::Error>> {
-        let current_dir_result: Result<String, io::Error> = get_dir_path_buf()
-            .and_then(|path| {
-                path.to_str()
-                    .ok_or_else(|| io::Error::new(ErrorKind::Other, "Failed to convert path to string"))
-                    .map(|s| s.to_owned())
-            }
-        );
+        let current_dir_result: Result<String, io::Error> = get_dir_path_buf().and_then(|path| {
+            path.to_str()
+                .ok_or_else(|| io::Error::new(ErrorKind::Other, "Failed to convert path to string"))
+                .map(|s| s.to_owned())
+        });
 
-        assert!(current_dir_result.is_ok());    
+        assert!(current_dir_result.is_ok());
         let dir_str = current_dir_result?;
         assert_ne!(dir_str, "");
-    
+
         Ok(())
     }
-    
+
     #[test]
     fn test_get_dir_str_workspace() -> Result<(), Box<dyn std::error::Error>> {
-        let workspace_dir_result = get_dir_path_buf()
-            .and_then(|path| {
-                path.to_str()
-                    .ok_or_else(|| std::io::Error::new(std::io::ErrorKind::Other, "Failed to convert path to string"))
-                    .map(|s| s.to_owned())
-            });
-    
+        let workspace_dir_result = get_dir_path_buf().and_then(|path| {
+            path.to_str()
+                .ok_or_else(|| {
+                    std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        "Failed to convert path to string",
+                    )
+                })
+                .map(|s| s.to_owned())
+        });
+
         assert!(workspace_dir_result.is_ok());
-        
+
         let dir_str = workspace_dir_result?;
-    
+
         assert_ne!(dir_str, "");
-    
+
         Ok(())
     }
 
