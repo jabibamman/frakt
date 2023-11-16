@@ -9,8 +9,9 @@ use crate::types::complex::Complex;
 #[derive(Debug, Clone, PartialEq)]
 pub enum FractalType {
     Julia(JuliaDescriptor),
-    // Mandelbrot(MandelbrotDescriptor),
-    // ...
+    IteratedSinZ(IteratedSinZDescriptor),
+    //Mandelbrot(MandelbrotDescriptor),
+    //...
 }
 
 /// Describes parameters specific to a Julia fractal.
@@ -29,6 +30,11 @@ pub struct JuliaDescriptor {
 /// Attributes:
 /// - `divergence_threshold_square`: The square of the divergence threshold. Points whose magnitude square exceeds this threshold are considered to diverge.
 /// - `max_iteration`: Maximum number of iterations to determine whether a point diverges.
+#[derive(Debug, Clone, PartialEq)]
+pub struct IteratedSinZDescriptor {
+    pub c: Complex,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct MandelbrotDescriptor {
     pub divergence_threshold_square: f64,
