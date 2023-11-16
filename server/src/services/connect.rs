@@ -1,4 +1,4 @@
-use std::io::Result;
+use std::io;
 use std::net::TcpStream;
 
 /// Connect to a server
@@ -10,7 +10,7 @@ use std::net::TcpStream;
 /// # Return
 ///
 /// * `Result<TcpStream, std::io::Error>` - TcpStream
-pub fn connect(address: &str) -> Result<TcpStream> {
+pub fn connect(address: &str) -> io::Result<TcpStream> {
     let stream = TcpStream::connect(address)?;
 
     Ok(stream)
