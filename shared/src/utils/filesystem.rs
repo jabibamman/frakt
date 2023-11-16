@@ -56,7 +56,7 @@ pub fn get_extension_str(extension: FileExtension) -> &'static str {
 /// # Examples
 /// ```
 /// use std::path::PathBuf;
-/// use my_crate::get_file_path; // Replace with the actual path to your function
+/// use shared::utils::filesystem::get_file_path;
 ///
 /// let path = PathBuf::from("/some/directory");
 /// match get_file_path("myfile", path, "txt") {
