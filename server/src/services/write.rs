@@ -12,7 +12,7 @@ use std::net::TcpStream;
 ///
 /// * `Vec<u8>` - The formatted message as a vector of bytes (`Vec<u8>`).
 ///
-/// /// This function takes a string slice,
+/// This function takes a string slice,
 /// and then converts it into a vector of bytes.
 fn prepare_message(message: &str) -> Vec<u8> {
     format!("{}", message).as_bytes().to_vec()
