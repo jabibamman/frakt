@@ -81,6 +81,16 @@ To build and the complex library (used by other components):
 cargo build -p complex
 ```
 
+## Running the worker with CLI
+
+To run the worker with CLI, use the following command:
+
+You can read the CLI rustdoc documentation for more information on the CLI arguments.
+
+```bash
+cargo run -p client -- -h
+```
+
 ## Documentation
 
 To generate documentation for all packages without including dependencies (recommended):
