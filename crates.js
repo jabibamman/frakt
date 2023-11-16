@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["client","complex","server","shared"];
+window.ALL_CRATES = ["cli","client","complex","server","shared"];

@@ -55,12 +55,26 @@
 <a href="#55" id="55">55</a>
 <a href="#56" id="56">56</a>
 <a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
 </pre></div><pre class="rust"><code><span class="kw">mod </span>image;
 <span class="kw">mod </span>julia;
+
+<span class="kw">use </span>std::io;
 
 <span class="kw">use </span><span class="kw">crate</span>::image::open_image;
 <span class="kw">use </span><span class="kw">crate</span>::julia::generate_julia_set;
 
+<span class="kw">use </span>cli::parser::{CliArgs, Parser};
+<span class="kw">use </span>server::services::{connect::connect, reader::read_message};
 <span class="kw">use </span>shared::types::filesystem::FileExtension;
 <span class="kw">use </span>shared::types::fractal_descriptor::FractalType::Julia;
 <span class="kw">use </span>shared::types::fractal_descriptor::{FractalDescriptor, JuliaDescriptor};
@@ -71,7 +85,11 @@
 <span class="kw">use </span>shared::types::{complex::Complex, resolution::Resolution};
 <span class="kw">use </span>shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
-<span class="kw">fn </span>main() {
+<span class="kw">fn </span>main() -&gt; io::Result&lt;()&gt; {
+    <span class="kw">let </span>args: CliArgs = CliArgs::parse();
+    <span class="kw">let </span>stream = connect(<span class="macro">format!</span>(<span class="string">&quot;{}:{}&quot;</span>, args.hostname, args.port).as_str())<span class="question-mark">?</span>;
+    <span class="kw">let </span>message = read_message(stream);
+    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, message);
     <span class="kw">let </span>img_path = get_file_path(
         <span class="string">&quot;julia&quot;</span>,
         get_dir_path_buf(),
@@ -111,5 +129,7 @@
     }
 
     open_image(img_path.as_str());
+
+    <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div></section></main></body></html>
