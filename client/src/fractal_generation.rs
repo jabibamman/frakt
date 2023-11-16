@@ -1,23 +1,22 @@
 use complex::complex_operations::ComplexOperations;
 use complex::fractal_operations::FractalOperations;
-use complex::iterated_sinz_impl::IteratedSinZOperations;
 use image::{ImageBuffer, Rgb};
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia};
 use shared::types::messages::FragmentTask;
 
-/// Generates an image of the Julia set fractal based on the provided fragment task.
+/// Generates an image of a Fractal Type based on the provided fragment task.
 ///
 /// # Arguments
 /// * `fragment_task`: A `FragmentTask` containing details such as the fractal type, resolution, and range.
 ///
 /// # Returns
-/// Returns an `ImageBuffer` containing the generated Julia set fractal.
+/// Returns an `ImageBuffer` containing the generated Fractal.
 ///
 /// # Details
 /// This function scales the coordinates based on the provided resolution and range, computes the number of
 /// iterations for each pixel, and then maps these iterations to a color value.
-pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
+pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let descriptor = &fragment_task.fractal.fractal_type;
     let descriptor: &dyn FractalOperations = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
@@ -59,10 +58,4 @@ fn color(intensity: f32) -> [u8; 3] {
     [(255.0 * r) as u8, (255.0 * g) as u8, (255.0 * b) as u8]
 }
 
-fn iterations_to_color(mut iterations: u16, max_iterations: u16) -> u8 {
-    if iterations == max_iterations {
-        0
-    } else {
-        ((iterations / max_iterations) * 255) as u8 // (to edit the intensity of the fractal, you could modify 12.0)
-    }
-}
+

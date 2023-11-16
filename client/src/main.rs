@@ -1,8 +1,8 @@
 mod image;
-mod julia;
+mod fractal_generation;
 
 use crate::image::open_image;
-use crate::julia::generate_julia_set;
+use crate::fractal_generation::generate_fractal_set;
 
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
@@ -42,7 +42,7 @@ fn main() {
         },
     };
 
-    match generate_julia_set(fragment_task).save(img_path.clone().as_str()) {
+    match generate_fractal_set(fragment_task).save(img_path.clone().as_str()) {
         Ok(_) => println!("L'image du Julia Set a été sauvegardée !"),
         Err(e) => println!(
             "Erreur lors de la sauvegarde de l'image du Julia Set : {}",
