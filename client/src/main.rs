@@ -23,11 +23,25 @@ fn main() -> io::Result<()> {
     let stream = connect(format!("{}:{}", args.hostname, args.port).as_str())?;
     let message = read_message(stream);
     println!("{}", message);
-    let img_path = get_file_path(
-        "julia",
-        get_dir_path_buf(),
-        get_extension_str(FileExtension::PNG),
-    );
+    let img_path = match get_dir_path_buf() {
+        Ok(dir_path_buf) => {
+            match get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG)) {
+                Ok(img_path) => img_path,
+                Err(e) => {
+                    eprintln!(
+                        "Erreur lors de la récupération du chemin du fichier : {}",
+                        e
+                    );
+                    return Ok(());
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Erreur lors de la récupération du répertoire : {}", e);
+            return Ok(());
+        }
+    };
+
     let fragment_task: FragmentTask = FragmentTask {
         id: U8Data {
             offset: 0,
@@ -61,7 +75,14 @@ fn main() -> io::Result<()> {
         ),
     }
 
-    open_image(img_path.as_str());
-
-    Ok(())
+    match open_image(img_path.as_str()) {
+        Ok(_) => {
+            println!("L'image du Julia Set a été ouverte !");
+            Ok(())
+        }
+        Err(e) => {
+            println!("Erreur lors de l'ouverture de l'image du Julia Set : {}", e);
+            Err(e)
+        }
+    }
 }
