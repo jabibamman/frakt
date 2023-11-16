@@ -18,9 +18,35 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
     Ok(get_current_working_dir()?)
 }
 
-/// Retrieves the directory path as a `PathBuf`. In release mode, returns the current working directory.
-/// In debug mode, appends `target` to the workspace directory path.
-/// Panics if the directory cannot be obtained.
+/// Returns a `PathBuf` representing a directory path.
+/// 
+/// This function determines the appropriate directory path based on the current
+/// mode (debug or release) and an optional workspace directory.
+/// In release mode, it returns the current working directory.
+/// In debug mode, it recursively determines the workspace directory,
+/// appending "target" to it.
+///
+/// # Parameters
+/// - `is_debug_mode`: A boolean indicating whether the function is running in debug mode.
+/// - `workspace_dir`: An optional `PathBuf` representing the workspace directory.
+///
+/// # Returns
+/// `std::result::Result<PathBuf, io::Error>`
+/// - `Ok(PathBuf)`: The directory path as `PathBuf`.
+/// - `Err(io::Error)`: An error occurred while determining the directory path.
+///
+/// # Examples
+/// ```
+/// use shared::utils::filesystem::get_dir_path_buf;
+///
+/// // Retrieve the directory path in the current mode
+/// let path_buf = get_dir_path_buf().expect("Failed to get directory path");
+/// println!("Directory Path: {:?}", path_buf);
+/// ```
+///
+/// # Note
+/// This function uses a recursive approach in debug mode to determine the workspace
+/// directory. It may append "target" to the workspace directory in this case.
 pub fn get_dir_path_buf() -> std::result::Result<PathBuf, io::Error> {
     fn recursive_get_dir_path_buf(is_debug_mode: bool, workspace_dir: Option<PathBuf>) -> std::result::Result<PathBuf, io::Error> {
         if !is_debug_mode {
