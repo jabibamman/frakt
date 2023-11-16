@@ -1,8 +1,8 @@
-mod image;
 mod fractal_generation;
+mod image;
 
-use crate::image::open_image;
 use crate::fractal_generation::generate_fractal_set;
+use crate::image::open_image;
 
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;

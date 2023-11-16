@@ -57,5 +57,3 @@ fn color(intensity: f32) -> [u8; 3] {
         + brightness.2;
     [(255.0 * r) as u8, (255.0 * g) as u8, (255.0 * b) as u8]
 }
-
-
