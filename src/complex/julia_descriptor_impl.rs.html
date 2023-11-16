@@ -55,27 +55,61 @@
 <a href="#55" id="55">55</a>
 <a href="#56" id="56">56</a>
 <a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::complex_operations::ComplexOperations;
+<span class="kw">use </span><span class="kw">crate</span>::fractal_operations::FractalOperations;
 <span class="kw">use </span>shared::types::complex::Complex;
 <span class="kw">use </span>shared::types::fractal_descriptor::JuliaDescriptor;
-<span class="kw">use </span>shared::types::resolution::Resolution;
 
 <span class="doccomment">/// Provides operations specific to the Julia fractal.
 </span><span class="kw">pub trait </span>JuliaOperations {
     <span class="doccomment">/// Constructs a new `JuliaDescriptor` with the specified complex number and divergence threshold.
     </span><span class="kw">fn </span>new(c: Complex, divergence_threshold_square: f64) -&gt; <span class="self">Self</span>;
 
-    <span class="doccomment">/// Converts pixel coordinates to a complex number based on the resolution.
-    </span><span class="kw">fn </span>to_complex(<span class="kw-2">&amp;</span><span class="self">self</span>, x: u16, y: u16, resolution: <span class="kw-2">&amp;</span>Resolution) -&gt; Complex;
-
-    <span class="doccomment">/// Iterates over a complex point and returns the number of iterations before it diverges.
-    </span><span class="kw">fn </span>iterate_complex_point(<span class="kw-2">&amp;</span><span class="self">self</span>, complex_point: <span class="kw-2">&amp;</span>Complex, max_iteration: u16) -&gt; u16;
-
     <span class="doccomment">/// Returns the square of the divergence threshold.
     </span><span class="kw">fn </span>divergence_threshold_square(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f64;
+}
 
-    <span class="doccomment">/// Returns a reference to the complex number `c` used in the Julia fractal formula.
-    </span><span class="kw">fn </span>c(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Complex;
+<span class="kw">impl </span>FractalOperations <span class="kw">for </span>JuliaDescriptor {
+    <span class="kw">fn </span>iterate_complex_point(<span class="kw-2">&amp;</span><span class="self">self</span>, complex_point: <span class="kw-2">&amp;</span>Complex, max_iteration: u16) -&gt; u16 {
+        <span class="kw">fn </span>recursive_iterate(
+            z: Complex,
+            c: <span class="kw-2">&amp;</span>Complex,
+            divergence_threshold_square: f64,
+            max_iteration: u16,
+            current_iteration: u16,
+        ) -&gt; u16 {
+            <span class="kw">if </span>z.norm() &gt; divergence_threshold_square || current_iteration == max_iteration {
+                current_iteration
+            } <span class="kw">else </span>{
+                <span class="kw">let </span>next_z = z.square().add(c);
+                recursive_iterate(
+                    next_z,
+                    c,
+                    divergence_threshold_square,
+                    max_iteration,
+                    current_iteration + <span class="number">1</span>,
+                )
+            }
+        }
+
+        recursive_iterate(
+            complex_point.clone(),
+            <span class="kw-2">&amp;</span><span class="self">self</span>.c,
+            <span class="self">self</span>.divergence_threshold_square,
+            max_iteration,
+            <span class="number">0</span>,
+        )
+    }
+
+    <span class="kw">fn </span>c(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Complex {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.c
+    }
 }
 
 <span class="kw">impl </span>JuliaOperations <span class="kw">for </span>JuliaDescriptor {
@@ -86,30 +120,8 @@
         }
     }
 
-    <span class="kw">fn </span>to_complex(<span class="kw-2">&amp;</span><span class="self">self</span>, x: u16, y: u16, resolution: <span class="kw-2">&amp;</span>Resolution) -&gt; Complex {
-        <span class="kw">let </span>re = (x <span class="kw">as </span>f64 / resolution.nx <span class="kw">as </span>f64) * <span class="number">4.0 </span>- <span class="number">2.0</span>;
-        <span class="kw">let </span>im = (y <span class="kw">as </span>f64 / resolution.ny <span class="kw">as </span>f64) * <span class="number">4.0 </span>- <span class="number">2.0</span>;
-        Complex::new(re, im)
-    }
-
-    <span class="kw">fn </span>iterate_complex_point(<span class="kw-2">&amp;</span><span class="self">self</span>, complex_point: <span class="kw-2">&amp;</span>Complex, max_iteration: u16) -&gt; u16 {
-        <span class="kw">let </span><span class="kw-2">mut </span>z = complex_point.clone();
-        <span class="kw">let </span><span class="kw-2">mut </span>iterations = <span class="number">0</span>;
-
-        <span class="kw">while </span>z.norm() &lt;= <span class="self">self</span>.divergence_threshold_square &amp;&amp; iterations &lt; max_iteration {
-            z = z.square().add(<span class="kw-2">&amp;</span><span class="self">self</span>.c);
-            iterations += <span class="number">1</span>;
-        }
-
-        iterations
-    }
-
     <span class="kw">fn </span>divergence_threshold_square(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f64 {
         <span class="self">self</span>.divergence_threshold_square
-    }
-
-    <span class="kw">fn </span>c(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Complex {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.c
     }
 }
 </code></pre></div></section></main></body></html>

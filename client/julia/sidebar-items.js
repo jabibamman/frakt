@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["generate_julia_set","iterations_to_color"]};

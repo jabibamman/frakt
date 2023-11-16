@@ -65,19 +65,36 @@
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
-</pre></div><pre class="rust"><code><span class="kw">mod </span>image;
-<span class="kw">mod </span>julia;
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+</pre></div><pre class="rust"><code><span class="kw">mod </span>fractal_generation;
+<span class="kw">mod </span>image;
 
 <span class="kw">use </span>std::io;
 
 <span class="kw">use </span><span class="kw">crate</span>::image::open_image;
-<span class="kw">use </span><span class="kw">crate</span>::julia::generate_julia_set;
+<span class="kw">use </span><span class="kw">crate</span>::fractal_generation::generate_fractal_set;
 
 <span class="kw">use </span>cli::parser::{CliArgs, Parser};
 <span class="kw">use </span>server::services::{connect::connect, reader::read_message};
 <span class="kw">use </span>shared::types::filesystem::FileExtension;
-<span class="kw">use </span>shared::types::fractal_descriptor::FractalType::Julia;
-<span class="kw">use </span>shared::types::fractal_descriptor::{FractalDescriptor, JuliaDescriptor};
+<span class="kw">use </span>shared::types::fractal_descriptor::FractalType::IteratedSinZ;
+<span class="kw">use </span>shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
 <span class="kw">use </span>shared::types::messages::FragmentTask;
 <span class="kw">use </span>shared::types::point::Point;
 <span class="kw">use </span>shared::types::range::Range;
@@ -90,37 +107,47 @@
     <span class="kw">let </span>stream = connect(<span class="macro">format!</span>(<span class="string">&quot;{}:{}&quot;</span>, args.hostname, args.port).as_str())<span class="question-mark">?</span>;
     <span class="kw">let </span>message = read_message(stream);
     <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, message);
-    <span class="kw">let </span>img_path = get_file_path(
-        <span class="string">&quot;julia&quot;</span>,
-        get_dir_path_buf(),
-        get_extension_str(FileExtension::PNG),
-    );
+    <span class="kw">let </span>img_path = <span class="kw">match </span>get_dir_path_buf() {
+        <span class="prelude-val">Ok</span>(dir_path_buf) =&gt; {
+            <span class="kw">match </span>get_file_path(<span class="string">&quot;julia&quot;</span>, dir_path_buf, get_extension_str(FileExtension::PNG)) {
+                <span class="prelude-val">Ok</span>(img_path) =&gt; img_path,
+                <span class="prelude-val">Err</span>(e) =&gt; {
+                    <span class="macro">eprintln!</span>(
+                        <span class="string">&quot;Erreur lors de la récupération du chemin du fichier : {}&quot;</span>,
+                        e
+                    );
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+                }
+            }
+        }
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">eprintln!</span>(<span class="string">&quot;Erreur lors de la récupération du répertoire : {}&quot;</span>, e);
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+        }
+    };
+
     <span class="kw">let </span>fragment_task: FragmentTask = FragmentTask {
         id: U8Data {
             offset: <span class="number">0</span>,
             count: <span class="number">16</span>,
         },
         fractal: FractalDescriptor {
-            fractal_type: Julia(JuliaDescriptor {
-                c: Complex {
-                    re: <span class="number">0.285</span>,
-                    im: <span class="number">0.013</span>,
-                },
-                divergence_threshold_square: <span class="number">4.0</span>,
+            fractal_type: IteratedSinZ(IteratedSinZDescriptor {
+                c: Complex { re: <span class="number">0.2</span>, im: <span class="number">1.0 </span>},
             }),
         },
         max_iteration: <span class="number">64</span>,
-        resolution: Resolution { nx: <span class="number">300</span>, ny: <span class="number">300 </span>},
+        resolution: Resolution { nx: <span class="number">1080</span>, ny: <span class="number">1920 </span>},
         range: Range {
-            min: Point { x: -<span class="number">1.2</span>, y: <span class="number">0.0 </span>},
-            max: Point {
-                x: -<span class="number">0.6</span>,
-                y: <span class="number">0.60000000000000001</span>,
+            min: Point {
+                x: -<span class="number">2.0</span>,
+                y: -<span class="number">3.55556</span>,
             },
+            max: Point { x: <span class="number">2.0</span>, y: <span class="number">3.55556 </span>},
         },
     };
 
-    <span class="kw">match </span>generate_julia_set(fragment_task).save(img_path.clone().as_str()) {
+    <span class="kw">match </span>generate_fractal_set(fragment_task).save(img_path.clone().as_str()) {
         <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">println!</span>(<span class="string">&quot;L&#39;image du Julia Set a été sauvegardée !&quot;</span>),
         <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">println!</span>(
             <span class="string">&quot;Erreur lors de la sauvegarde de l&#39;image du Julia Set : {}&quot;</span>,
@@ -128,8 +155,15 @@
         ),
     }
 
-    open_image(img_path.as_str());
-
-    <span class="prelude-val">Ok</span>(())
+    <span class="kw">match </span>open_image(img_path.as_str()) {
+        <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
+            <span class="macro">println!</span>(<span class="string">&quot;L&#39;image du Julia Set a été ouverte !&quot;</span>);
+            <span class="prelude-val">Ok</span>(())
+        }
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">println!</span>(<span class="string">&quot;Erreur lors de l&#39;ouverture de l&#39;image du Julia Set : {}&quot;</span>, e);
+            <span class="prelude-val">Err</span>(e)
+        }
+    }
 }
 </code></pre></div></section></main></body></html>
