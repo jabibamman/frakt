@@ -1,9 +1,14 @@
 mod fractal_generation;
 mod image;
 
+use std::io;
+
+use crate::image::open_image;
 use crate::fractal_generation::generate_fractal_set;
 use crate::image::open_image;
 
+use cli::parser::{CliArgs, Parser};
+use server::services::{connect::connect, reader::read_message};
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
 use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
@@ -14,12 +19,29 @@ use shared::types::u8data::U8Data;
 use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
-fn main() {
-    let img_path = get_file_path(
-        "julia",
-        get_dir_path_buf(),
-        get_extension_str(FileExtension::PNG),
-    );
+fn main() -> io::Result<()> {
+    let args: CliArgs = CliArgs::parse();
+    let stream = connect(format!("{}:{}", args.hostname, args.port).as_str())?;
+    let message = read_message(stream);
+    println!("{}", message);
+    let img_path = match get_dir_path_buf() {
+        Ok(dir_path_buf) => {
+            match get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG)) {
+                Ok(img_path) => img_path,
+                Err(e) => {
+                    eprintln!(
+                        "Erreur lors de la récupération du chemin du fichier : {}",
+                        e
+                    );
+                    return Ok(());
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Erreur lors de la récupération du répertoire : {}", e);
+            return Ok(());
+        }
+    };
 
     let fragment_task: FragmentTask = FragmentTask {
         id: U8Data {
@@ -50,5 +72,14 @@ fn main() {
         ),
     }
 
-    open_image(img_path.as_str());
+    match open_image(img_path.as_str()) {
+        Ok(_) => {
+            println!("L'image du Julia Set a été ouverte !");
+            Ok(())
+        }
+        Err(e) => {
+            println!("Erreur lors de l'ouverture de l'image du Julia Set : {}", e);
+            Err(e)
+        }
+    }
 }

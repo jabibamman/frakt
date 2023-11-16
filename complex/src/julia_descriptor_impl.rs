@@ -14,15 +14,34 @@ pub trait JuliaOperations {
 
 impl FractalOperations for JuliaDescriptor {
     fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> u16 {
-        let mut z = complex_point.clone();
-        let mut iterations = 0;
-
-        while z.norm() <= self.divergence_threshold_square && iterations < max_iteration {
-            z = z.square().add(&self.c);
-            iterations += 1;
+        fn recursive_iterate(
+            z: Complex,
+            c: &Complex,
+            divergence_threshold_square: f64,
+            max_iteration: u16,
+            current_iteration: u16,
+        ) -> u16 {
+            if z.norm() > divergence_threshold_square || current_iteration == max_iteration {
+                current_iteration
+            } else {
+                let next_z = z.square().add(c);
+                recursive_iterate(
+                    next_z,
+                    c,
+                    divergence_threshold_square,
+                    max_iteration,
+                    current_iteration + 1,
+                )
+            }
         }
 
-        iterations
+        recursive_iterate(
+            complex_point.clone(),
+            &self.c,
+            self.divergence_threshold_square,
+            max_iteration,
+            0,
+        )
     }
 
     fn c(&self) -> &Complex {

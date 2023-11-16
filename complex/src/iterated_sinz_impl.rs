@@ -12,7 +12,7 @@ pub trait IteratedSinZOperations {
 }
 
 impl FractalOperations for IteratedSinZDescriptor {
-    fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> u16 {
+    fn iterate_complex_point(&self, complex_point: &Complex, _max_iteration: u16) -> u16 {
         let mut z = complex_point.clone();
         let mut iterations = 0;
         let max = 256;
