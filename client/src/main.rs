@@ -1,10 +1,11 @@
-mod image;
 mod fractal_generation;
+mod image;
 
 use std::io;
 
 use crate::image::open_image;
 use crate::fractal_generation::generate_fractal_set;
+use crate::image::open_image;
 
 use cli::parser::{CliArgs, Parser};
 use server::services::{connect::connect, reader::read_message};
