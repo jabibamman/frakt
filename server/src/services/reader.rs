@@ -17,10 +17,10 @@ use std::{net::TcpStream, io::Read};
 ///
 /// # Examples
 ///
-/// ```
-/// use std::net::TcpListener;
-/// use my_crate::read_message; // Replace with the actual path to your function
-///
+/// ```no_run
+/// use std::net::{TcpListener, TcpStream};
+/// use server::services::reader::read_message;
+/// 
 /// let listener = TcpListener::bind("127.0.0.1:0").unwrap();
 /// let address = listener.local_addr().unwrap();
 /// let mut stream = TcpStream::connect(address).unwrap();
