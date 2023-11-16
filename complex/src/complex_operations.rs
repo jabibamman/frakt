@@ -1,15 +1,31 @@
 use shared::types::complex::Complex;
 
+/// Provides a set of operations for complex number arithmetic.
 pub trait ComplexOperations {
+    /// Constructs a new complex number.
     fn new(re: f64, im: f64) -> Self;
+
+    /// Adds two complex numbers and returns the result.
     fn add(&self, other: &Self) -> Self;
+
+    /// Subtracts another complex number from this one and returns the result.
     fn sub(&self, other: &Self) -> Self;
+
+    /// Multiplies two complex numbers and returns the result.
     fn mul(&self, other: &Self) -> Self;
+
+    /// Squares the complex number and returns the result.
     fn square(&self) -> Self;
+
+    /// Returns the squared magnitude of the complex number.
     fn magnitude_squared(&self) -> f64;
+
+    /// Returns the Euclidean norm (magnitude) of the complex number.
     fn norm(&self) -> f64;
-    fn div(&self,other:&self) -> self;
+    fn div(&self,other:Self) -> Self;
     fn abs(&self) -> f64;
+    fn sin(&self) -> Self;
+    fn exp(&self) -> Self;
 }
 
 impl ComplexOperations for Complex {
@@ -43,7 +59,7 @@ impl ComplexOperations for Complex {
     fn norm(&self) -> f64 {
         self.magnitude_squared().sqrt()
     }
-    fn div(&self,other:&self) -> self{
+    fn div(&self,other:Self) -> Self{
         let denominator = other.magnitude_squared();
         Complex::new(
             (self.re * other.re + self.im * other.im) / denominator,
@@ -55,12 +71,36 @@ impl ComplexOperations for Complex {
         self.norm()
     }
 
+    ///Re(Sin(z)) = Sin(a) * Cosh(b)
+    ///Im(Sin(z)) = Cos(a) * Sinh(b)
+    fn sin(&self) -> Self {
+        Complex::new(
+            self.re.sin() * self.im.cosh(),
+            self.re.cos() * self.im.sinh(),
+        )
+    }
 
+    ///exp(a+ib) = exp(a) * exp(ib) = exp(a) * (cos(b) + isin(b))
+    fn exp(&self) -> Self {
+        let exp_re = Complex::new(self.re.exp(), 0.0);
+        let exp_im = Complex::new(self.im.cos(), self.im.sin());
+        exp_re.mul(&exp_im)
+    }
 }
 
 #[cfg(test)]
 mod complex_tests {
     use super::*;
+    use std::f64::consts::{E, PI};
+
+    // Series of tests for each operation, verifying the correctness
+    // of complex number arithmetic such as addition, subtraction,
+    // multiplication, squaring, and calculation of magnitude and norm.
+
+    fn round(value: &f64) -> f64 {
+        let accuracy = 10000000.0;
+        (value * accuracy).round() / accuracy
+    }
 
     #[test]
     fn test_add() {
@@ -135,6 +175,82 @@ mod complex_tests {
         let result = a.norm();
 
         assert_eq!(result, 5.0f64.sqrt());
+    }
+
+    #[test]
+    fn test_exp_where_im_equal_0() {
+        let a = Complex::new(0.0, 0.0);
+        let result = a.exp();
+
+        assert_eq!(result.re, 1.0);
+        assert_eq!(result.im, 0.0);
+    }
+
+    #[test]
+    fn test_exp_where_im_equal_half_pi() {
+        let a = Complex::new(0.0, PI / 2.0);
+        let result = a.exp();
+
+        assert_eq!(round(&result.re), 0.0);
+        assert_eq!(round(&result.im), 1.0);
+    }
+
+    #[test]
+    fn test_exp_where_im_equal_minus_half_pi() {
+        let a = Complex::new(0.0, -PI / 2.0);
+        let result = a.exp();
+
+        assert_eq!(round(&result.re), 0.0);
+        assert_eq!(round(&result.im), -1.0);
+    }
+
+    #[test]
+    fn test_exp_where_im_equal_pi() {
+        let a = Complex::new(0.0, PI);
+        let result = a.exp();
+
+        assert_eq!(round(&result.re), -1.0);
+        assert_eq!(round(&result.im), 0.0);
+    }
+
+    #[test]
+    fn test_exp_where_im_equal_minus_pi() {
+        let a = Complex::new(0.0, -PI);
+        let result = a.exp();
+
+        assert_eq!(round(&result.re), -1.0);
+        assert_eq!(round(&result.im), 0.0);
+    }
+
+    #[test]
+    fn test_exp_z_mul_exp_minus_z_equal_1() {
+        let z = Complex::new(353.5, -4520.3);
+        let left = z.exp();
+        let right = z.mul(&Complex::new(-1.0, 0.0)).exp();
+        let result = left.mul(&right);
+
+        assert_eq!(round(&result.re), 1.0);
+        assert_eq!(round(&result.im), 0.0);
+    }
+
+    #[test]
+    fn test_exp_with_reel_1() {
+        let z = Complex::new(1.0, PI);
+        let result = z.exp();
+
+        let minus_exp = -E;
+        assert_eq!(round(&result.re), round(&minus_exp));
+        assert_eq!(round(&result.im), 0.0);
+    }
+
+    #[test]
+    fn test_exp_with_reel_2() {
+        let z = Complex::new(2.0, PI / 4.0);
+        let result = z.exp();
+
+        let exp_value = E.powi(2) / 2.0_f64.sqrt();
+        assert_eq!(round(&result.re), round(&result.im));
+        assert_eq!(round(&result.re), round(&exp_value));
     }
 
     #[test]

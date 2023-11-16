@@ -1,21 +1,10 @@
-[package]
-name = "frakt"
-authors = ["James <jabib@myges.fr>", "Ronan <rkielt@myges.fr>", "Charles <ccretois@myges.fr>", "Samira <sseddar@myges.fr>"]
-version = "0.1.1"
-edition = "2021"
-
-[[bin]]
-name = "client"
-path = "client/src/main.rs"
-
-[[bin]]
-name = "server"
-path = "server/src/main.rs"
-
 [workspace]
+resolver = "2"
+
 members = [
     "client",
     "shared",
     "server",
     "complex",
+    "cli"
 ]

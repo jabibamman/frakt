@@ -15,35 +15,13 @@ env:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v3
-
-      - name: List directory content
-        run: ls -la
-
-      - name: Build client
-        working-directory: ./client
+      - name: Build
         run: cargo build --verbose
-
-      - name: Build complex
-        working-directory: ./complex
-        run: cargo build --verbose
-
-      - name: Build shared
-        working-directory: ./shared
-        run: cargo build --verbose
-
-      - name: Run tests for client
-        working-directory: ./client
-        run: cargo test --verbose
-
-      - name: Run tests for complex
-        working-directory: ./complex
-        run: cargo test --verbose
-
-      - name: Run tests for shared
-        working-directory: ./shared
+      - name: Run tests
         run: cargo test --verbose
