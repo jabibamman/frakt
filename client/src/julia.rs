@@ -31,7 +31,8 @@ pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, V
         let scaled_y = y as f64 * scale_y + range.min.y;
         let complex_point = Complex::new(scaled_x, scaled_y);
 
-        let iterations = descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
+        let iterations =
+            descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
         let color_value = iterations_to_color(iterations, fragment_task.max_iteration);
 
         Rgb([color_value, 0, 0])

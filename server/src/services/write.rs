@@ -54,7 +54,6 @@ pub fn write(stream: TcpStream, message: &str) -> Result<TcpStream> {
     Ok(stream)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
