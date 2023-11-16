@@ -1,9 +1,13 @@
 mod image;
 mod julia;
 
+use std::io;
+
 use crate::image::open_image;
 use crate::julia::generate_julia_set;
 
+use cli::parser::{CliArgs, Parser};
+use server::services::{connect::connect, reader::read_message};
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::Julia;
 use shared::types::fractal_descriptor::{FractalDescriptor, JuliaDescriptor};
@@ -14,7 +18,11 @@ use shared::types::u8data::U8Data;
 use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
-fn main() {
+fn main() -> io::Result<()> {
+    let args: CliArgs = CliArgs::parse();
+    let stream = connect(format!("{}:{}", args.hostname, args.port).as_str())?;
+    let message = read_message(stream);
+    println!("{}", message);
     let img_path = get_file_path(
         "julia",
         get_dir_path_buf(),
@@ -54,4 +62,6 @@ fn main() {
     }
 
     open_image(img_path.as_str());
+
+    Ok(())
 }
