@@ -22,13 +22,24 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
 /// In debug mode, appends `target` to the workspace directory path.
 /// Panics if the directory cannot be obtained.
 pub fn get_dir_path_buf() -> std::result::Result<PathBuf, io::Error> {
-    if cfg!(not(debug_assertions)) {
-        get_current_working_dir()
-    } else {
-        let mut workspace_dir = get_workspace_dir()?;
-        workspace_dir.push("target");
-        Ok(workspace_dir)
+    fn recursive_get_dir_path_buf(is_debug_mode: bool, workspace_dir: Option<PathBuf>) -> std::result::Result<PathBuf, io::Error> {
+        if !is_debug_mode {
+            get_current_working_dir()
+        } else {
+            match workspace_dir {
+                None => {
+                    let dir = get_workspace_dir()?;
+                    recursive_get_dir_path_buf(true, Some(dir))
+                }
+                Some(dir) => {
+                    let new_dir = dir.join("target");
+                    Ok(new_dir)
+                }
+            }
+        }
     }
+
+    recursive_get_dir_path_buf(cfg!(debug_assertions), None)
 }
 
 /// Maps a `FileExtension` enum variant to its corresponding file extension string.
