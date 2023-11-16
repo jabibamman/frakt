@@ -1,4 +1,4 @@
-use std::{net::TcpStream, io::Read};
+use std::{io::Read, net::TcpStream};
 
 /// Read a message from a TCP stream.
 ///
@@ -20,11 +20,11 @@ use std::{net::TcpStream, io::Read};
 /// ```no_run
 /// use std::net::{TcpListener, TcpStream};
 /// use server::services::reader::read_message;
-/// 
+///
 /// let listener = TcpListener::bind("127.0.0.1:0").unwrap();
 /// let address = listener.local_addr().unwrap();
 /// let mut stream = TcpStream::connect(address).unwrap();
-/// 
+///
 /// let message = read_message(stream);
 /// println!("Received message: {}", message);
 /// ```
