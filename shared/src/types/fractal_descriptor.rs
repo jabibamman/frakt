@@ -29,4 +29,3 @@ pub struct NewtonRaphsonZ3Descriptor{
 #[derive(Debug, Clone, PartialEq)]
 pub struct NewtonRaphsonZ4Descriptor{
 }
-

@@ -35,7 +35,7 @@ impl NewtonRaphsonOperations for NewtonRaphsonZ3Descriptor {
         let mut iterations = 0;
         let mut z1 = z0.sub(&self.pz(&z0).div(&self.pz_prime(&z0))).add(complex_point);
         let e: f64 = std::f64::consts::E;
-      while (z1-z0).abs().squar()< 1 * e - 6  {
+      while (z1-z0).abs().squar()>= 1 * e - 6  {
             z0=z1;
             z1=z0.sub(&self.pz(&z0).div(&self.pz_prime(&z0))).add(complex_point);
             iterations += 1;
@@ -69,7 +69,7 @@ impl NewtonRaphsonOperations for NewtonRaphsonZ4Descriptor {
         let mut iterations = 0;
         let mut z1 = z0.sub(&self.pz(&z0).div(&self.pz_prime(&z0))).add(complex_point);
         let e: f64 = std::f64::consts::E;
-        while (z1-z0).abs().squar()< 1 * e -6 {
+        while (z1-z0).abs().squar()>= 1 * e -6 {
             z0=z1;
             z1=z0.sub(&self.pz(&z0).div(&self.pz_prime(&z0))).add(complex_point);
             iterations += 1;
