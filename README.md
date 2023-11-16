@@ -58,11 +58,10 @@ cargo run -p client
 
 ### Server
 
-To build and run only the server:
+To build the server library (used by other components):
 
 ```bash
 cargo build -p server
-cargo run -p server
 ```
 
 ### Shared
