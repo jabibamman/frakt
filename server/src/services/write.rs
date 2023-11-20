@@ -41,8 +41,8 @@ fn prepare_message(message: &str) -> Vec<u8> {
 /// use std::net::TcpStream;
 /// use server::services::write::write;
 ///
-/// let stream = TcpStream::connect("localhost:8787").unwrap();
-/// let stream = write(stream, "Hello world!").unwrap();
+/// let mut stream = TcpStream::connect("localhost:8787").unwrap();
+/// let stream = write(&mut stream, "Hello world!").unwrap();
 /// ```
 ///
 pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
