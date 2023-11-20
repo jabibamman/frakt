@@ -1,4 +1,8 @@
-use std::{io::{Read, self}, net::TcpStream, time::Duration};
+use std::{
+    io::{self, Read},
+    net::TcpStream,
+    time::Duration,
+};
 
 /// Reads a message from a TCP stream, parsing and returning the JSON component.
 ///
@@ -38,8 +42,18 @@ pub fn read_message(stream: &mut TcpStream) -> io::Result<String> {
     let mut size_buffer = [0u8; 8];
     stream.read_exact(&mut size_buffer)?;
 
-    let total_size = u32::from_be_bytes([size_buffer[0], size_buffer[1], size_buffer[2], size_buffer[3]]) as usize;
-    let json_size = u32::from_be_bytes([size_buffer[4], size_buffer[5], size_buffer[6], size_buffer[7]]) as usize;
+    let total_size = u32::from_be_bytes([
+        size_buffer[0],
+        size_buffer[1],
+        size_buffer[2],
+        size_buffer[3],
+    ]) as usize;
+    let json_size = u32::from_be_bytes([
+        size_buffer[4],
+        size_buffer[5],
+        size_buffer[6],
+        size_buffer[7],
+    ]) as usize;
 
     let mut json_buffer = vec![0; json_size];
     stream.read_exact(&mut json_buffer)?;
@@ -67,4 +81,3 @@ pub fn get_response(stream: &mut TcpStream) -> io::Result<String> {
     let response = read_message(stream)?;
     Ok(response)
 }
-

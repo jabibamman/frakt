@@ -3,8 +3,8 @@ mod image;
 
 use std::io;
 
-use crate::image::open_image;
 use crate::fractal_generation::generate_fractal_set;
+use crate::image::open_image;
 
 use cli::parser::{CliArgs, Parser};
 use server::services::{connect::connect, reader::get_response, write::write};
@@ -22,7 +22,7 @@ fn main() -> io::Result<()> {
     let args: CliArgs = CliArgs::parse();
     let mut stream = connect(format!("{}:{}", args.hostname, args.port).as_str())?;
     println!("Connecté au serveur !");
-    
+
     let _ = write(&mut stream, "Hello World !");
     println!("Message envoyé !");
     let response = get_response(&mut stream)?;
