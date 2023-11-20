@@ -1,2 +1,3 @@
 pub mod client;
-pub mod julia;
+pub mod fractal_generation;
+pub mod networking;

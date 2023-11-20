@@ -58,11 +58,10 @@ cargo run -p client
 
 ### Server
 
-To build and run only the server:
+To build the server library (used by other components):
 
 ```bash
 cargo build -p server
-cargo run -p server
 ```
 
 ### Shared
@@ -79,6 +78,30 @@ To build and the complex library (used by other components):
 
 ```bash
 cargo build -p complex
+```
+
+## Running the worker with CLI
+
+To run the worker with CLI, use the following command:
+
+You can read the CLI rustdoc documentation for more information on the CLI arguments.
+
+```bash
+cargo run -p client -- -h
+```
+
+## Documentation
+
+To generate documentation for all packages without including dependencies (recommended):
+
+```bash
+cargo doc --no-deps --open
+```
+
+To generate documentation for all packages including dependencies:
+
+```bash
+cargo doc --open
 ```
 
 ## Contributing

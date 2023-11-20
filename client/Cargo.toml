@@ -10,3 +10,5 @@ edition = "2021"
 image = { version = "0.24.7", features = [] }
 complex = { path = "../complex" }
 shared = { path = "../shared" }
+server = { path = "../server" }
+cli = { path = "../cli" }
