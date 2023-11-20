@@ -58,40 +58,40 @@ fn color(intensity: f32) -> [u8; 3] {
     [(255.0 * r) as u8, (255.0 * g) as u8, (255.0 * b) as u8]
 }
 
-
 #[cfg(test)]
 mod julia_descriptor_tests {
-    use shared::types::fractal_descriptor::JuliaDescriptor;
-    use shared::types::point::Point;
-    use shared::types::resolution::Resolution;
-    use shared::types::u8data::U8Data;
     use complex::complex_operations::ComplexOperations;
     use shared::types::complex::Complex;
     use shared::types::fractal_descriptor::FractalType::Julia;
+    use shared::types::fractal_descriptor::JuliaDescriptor;
     use shared::types::messages::FragmentTask;
+    use shared::types::point::Point;
     use shared::types::range::Range;
+    use shared::types::resolution::Resolution;
+    use shared::types::u8data::U8Data;
     use shared::utils::type_of::type_of;
-
 
     use super::*;
 
     #[test]
     fn test_generate_julia_set() {
         let fragment_task = FragmentTask {
-            fractal: shared::types::fractal_descriptor::FractalDescriptor { fractal_type: Julia(JuliaDescriptor {
-                c: Complex::new(-0.8, 0.156),
-                divergence_threshold_square: 0.0 ,
-            }) },
-            resolution: Resolution {
-                nx: 800,
-                ny: 600,
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: Julia(JuliaDescriptor {
+                    c: Complex::new(-0.8, 0.156),
+                    divergence_threshold_square: 0.0,
+                }),
             },
+            resolution: Resolution { nx: 800, ny: 600 },
             range: Range {
-                min: Point{x: -2.0,y:  -1.5},
-                max: Point{x: 2.0,y:  1.5},
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
             },
             max_iteration: 100,
-            id: U8Data { offset: 0, count: 0 },
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
         };
 
         let result = generate_fractal_set(fragment_task);
