@@ -5,8 +5,6 @@ use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::Julia;
 use shared::types::messages::FragmentTask;
 
-
-
 pub fn generate_julia_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let descriptor = &fragment_task.fractal.fractal_type;
     let descriptor = match descriptor {
@@ -47,37 +45,38 @@ fn iterations_to_color(iterations: u16, max_iterations: u16) -> u8 {
 
 #[cfg(test)]
 mod julia_descriptor_tests {
-    use shared::types::fractal_descriptor::JuliaDescriptor;
-    use shared::types::point::Point;
-    use shared::types::resolution::Resolution;
-    use shared::types::u8data::U8Data;
     use complex::complex_operations::ComplexOperations;
     use shared::types::complex::Complex;
     use shared::types::fractal_descriptor::FractalType::Julia;
+    use shared::types::fractal_descriptor::JuliaDescriptor;
     use shared::types::messages::FragmentTask;
+    use shared::types::point::Point;
     use shared::types::range::Range;
+    use shared::types::resolution::Resolution;
+    use shared::types::u8data::U8Data;
     use shared::utils::type_of::type_of;
-
 
     use super::*;
 
     #[test]
     fn test_generate_julia_set() {
         let fragment_task = FragmentTask {
-            fractal: shared::types::fractal_descriptor::FractalDescriptor { fractal_type: Julia(JuliaDescriptor {
-                c: Complex::new(-0.8, 0.156),
-                divergence_threshold_square: 0.0 ,
-            }) },
-            resolution: Resolution {
-                nx: 800,
-                ny: 600,
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: Julia(JuliaDescriptor {
+                    c: Complex::new(-0.8, 0.156),
+                    divergence_threshold_square: 0.0,
+                }),
             },
+            resolution: Resolution { nx: 800, ny: 600 },
             range: Range {
-                min: Point{x: -2.0,y:  -1.5},
-                max: Point{x: 2.0,y:  1.5},
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
             },
             max_iteration: 100,
-            id: U8Data { offset: 0, count: 0 },
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
         };
 
         let result = generate_julia_set(fragment_task);
@@ -87,12 +86,11 @@ mod julia_descriptor_tests {
 
     #[test]
     fn test_iterations_to_color() {
-
         let iterations = 50;
         let max_iterations = 100;
 
         let result = iterations_to_color(iterations, max_iterations);
-        
+
         let test = type_of(result);
 
         assert!(test.eq("u8"));
