@@ -57,3 +57,60 @@ fn color(intensity: f32) -> [u8; 3] {
         + brightness.2;
     [(255.0 * r) as u8, (255.0 * g) as u8, (255.0 * b) as u8]
 }
+
+#[cfg(test)]
+mod julia_descriptor_tests {
+    use complex::complex_operations::ComplexOperations;
+    use shared::types::complex::Complex;
+    use shared::types::fractal_descriptor::FractalType::Julia;
+    use shared::types::fractal_descriptor::JuliaDescriptor;
+    use shared::types::messages::FragmentTask;
+    use shared::types::point::Point;
+    use shared::types::range::Range;
+    use shared::types::resolution::Resolution;
+    use shared::types::u8data::U8Data;
+    use shared::utils::type_of::type_of;
+
+    use super::*;
+
+    #[test]
+    fn test_generate_julia_set() {
+        let fragment_task = FragmentTask {
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: Julia(JuliaDescriptor {
+                    c: Complex::new(-0.8, 0.156),
+                    divergence_threshold_square: 0.0,
+                }),
+            },
+            resolution: Resolution { nx: 800, ny: 600 },
+            range: Range {
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
+            },
+            max_iteration: 100,
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
+        };
+
+        let result = generate_fractal_set(fragment_task);
+
+        assert_eq!(result.dimensions(), (800, 600));
+    }
+
+    #[test]
+    fn test_color() {
+        let intensity = 0.5;
+
+        let result = color(intensity);
+
+        let test0 = type_of(result[0]);
+        let test1 = type_of(result[1]);
+        let test2 = type_of(result[2]);
+
+        assert!(test0.eq("u8"));
+        assert!(test1.eq("u8"));
+        assert!(test2.eq("u8"));
+    }
+}
