@@ -7,7 +7,7 @@ use crate::image::open_image;
 use crate::fractal_generation::generate_fractal_set;
 
 use cli::parser::{CliArgs, Parser};
-use server::services::{connect::connect, reader::read_message};
+use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
 use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
@@ -20,9 +20,14 @@ use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_pa
 
 fn main() -> io::Result<()> {
     let args: CliArgs = CliArgs::parse();
-    let stream = connect(format!("{}:{}", args.hostname, args.port).as_str())?;
-    let message = read_message(stream);
-    println!("{}", message);
+    let mut stream = connect(format!("{}:{}", args.hostname, args.port).as_str())?;
+    println!("Connecté au serveur !");
+    
+    let _ = write(&mut stream, "Hello World !");
+    println!("Message envoyé !");
+    let response = get_response(&mut stream)?;
+    println!("Réponse reçue: {:?}", response);
+
     let img_path = match get_dir_path_buf() {
         Ok(dir_path_buf) => {
             match get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG)) {

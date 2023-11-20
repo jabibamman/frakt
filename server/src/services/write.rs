@@ -1,4 +1,4 @@
-use std::io::Result;
+use std::io;
 use std::io::Write;
 use std::net::TcpStream;
 
@@ -45,13 +45,13 @@ fn prepare_message(message: &str) -> Vec<u8> {
 /// let stream = write(stream, "Hello world!").unwrap();
 /// ```
 ///
-pub fn write(stream: TcpStream, message: &str) -> Result<TcpStream> {
+pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
     let message_bytes = prepare_message(message);
 
     let mut stream_clone = stream.try_clone()?;
     stream_clone.write_all(&message_bytes)?;
 
-    Ok(stream)
+    Ok(())
 }
 
 #[cfg(test)]
