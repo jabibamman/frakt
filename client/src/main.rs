@@ -9,8 +9,8 @@ use crate::fractal_generation::generate_fractal_set;
 use cli::parser::{CliArgs, Parser};
 use server::services::{connect::connect, reader::read_message};
 use shared::types::filesystem::FileExtension;
-use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
-use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
+use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Mandelbrot};
+use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor, MandelbrotDescriptor};
 use shared::types::messages::FragmentTask;
 use shared::types::point::Point;
 use shared::types::range::Range;
@@ -48,8 +48,8 @@ fn main() -> io::Result<()> {
             count: 16,
         },
         fractal: FractalDescriptor {
-            fractal_type: IteratedSinZ(IteratedSinZDescriptor {
-                c: Complex { re: 0.2, im: 1.0 },
+            fractal_type: Mandelbrot(MandelbrotDescriptor{
+                //c: Complex { re: 0.2, im: 1.0 },
             }),
         },
         max_iteration: 64,

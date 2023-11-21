@@ -11,7 +11,7 @@ pub enum FractalType {
     Julia(JuliaDescriptor),
     IteratedSinZ(IteratedSinZDescriptor),
     Mandelbrot(MandelbrotDescriptor),
-    NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor),
+   NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor),
     NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor)
 }
 
