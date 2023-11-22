@@ -23,8 +23,11 @@ fn main() -> io::Result<()> {
     let mut stream = connect(format!("{}:{}", args.hostname, args.port).as_str())?;
     println!("Connecté au serveur !");
 
-    let _ = write(&mut stream, "Hello World !");
-    println!("Message envoyé !");
+    let writed = write(&mut stream, "Hello World !");
+    match writed {
+        Ok(_) => { println!("Message envoyé !") }
+        Err(error) => { println!("Échec de l'envoie du message : {}", error) }
+    }
     let response = get_response(&mut stream)?;
     println!("Réponse reçue: {:?}", response);
 
