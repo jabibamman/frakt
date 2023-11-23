@@ -1,45 +1,83 @@
-use std::{io::Read, net::TcpStream};
+use std::{
+    io::{self, Read},
+    net::TcpStream,
+    time::Duration,
+};
 
-/// Read a message from a TCP stream.
+/// Reads a message from a TCP stream, parsing and returning the JSON component.
 ///
-/// This function reads data from the given TCP stream up to 1024 bytes.
-/// It assumes that the message is UTF-8 encoded. If the message contains
-/// non-UTF-8 bytes, they will be replaced by U+FFFD REPLACEMENT CHARACTER.
-/// The function also trims null characters from the message.
+/// This function first reads the message size and JSON size from the stream.
+/// It then reads the JSON data based on the specified size and converts it into a `String`.
+/// If there's any additional binary data following the JSON data, it also reads that.
+/// The function handles any errors that occur during reading and parsing.
 ///
-/// # Arguments
-///
-/// * `stream` - A mutable reference to the TCP stream from which to read the message.
+/// # Parameters
+/// * `stream`: A mutable reference to a `TcpStream` from which the message will be read.
 ///
 /// # Returns
+/// An `io::Result<String>` which is `Ok` containing the JSON string if the read is successful,
+/// or an `io::Error` if an error occurs during the read operation.
 ///
-/// Returns a `String` containing the message read from the stream.
+/// # Errors
+/// Returns an `io::Error` if there's an issue with stream reading or if the JSON data
+/// cannot be converted into a UTF-8 string.
 ///
 /// # Examples
-///
 /// ```no_run
-/// use std::net::{TcpListener, TcpStream};
+/// use std::io;
+/// use std::net::TcpStream;
 /// use server::services::reader::read_message;
 ///
-/// let listener = TcpListener::bind("127.0.0.1:0").unwrap();
-/// let address = listener.local_addr().unwrap();
-/// let mut stream = TcpStream::connect(address).unwrap();
+/// fn main() -> io::Result<()> {
+///     let mut stream = TcpStream::connect("localhost:8787").unwrap();
+///     match read_message(&mut stream) {
+///         Ok(json_msg) => println!("Received JSON: {}", json_msg),
+///         Err(e) => eprintln!("Failed to read message: {}", e),
+///     }
 ///
-/// let message = read_message(stream);
-/// println!("Received message: {}", message);
+///     Ok(())
+/// }
 /// ```
-///
-/// # Panics
-///
-/// Panics if the reading from the stream fails or if the buffer cannot be
-/// converted to a UTF-8 string.
-///
-pub fn read_message(mut stream: TcpStream) -> String {
-    let mut buffer = [0; 1024];
-    stream.read(&mut buffer).unwrap();
+pub fn read_message(stream: &mut TcpStream) -> io::Result<String> {
+    let mut size_buffer = [0u8; 8];
+    stream.read_exact(&mut size_buffer)?;
 
-    let message = String::from_utf8_lossy(&buffer[..]);
-    let message = message.trim_matches(char::from(0)).to_string();
+    let total_size = u32::from_be_bytes([
+        size_buffer[0],
+        size_buffer[1],
+        size_buffer[2],
+        size_buffer[3],
+    ]) as usize;
+    let json_size = u32::from_be_bytes([
+        size_buffer[4],
+        size_buffer[5],
+        size_buffer[6],
+        size_buffer[7],
+    ]) as usize;
 
-    message
+    let mut json_buffer = vec![0; json_size];
+    stream.read_exact(&mut json_buffer)?;
+
+    let json_str = match String::from_utf8(json_buffer) {
+        Ok(str) => str,
+        Err(e) => return Err(io::Error::new(io::ErrorKind::InvalidData, e)),
+    };
+
+    println!("Réponse JSON du serveur: {}", json_str);
+
+    // donnée supplémentaire en binaire
+    let binary_data_size = total_size - json_size;
+    if binary_data_size > 0 {
+        let mut binary_buffer = vec![0; binary_data_size];
+        stream.read_exact(&mut binary_buffer)?;
+        println!("Données binaires reçues: {:?}", binary_buffer);
+    }
+
+    Ok(json_str)
+}
+
+pub fn get_response(stream: &mut TcpStream) -> io::Result<String> {
+    stream.set_read_timeout(Some(Duration::new(5, 0)))?;
+    let response = read_message(stream)?;
+    Ok(response)
 }
