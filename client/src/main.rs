@@ -25,8 +25,12 @@ fn main() -> io::Result<()> {
 
     let writed = write(&mut stream, "Hello World !");
     match writed {
-        Ok(_) => { println!("Message envoyé !") }
-        Err(error) => { println!("Échec de l'envoie du message : {}", error) }
+        Ok(_) => {
+            println!("Message envoyé !")
+        }
+        Err(error) => {
+            println!("Échec de l'envoie du message : {}", error)
+        }
     }
     let response = get_response(&mut stream)?;
     println!("Réponse reçue: {:?}", response);
