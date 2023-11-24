@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["read_message"]};
+window.SIDEBAR_ITEMS = {"fn":["get_response","read_message"]};

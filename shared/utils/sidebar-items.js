@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["filesystem"]};
+window.SIDEBAR_ITEMS = {"mod":["filesystem","type_of"]};

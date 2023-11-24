@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["connect","reader","write"]};
+window.SIDEBAR_ITEMS = {"mod":["connect","reader","server_runner","write"]};

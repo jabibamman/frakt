@@ -82,16 +82,30 @@
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
 </pre></div><pre class="rust"><code><span class="kw">mod </span>fractal_generation;
 <span class="kw">mod </span>image;
 
 <span class="kw">use </span>std::io;
 
-<span class="kw">use </span><span class="kw">crate</span>::image::open_image;
 <span class="kw">use </span><span class="kw">crate</span>::fractal_generation::generate_fractal_set;
+<span class="kw">use </span><span class="kw">crate</span>::image::open_image;
 
-<span class="kw">use </span>cli::parser::{CliArgs, Parser};
-<span class="kw">use </span>server::services::{connect::connect, reader::read_message};
+<span class="kw">use </span>cli::operation::parse_to_address;
+<span class="kw">use </span>cli::parser::{CliArgs, CliClientArgs, Parser};
+<span class="kw">use </span>server::services::{connect::connect, reader::get_response, write::write};
 <span class="kw">use </span>shared::types::filesystem::FileExtension;
 <span class="kw">use </span>shared::types::fractal_descriptor::FractalType::IteratedSinZ;
 <span class="kw">use </span>shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
@@ -103,10 +117,22 @@
 <span class="kw">use </span>shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 <span class="kw">fn </span>main() -&gt; io::Result&lt;()&gt; {
-    <span class="kw">let </span>args: CliArgs = CliArgs::parse();
-    <span class="kw">let </span>stream = connect(<span class="macro">format!</span>(<span class="string">&quot;{}:{}&quot;</span>, args.hostname, args.port).as_str())<span class="question-mark">?</span>;
-    <span class="kw">let </span>message = read_message(stream);
-    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, message);
+    <span class="kw">let </span>cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
+    <span class="kw">let </span>connection_result = connect(<span class="kw-2">&amp;</span>parse_to_address(cli_args));
+
+    <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>stream) = connection_result {
+        <span class="macro">println!</span>(<span class="string">&quot;Connected to the server!&quot;</span>);
+        <span class="kw">match </span>write(<span class="kw-2">&amp;mut </span>stream, <span class="string">&quot;Hello World !&quot;</span>) {
+            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">println!</span>(<span class="string">&quot;Message sent!&quot;</span>),
+            <span class="prelude-val">Err</span>(error) =&gt; <span class="macro">println!</span>(<span class="string">&quot;Failed to send message: {}&quot;</span>, error),
+        }
+
+        <span class="kw">let </span>response = get_response(<span class="kw-2">&amp;mut </span>stream)<span class="question-mark">?</span>;
+        <span class="macro">println!</span>(<span class="string">&quot;Response received: {:?}&quot;</span>, response);
+    } <span class="kw">else if let </span><span class="prelude-val">Err</span>(e) = connection_result {
+        <span class="macro">println!</span>(<span class="string">&quot;Failed to connect: {}&quot;</span>, e);
+    }
+
     <span class="kw">let </span>img_path = <span class="kw">match </span>get_dir_path_buf() {
         <span class="prelude-val">Ok</span>(dir_path_buf) =&gt; {
             <span class="kw">match </span>get_file_path(<span class="string">&quot;julia&quot;</span>, dir_path_buf, get_extension_str(FileExtension::PNG)) {

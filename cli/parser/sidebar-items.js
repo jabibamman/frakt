@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":["Parser"],"struct":["CliArgs"],"trait":["Parser"]};
+window.SIDEBAR_ITEMS = {"derive":["Parser"],"enum":["CliArgs"],"struct":["CliClientArgs","CliServerArgs"],"trait":["Parser"]};
