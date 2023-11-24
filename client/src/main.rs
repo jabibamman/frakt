@@ -6,7 +6,8 @@ use std::io;
 use crate::fractal_generation::generate_fractal_set;
 use crate::image::open_image;
 
-use cli::parser::{CliClientArgs, Parser};
+use cli::operation::parse_to_address;
+use cli::parser::{CliClientArgs, Parser, CliArgs};
 use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
@@ -19,21 +20,21 @@ use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 fn main() -> io::Result<()> {
-    let args: CliClientArgs = CliClientArgs::parse();
-    let mut stream = connect(format!("{}:{}", args.hostname, args.port).as_str())?;
-    println!("Connecté au serveur !");
+    let cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
+    let connection_result = connect(&parse_to_address(cli_args));
 
-    let writed = write(&mut stream, "Hello World !");
-    match writed {
-        Ok(_) => {
-            println!("Message envoyé !")
+    if let Ok(mut stream) = connection_result {
+        println!("Connected to the server!");
+        match write(&mut stream, "Hello World !") {
+            Ok(_) => println!("Message sent!"),
+            Err(error) => println!("Failed to send message: {}", error),
         }
-        Err(error) => {
-            println!("Échec de l'envoie du message : {}", error)
-        }
+
+        let response = get_response(&mut stream)?;
+        println!("Response received: {:?}", response);
+    } else if let Err(e) = connection_result {
+        println!("Failed to connect: {}", e);
     }
-    let response = get_response(&mut stream)?;
-    println!("Réponse reçue: {:?}", response);
 
     let img_path = match get_dir_path_buf() {
         Ok(dir_path_buf) => {
