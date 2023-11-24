@@ -4,6 +4,7 @@ use crate::types::range::Range;
 use crate::types::resolution::Resolution;
 use crate::types::u8data::U8Data;
 
+
 /// Represents a request for a fragment of work from a worker.
 ///
 /// Attributes:
@@ -11,8 +12,8 @@ use crate::types::u8data::U8Data;
 /// - `maximal_work_load`: An `u32` indicating the maximum workload (in terms of pixels) the worker can handle.
 #[derive(Debug, Clone, PartialEq)]
 pub struct FragmentRequest {
-    worker_name: String,
-    maximal_work_load: u32,
+    pub worker_name: String,
+    pub maximal_work_load: u32,
 }
 
 /// Describes a task assigned to a worker for fractal computation by a Server.
@@ -45,4 +46,11 @@ pub struct FragmentResult {
     resolution: Resolution,
     range: Range,
     pixels: PixelData,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Message {
+    FragmentRequest(FragmentRequest),
+    FragmentTask(FragmentTask),
+    FragmentResult(FragmentResult),
 }

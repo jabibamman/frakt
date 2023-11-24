@@ -1,4 +1,10 @@
-use std::{io::Read, net::TcpStream};
+use std::{io::{Read, self, BufReader}, net::TcpStream};
+
+use shared::types::messages::Message;
+
+use crate::services;
+
+use super::{serialization::{deserialize_message, serialize_task}, fragment_maker::{create_task_for_request, process_result}};
 
 /// Handles a client TCP stream.
 ///
@@ -26,18 +32,35 @@ use std::{io::Read, net::TcpStream};
 ///     }
 /// }
 /// ```
-pub fn handle_client(mut stream: TcpStream) {
+pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
     match stream.local_addr() {
         Ok(addr) => println!("[SERVER] Connection established {}", addr),
         Err(e) => println!("[SERVER] Failed to get local address: {}", e),
     }
 
-    let mut buffer = [0; 1024];
-    match stream.read(&mut buffer) {
-        Ok(_) => println!(
-            "[SERVER] Message received: {}",
-            String::from_utf8_lossy(&buffer[..])
-        ),
-        Err(e) => println!("[SERVER] Error reading from stream: {}", e),
+    let mut stream_reader = BufReader::new(&mut stream);
+    let mut data = String::new();
+    stream_reader.read_to_string(&mut data)?;
+
+    let trimmed_data = data.trim();
+    let message_result = deserialize_message(trimmed_data);
+
+    match message_result {
+        Ok(Message::FragmentRequest(request)) => {
+            let task = create_task_for_request(request);
+            let serialized_task: String = serialize_task(&task)?;
+            services::write::write(&mut stream, &serialized_task)?;
+        }
+        Ok(Message::FragmentTask(_task)) => {
+            todo!()
+        }
+        Ok(Message::FragmentResult(result)) => {
+            process_result(result);
+        }
+        Err(e) => {
+            println!("[SERVER] Error deserializing request: {:?}", e);
+        }
     }
+
+    Ok(())
 }

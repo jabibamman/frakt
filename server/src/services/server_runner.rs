@@ -1,4 +1,4 @@
-use crate::handler::handle_client;
+use crate::messages::handler::handle_client;
 use std::net::TcpListener;
 
 /// Starts a TCP server on the specified address.
@@ -38,7 +38,7 @@ pub fn run_server(address: &str) -> std::io::Result<()> {
     };
 
     for stream in listener.incoming() {
-        handle_client(stream?);
+        let _ = handle_client(stream?);
     }
 
     Ok(())

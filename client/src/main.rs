@@ -9,10 +9,11 @@ use crate::image::open_image;
 use cli::operation::parse_to_address;
 use cli::parser::{CliArgs, CliClientArgs, Parser};
 use server::services::{connect::connect, reader::get_response, write::write};
+use server::messages::serialization::serialize_request;
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
 use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
-use shared::types::messages::FragmentTask;
+use shared::types::messages::{FragmentTask, FragmentRequest};
 use shared::types::point::Point;
 use shared::types::range::Range;
 use shared::types::u8data::U8Data;
@@ -23,9 +24,22 @@ fn main() -> io::Result<()> {
     let cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
     let connection_result = connect(&parse_to_address(cli_args));
 
+    let fragment_request = FragmentRequest {
+        worker_name: "Worker 1".to_string(),
+        maximal_work_load: 1000,
+    };
+
+    let serialized_request = match serialize_request(&fragment_request) {
+        Ok(serialized_request) => serialized_request,
+        Err(e) => {
+            eprintln!("Erreur lors de la sérialisation de la requête : {}", e);
+            return Ok(());
+        }
+    };
+
     if let Ok(mut stream) = connection_result {
         println!("Connected to the server!");
-        match write(&mut stream, "Hello World !") {
+        match write(&mut stream, &serialized_request) {
             Ok(_) => println!("Message sent!"),
             Err(error) => println!("Failed to send message: {}", error),
         }
