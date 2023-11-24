@@ -7,7 +7,7 @@ use crate::fractal_generation::generate_fractal_set;
 use crate::image::open_image;
 
 use cli::operation::parse_to_address;
-use cli::parser::{CliClientArgs, Parser, CliArgs};
+use cli::parser::{CliArgs, CliClientArgs, Parser};
 use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;

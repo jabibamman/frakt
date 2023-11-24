@@ -1,5 +1,5 @@
-use std::net::TcpListener;
 use crate::handler::handle_client;
+use std::net::TcpListener;
 
 /// Starts a TCP server on the specified address.
 ///
@@ -8,7 +8,7 @@ use crate::handler::handle_client;
 /// it logs the error and returns without starting the server.
 ///
 /// ## Parameters
-/// - `address`: A string slice (`&str`) representing the address on which the server will listen. 
+/// - `address`: A string slice (`&str`) representing the address on which the server will listen.
 ///   The address should be in the format "{hostname}:{port}".
 ///
 /// ## Returns
@@ -20,7 +20,7 @@ use crate::handler::handle_client;
 /// ## Example Usage
 /// ```no_run
 /// use server::services::server_runner::run_server;
-/// 
+///
 /// let address = "127.0.0.1:8080";
 /// match run_server(address) {
 ///     Ok(()) => println!("Server running on {}", address),
