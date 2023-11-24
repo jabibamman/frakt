@@ -17,6 +17,7 @@ use std::{net::TcpStream, io::Read};
 /// Note: This example is a conceptual representation and may not work as-is.
 /// ```no_run
 /// use std::net::{TcpListener, TcpStream};
+/// use server::handler::handle_client;
 ///
 /// let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
 /// for stream in listener.incoming() {
