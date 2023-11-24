@@ -48,6 +48,27 @@ pub struct FragmentResult {
     pixels: PixelData,
 }
 
+/// An enumeration representing different types of messages in the system.
+///
+/// This enum categorizes messages into three distinct types, each associated with a specific data structure:
+/// `FragmentRequest`, `FragmentTask`, and `FragmentResult`.
+///
+/// # Variants
+///
+/// - `FragmentRequest(FragmentRequest)`: Represents a request for a fragment operation, containing the details
+///   required to process this request.
+/// - `FragmentTask(FragmentTask)`: Represents a task associated with a fragment, typically used to describe
+///   the work to be done or in progress.
+/// - `FragmentResult(FragmentResult)`: Represents the result of a fragment operation, detailing the outcome
+///   of the task or request.
+///
+/// # Traits
+///
+/// - `Debug`: Allows for formatting the enum using the `{:?}` formatter. Useful for debugging purposes.
+/// - `Clone`: Enables the creation of a copy of a value in this enum. Each variant of the enum will also need
+///   to implement `Clone`.
+/// - `PartialEq`: Enables comparison for equality between two enum values. Each variant's associated type
+///   must also implement `PartialEq`.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Message {
     FragmentRequest(FragmentRequest),
