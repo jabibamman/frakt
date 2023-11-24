@@ -1,4 +1,4 @@
-use std::{net::TcpStream, io::Read};
+use std::{io::Read, net::TcpStream};
 
 /// Handles a client TCP stream.
 ///
@@ -34,7 +34,10 @@ pub fn handle_client(mut stream: TcpStream) {
 
     let mut buffer = [0; 1024];
     match stream.read(&mut buffer) {
-        Ok(_) => println!("[SERVER] Message received: {}", String::from_utf8_lossy(&buffer[..])),
+        Ok(_) => println!(
+            "[SERVER] Message received: {}",
+            String::from_utf8_lossy(&buffer[..])
+        ),
         Err(e) => println!("[SERVER] Error reading from stream: {}", e),
     }
 }

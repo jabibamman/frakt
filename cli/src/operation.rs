@@ -33,16 +33,15 @@ pub fn parse_to_address(cli_args: CliArgs) -> String {
     }
 }
 
-
 #[cfg(test)]
 mod operation_tests {
     use super::*;
-    use crate::parser::{CliClientArgs, CliArgs, CliServerArgs};
+    use crate::parser::{CliArgs, CliClientArgs, CliServerArgs};
 
-    pub fn initialize() -> CliServerArgs{
+    pub fn initialize() -> CliServerArgs {
         CliServerArgs {
             hostname: "127.0.0.1".to_string(),
-            port: 8787
+            port: 8787,
         }
     }
 
@@ -67,6 +66,4 @@ mod operation_tests {
         let address = parse_to_address(server_args);
         assert_eq!(address, "127.0.0.1:8787");
     }
-
-
 }
