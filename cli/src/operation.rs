@@ -32,3 +32,41 @@ pub fn parse_to_address(cli_args: CliArgs) -> String {
         CliArgs::Server(args) => format!("{}:{}", args.hostname, args.port),
     }
 }
+
+
+#[cfg(test)]
+mod operation_tests {
+    use super::*;
+    use crate::parser::{CliClientArgs, CliArgs, CliServerArgs};
+
+    pub fn initialize() -> CliServerArgs{
+        CliServerArgs {
+            hostname: "127.0.0.1".to_string(),
+            port: 8787
+        }
+    }
+
+    #[test]
+    fn test_parse_client_to_address() {
+        let args = initialize();
+        let client_args = CliArgs::Client(CliClientArgs {
+            hostname: args.hostname,
+            port: args.port,
+            worker_name: "worker".to_string(),
+        });
+
+        let address = parse_to_address(client_args);
+        assert_eq!(address, "127.0.0.1:8787");
+    }
+
+    #[test]
+    fn test_parse_server_to_address() {
+        let args = initialize();
+        let server_args = CliArgs::Server(args);
+
+        let address = parse_to_address(server_args);
+        assert_eq!(address, "127.0.0.1:8787");
+    }
+
+
+}
