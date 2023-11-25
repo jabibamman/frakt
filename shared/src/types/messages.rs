@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::types::fractal_descriptor::FractalDescriptor;
 use crate::types::pixel_data::PixelData;
 use crate::types::range::Range;
@@ -24,7 +26,7 @@ pub struct FragmentRequest {
 /// - `max_iteration`: A `u16` specifying the maximum number of iterations for the fractal computation.
 /// - `resolution`: A `Resolution` specifying the resolution of the fragment to be computed.
 /// - `range`: A `Range` defining the physical space coordinates for the fragment.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FragmentTask {
     pub id: U8Data,
     pub fractal: FractalDescriptor,
@@ -40,7 +42,7 @@ pub struct FragmentTask {
 /// - `resolution`: A `Resolution` specifying the resolution of the computed fragment.
 /// - `range`: A `Range` defining the physical space coordinates for the computed fragment.
 /// - `pixels`: A `PixelData` containing the computed pixel data for the fragment.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FragmentResult {
     id: U8Data,
     resolution: Resolution,

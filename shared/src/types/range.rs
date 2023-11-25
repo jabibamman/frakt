@@ -1,3 +1,5 @@
+use serde::{Serialize, Deserialize};
+
 use crate::types::point::Point;
 
 /// Defines a rectangular range in a two-dimensional space, represented by minimum and maximum points.
@@ -5,7 +7,7 @@ use crate::types::point::Point;
 /// Attributes:
 /// - `min`: A `Point` defining the minimum (bottom-left) corner of the range.
 /// - `max`: A `Point` defining the maximum (top-right) corner of the range.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Range {
     pub min: Point,
     pub max: Point,
