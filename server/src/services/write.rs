@@ -50,7 +50,6 @@ pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
 
     let mut stream_clone = stream.try_clone()?;
     stream_clone.write_all(&message_bytes)?;
-
     Ok(())
 }
 
