@@ -22,7 +22,7 @@ use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_pa
 
 fn main() -> io::Result<()> {
     let cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
-    let connection_result = connect(&parse_to_address(cli_args));
+    let connection_result: Result<std::net::TcpStream, io::Error> = connect(&parse_to_address(cli_args));
 
     let fragment_request = FragmentRequest {
         worker_name: "Worker 1".to_string(),
@@ -32,22 +32,22 @@ fn main() -> io::Result<()> {
     let serialized_request = match serialize_request(&fragment_request) {
         Ok(serialized_request) => serialized_request,
         Err(e) => {
-            eprintln!("Erreur lors de la sérialisation de la requête : {}", e);
+            eprintln!("[CLIENT] Erreur lors de la sérialisation de la requête : {}", e);
             return Ok(());
         }
     };
 
     if let Ok(mut stream) = connection_result {
-        println!("Connected to the server!");
+        println!("[CLIENT] Connected to the server!");
         match write(&mut stream, &serialized_request) {
-            Ok(_) => println!("Message sent!"),
-            Err(error) => println!("Failed to send message: {}", error),
+            Ok(_) => println!("[CLIENT] Message sent!"),
+            Err(error) => println!("[CLIENT] Failed to send message, {}", error),
         }
 
         let response = get_response(&mut stream)?;
-        println!("Response received: {:?}", response);
+        println!("[CLIENT] Response received: {:?}", response);
     } else if let Err(e) = connection_result {
-        println!("Failed to connect: {}", e);
+        println!("[CLIENT] Failed to connect to the server: {}", e);
     }
 
     let img_path = match get_dir_path_buf() {

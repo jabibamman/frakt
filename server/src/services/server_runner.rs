@@ -28,11 +28,11 @@ use std::net::TcpListener;
 /// }
 /// ```
 pub fn run_server(address: &str) -> std::io::Result<()> {
-    println!("[SERVER] Starting server on {}", address);
+    println!("[SERVER] - Starting server on {}", address);
     let listener = match TcpListener::bind(address) {
         Ok(listener) => listener,
         Err(e) => {
-            println!("[SERVER] Failed to bind to address: {}", e);
+            println!("[SERVER] - Failed to bind to address: {}", e);
             return Ok(());
         }
     };

@@ -1,5 +1,5 @@
 use serde_json::json;
-use shared::types::messages::{FragmentRequest, Message, FragmentTask};
+use shared::types::{messages::{FragmentRequest, Message, FragmentTask}, fractal_descriptor::FractalType};
 use serde::de::Error as SerdeError;
 
 
@@ -81,6 +81,69 @@ pub fn deserialize_message(response: &str) -> serde_json::Result<Message> {
     }
 }
 
-pub fn serialize_task(_task: &FragmentTask) -> Result<String, serde_json::Error> {
-    todo!()
+pub fn serialize_task(task: &FragmentTask) -> Result<String, serde_json::Error> {
+    let fractal_details = match &task.fractal.fractal_type {
+        FractalType::Julia(julia_descriptor) => {
+            json!({
+                "Julia": {
+                    "c": {
+                        "im": julia_descriptor.c.im,
+                        "re": julia_descriptor.c.re
+                    },
+                    "divergence_threshold_square": julia_descriptor.divergence_threshold_square
+                }
+            })
+        }
+        FractalType::IteratedSinZ(iterated_sin_z_descriptor) => {
+            json!({
+                "IteratedSinZ": {
+                    "c": {
+                        "im": iterated_sin_z_descriptor.c.im,
+                        "re": iterated_sin_z_descriptor.c.re
+                    }
+                }
+            })
+        }
+    };
+
+    let task_json = json!({
+        "id": {
+            "offset": task.id.offset,
+            "count": task.id.count
+        },
+        "fractal": fractal_details,
+        "max_iteration": task.max_iteration,
+        "resolution": {
+            "nx": task.resolution.nx,
+            "ny": task.resolution.ny
+        },
+        "range": {
+            "min": {
+                "x": task.range.min.x,
+                "y": task.range.min.y
+            },
+            "max": {
+                "x": task.range.max.x,
+                "y": task.range.max.y
+            }
+        }
+    });
+
+    let request = json!({
+        "FragmentTask": task_json
+    });
+
+    serde_json::to_string(&request)
 }
+
+
+/* 
+// Un dispatcher qui décide quel builder utiliser en fonction du nom du fractal
+fn dispatch_fractal_builder(fractal_name: &str, fractal_value: &serde_json::Value) -> serde_json::Result<FractalType> {
+    //println!("Fractal name: {}, {}", fractal_name, max_iteration);
+    match fractal_name {
+        "Julia" => build_julia_descriptor(fractal_value),
+        // "Mandelbrot" => build_mandelbrot_descriptor(fractal_value, max_iteration),
+        _ => Err(SerdeError::custom(format!("Unsupported fractal type: {}", fractal_name))),
+    }
+}*/
