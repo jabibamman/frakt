@@ -1,10 +1,10 @@
 use crate::complex_operations::ComplexOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::MandelbrotDescriptor;
+use crate::fractal_operations::FractalOperations;
 
 pub trait MandelbrotOperations {
     fn new() -> Self;
-    fn iterate_complex_point(&self, complex_point: &Complex) -> u16;
 }
 
 impl MandelbrotOperations for MandelbrotDescriptor {
@@ -12,7 +12,10 @@ impl MandelbrotOperations for MandelbrotDescriptor {
         Self {
         }
     }
-    fn iterate_complex_point(&self, complex_point: &Complex) -> u16 {
+
+}
+impl FractalOperations for MandelbrotDescriptor {
+    fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> u16 {
         let mut z = Complex::new(0.0, 0.0);
         let mut iterations = 0;
         while z.abs().sqrt()<= 4.0{
@@ -22,5 +25,5 @@ impl MandelbrotOperations for MandelbrotDescriptor {
         iterations
     }
 
-
 }
+
