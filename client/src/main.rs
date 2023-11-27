@@ -25,7 +25,7 @@ fn main() -> io::Result<()> {
     println!("{}", message);
     let img_path = match get_dir_path_buf() {
         Ok(dir_path_buf) => {
-            match get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG)) {
+            match get_file_path("mandelbrot", dir_path_buf, get_extension_str(FileExtension::PNG)) {
                 Ok(img_path) => img_path,
                 Err(e) => {
                     eprintln!(
@@ -64,20 +64,20 @@ fn main() -> io::Result<()> {
     };
 
     match generate_fractal_set(fragment_task).save(img_path.clone().as_str()) {
-        Ok(_) => println!("L'image du Julia Set a été sauvegardée !"),
+        Ok(_) => println!("L'image de la fractale a été sauvegardée !"),
         Err(e) => println!(
-            "Erreur lors de la sauvegarde de l'image du Julia Set : {}",
+            "Erreur lors de la sauvegarde de l'image de la fractale : {}",
             e
         ),
     }
 
     match open_image(img_path.as_str()) {
         Ok(_) => {
-            println!("L'image du Julia Set a été ouverte !");
+            println!("L'image de la fractale a été ouverte !");
             Ok(())
         }
         Err(e) => {
-            println!("Erreur lors de l'ouverture de l'image du Julia Set : {}", e);
+            println!("Erreur lors de l'ouverture de l'image de la fractale : {}", e);
             Err(e)
         }
     }

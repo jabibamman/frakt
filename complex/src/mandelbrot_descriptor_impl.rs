@@ -18,7 +18,9 @@ impl FractalOperations for MandelbrotDescriptor {
     fn iterate_complex_point(&self, complex_point: &Complex, _max_iteration: u16) -> u16 {
         let mut z = Complex::new(0.0, 0.0);
         let mut iterations = 0;
-        while z.abs().sqrt()<= 4.0{
+        let max = 256;
+        
+        while z.abs().sqrt()<= 4.0 && iterations < max {
             z = z.square().add(complex_point);
             iterations += 1;
         }
