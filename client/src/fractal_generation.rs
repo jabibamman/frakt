@@ -21,9 +21,9 @@ pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>,
     let descriptor: &dyn FractalOperations = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
         IteratedSinZ(iterated_sinz_descriptor) => iterated_sinz_descriptor,
-        Mandelbrot(MandelbrotDescriptor) => MandelbrotDescriptor,
-        NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor) => NewtonRaphsonZ3Descriptor,
-        NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor) => NewtonRaphsonZ4Descriptor
+        Mandelbrot(mandelbrot_descriptor) => mandelbrot_descriptor,
+        NewtonRaphsonZ3(newton_raphson_z3_descriptor) => newton_raphson_z3_descriptor,
+        NewtonRaphsonZ4(newton_raphson_z4_descriptor) => newton_raphson_z4_descriptor
     };
     let resolution = &fragment_task.resolution;
     let range = &fragment_task.range;

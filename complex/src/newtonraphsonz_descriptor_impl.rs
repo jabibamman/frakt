@@ -10,7 +10,7 @@ pub trait NewtonRaphsonOperations {
     fn pz_prime(&self, z:&Complex) -> Complex;
 }
 impl FractalOperations for NewtonRaphsonZ3Descriptor {
-    fn iterate_complex_point(&self, complex_point: &Complex,  max_iteration: u16) -> u16 {
+    fn iterate_complex_point(&self, complex_point: &Complex,  _max_iteration: u16) -> u16 {
         let mut z0 = Complex::new(1.0, 0.0);
         let mut iterations = 0;
         let mut z1 = z0.sub(&self.pz(&z0).div(self.pz_prime(&z0))).add(complex_point);
@@ -26,7 +26,7 @@ impl FractalOperations for NewtonRaphsonZ3Descriptor {
 
 }
 impl FractalOperations for NewtonRaphsonZ4Descriptor {
-    fn iterate_complex_point(&self, complex_point: &Complex , max_iteration: u16) -> u16 {
+    fn iterate_complex_point(&self, complex_point: &Complex , _max_iteration: u16) -> u16 {
         let mut z0 = Complex::new(1.0, 0.0);
         let mut iterations = 0;
         let mut z1 = z0.sub(&self.pz(&z0).div(self.pz_prime(&z0))).add(complex_point);
@@ -48,16 +48,16 @@ impl NewtonRaphsonOperations for NewtonRaphsonZ3Descriptor {
         }
     }
     fn pz(&self,z: &Complex) -> Complex{
-        let mut z=z.clone();
-        let mut z0=Complex::new(1.0,0.0);
-        let mut result = z.mul(&z.mul(&z)).sub(&z0);
+        let z=z.clone();
+        let z0=Complex::new(1.0,0.0);
+        let result = z.mul(&z.mul(&z)).sub(&z0);
         result
 
     }
     fn pz_prime(&self, z:&Complex) -> Complex{
-        let mut z=z.clone();
-        let mut z3=Complex::new(3.0, 0.0);
-        let mut result = z3 .mul(&z.mul(&z)) ;
+        let z=z.clone();
+        let z3 = Complex::new(3.0, 0.0);
+        let result = z3 .mul(&z.mul(&z)) ;
         result
 
     }
@@ -69,16 +69,16 @@ impl NewtonRaphsonOperations for NewtonRaphsonZ4Descriptor {
         }
     }
     fn pz(&self,z: &Complex) -> Complex{
-        let mut z=z.clone();
-        let mut z0=Complex::new(1.0,0.0);
-        let mut result = z.mul(&z.mul(&z)).mul(&z) .sub(&z0);
+        let z=z.clone();
+        let z0=Complex::new(1.0,0.0);
+        let result = z.mul(&z.mul(&z)).mul(&z) .sub(&z0);
         result
 
     }
     fn pz_prime(&self, z: &Complex) -> Complex{
-        let mut z=z.clone();
-        let mut z3=Complex::new(3.0, 0.0);
-        let mut result = z3 .mul(&z.mul(&z)) ;
+        let z=z.clone();
+        let z3=Complex::new(3.0, 0.0);
+        let result = z3 .mul(&z.mul(&z)) ;
         result
 
     }

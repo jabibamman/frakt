@@ -9,13 +9,13 @@ use crate::fractal_generation::generate_fractal_set;
 use cli::parser::{CliArgs, Parser};
 use server::services::{connect::connect, reader::read_message};
 use shared::types::filesystem::FileExtension;
-use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Mandelbrot};
-use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor, MandelbrotDescriptor};
+use shared::types::fractal_descriptor::FractalType::Mandelbrot;
+use shared::types::fractal_descriptor::{FractalDescriptor, MandelbrotDescriptor};
 use shared::types::messages::FragmentTask;
 use shared::types::point::Point;
 use shared::types::range::Range;
 use shared::types::u8data::U8Data;
-use shared::types::{complex::Complex, resolution::Resolution};
+use shared::types::resolution::Resolution;
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 fn main() -> io::Result<()> {
