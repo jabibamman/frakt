@@ -5,6 +5,7 @@ use crate::fractal_operations::FractalOperations;
 
 pub trait MandelbrotOperations {
     fn new() -> Self;
+
 }
 
 impl MandelbrotOperations for MandelbrotDescriptor {
@@ -20,7 +21,7 @@ impl FractalOperations for MandelbrotDescriptor {
         let mut iterations = 0;
         let max = 256;
         
-        while z.abs().sqrt()<= 4.0 && iterations < max {
+        while z.abs()*&z.abs()<= 4.0 && iterations < max {
             z = z.square().add(complex_point);
             iterations += 1;
         }

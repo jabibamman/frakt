@@ -50,7 +50,9 @@ pub struct FractalDescriptor {
 }
 #[derive(Debug, Clone, PartialEq)]
 pub struct NewtonRaphsonZ3Descriptor{
+    pub c: Complex,
 }
 #[derive(Debug, Clone, PartialEq)]
 pub struct NewtonRaphsonZ4Descriptor{
+    pub c: Complex,
 }

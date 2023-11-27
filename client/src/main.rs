@@ -8,9 +8,10 @@ use crate::fractal_generation::generate_fractal_set;
 
 use cli::parser::{CliArgs, Parser};
 use server::services::{connect::connect, reader::read_message};
+use shared::types::complex::Complex;
 use shared::types::filesystem::FileExtension;
-use shared::types::fractal_descriptor::FractalType::Mandelbrot;
-use shared::types::fractal_descriptor::{FractalDescriptor, MandelbrotDescriptor};
+use shared::types::fractal_descriptor::FractalType::{Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4};
+use shared::types::fractal_descriptor::{FractalDescriptor, MandelbrotDescriptor, NewtonRaphsonZ3Descriptor, NewtonRaphsonZ4Descriptor};
 use shared::types::messages::FragmentTask;
 use shared::types::point::Point;
 use shared::types::range::Range;
@@ -19,10 +20,10 @@ use shared::types::resolution::Resolution;
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 fn main() -> io::Result<()> {
-    let args: CliArgs = CliArgs::parse();
+    /*let args: CliArgs = CliArgs::parse();
     let stream = connect(format!("{}:{}", args.hostname, args.port).as_str())?;
     let message = read_message(stream);
-    println!("{}", message);
+    println!("{}", message);*/
     let img_path = match get_dir_path_buf() {
         Ok(dir_path_buf) => {
             match get_file_path("mandelbrot", dir_path_buf, get_extension_str(FileExtension::PNG)) {
@@ -48,8 +49,8 @@ fn main() -> io::Result<()> {
             count: 16,
         },
         fractal: FractalDescriptor {
-            fractal_type: Mandelbrot(MandelbrotDescriptor{
-                //c: Complex { re: 0.2, im: 1.0 },
+            fractal_type:NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor{
+                c: Complex { re: 0.2, im: 1.0 },
             }),
         },
         max_iteration: 64,
