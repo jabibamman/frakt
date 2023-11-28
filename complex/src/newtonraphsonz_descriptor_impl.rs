@@ -5,21 +5,17 @@ use shared::types::fractal_descriptor::NewtonRaphsonZ4Descriptor;
 use crate::fractal_operations::FractalOperations;
 
 pub trait NewtonRaphsonOperations {
-    fn new(c: Complex,) -> Self;
+    fn new() -> Self;
     fn pz(&self,z: &Complex) -> Complex;
     fn pz_prime(&self, z:&Complex) -> Complex;
-    fn c(&self) -> &Complex;
 }
 
 impl NewtonRaphsonOperations for NewtonRaphsonZ3Descriptor {
-    fn new(c: Complex) -> Self {
+    fn new() -> Self {
         Self {
-            c
         }
     }
-    fn c(&self) -> &Complex {
-        &self.c
-    }
+
     fn pz_prime(&self, z:&Complex) -> Complex{
         let z=z.clone();
         let z3 = Complex::new(3.0, 0.0);
@@ -37,9 +33,8 @@ impl NewtonRaphsonOperations for NewtonRaphsonZ3Descriptor {
 
 }
 impl NewtonRaphsonOperations for NewtonRaphsonZ4Descriptor {
-    fn new(c: Complex) -> Self {
+    fn new() -> Self {
         Self {
-            c
         }
     }
     fn pz_prime(&self, z: &Complex) -> Complex{
@@ -55,9 +50,6 @@ impl NewtonRaphsonOperations for NewtonRaphsonZ4Descriptor {
         let result = z.mul(&z.mul(&z)).mul(&z) .sub(&z0);
         result
 
-    }
-    fn c(&self) -> &Complex {
-        &self.c
     }
 }
 impl FractalOperations for NewtonRaphsonZ3Descriptor {
