@@ -64,6 +64,7 @@ impl FractalOperations for NewtonRaphsonZ3Descriptor {
             z1=z0.sub(&self.pz(&z0).div(self.pz_prime(&z0))).add(complex_point);
             iterations += 1;
         }
+        //println!("la variable es : {}",iterations);
 
         iterations
     }
@@ -77,9 +78,13 @@ impl FractalOperations for NewtonRaphsonZ4Descriptor {
         let e: f64 = std::f64::consts::E;
         let max = 256;
         while (z1.sub(&z0).abs()*z1.sub(&z0).abs()>= 1.0 * e - 6.0) && iterations<max  {
+            //println!("   {}",(z1.sub(&z0).abs()*z1.sub(&z0).abs()>= 1.0 * e - 6.0));
             z0=z1;
             z1=z0.sub(&self.pz(&z0).div(self.pz_prime(&z0))).add(complex_point);
+            //println!("la valeur de z0 est {} {}",z0.im,z0.re);
+            //println!("la valeur de z1 est {} {}",z1.im,z1.re);
             iterations += 1;
+            //println!("{}",iterations);
         }
 
         iterations

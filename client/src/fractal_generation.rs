@@ -39,7 +39,8 @@ pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>,
         let complex_point = Complex::new(scaled_x, scaled_y);
 
         let iterations =
-            descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
+            descriptor.
+                iterate_complex_point(&complex_point, fragment_task.max_iteration);
         *pixel = Rgb(color((iterations as f32) / 255.0));
     }
 

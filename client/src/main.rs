@@ -26,7 +26,7 @@ fn main() -> io::Result<()> {
     println!("{}", message);*/
     let img_path = match get_dir_path_buf() {
         Ok(dir_path_buf) => {
-            match get_file_path("newtonZ3", dir_path_buf, get_extension_str(FileExtension::PNG)) {
+            match get_file_path("mouhhh", dir_path_buf, get_extension_str(FileExtension::PNG)) {
                 Ok(img_path) => img_path,
                 Err(e) => {
                     eprintln!(

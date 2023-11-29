@@ -25,6 +25,7 @@ impl FractalOperations for MandelbrotDescriptor {
             z = z.square().add(complex_point);
             iterations += 1;
         }
+
         iterations
     }
 
