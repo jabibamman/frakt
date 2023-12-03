@@ -54,7 +54,8 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         Ok(Message::FragmentRequest(request)) => {
             let task = create_task_for_request(request);
             let serialized_task: String = serialize_task(&task)?;
-            info!("Sending serialized task to client at", );
+
+            info!("Sending serialized task to client at {}", stream.peer_addr()?); 
             
             services::write::write(&mut stream, &serialized_task)?;
 
