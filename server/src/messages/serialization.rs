@@ -81,6 +81,22 @@ pub fn deserialize_message(response: &str) -> serde_json::Result<Message> {
     }
 }
 
+/// Serializes a `FragmentTask` into a JSON string.
+///
+/// This function takes a reference to a `FragmentTask` and converts it into a JSON string using `serde_json`. The serialization captures detailed information about the fractal task, including the type of fractal (Julia or IteratedSinZ), various parameters of the fractal, the maximum iteration count, resolution, and the range for the task.
+///
+/// # Arguments
+///
+/// * `task` - A reference to the `FragmentTask` that needs to be serialized.
+///
+/// # Returns
+///
+/// This function returns a `Result<String, serde_json::Error>`. On successful serialization, it yields `Ok(String)` containing the JSON representation of the task. On failure, it returns an error (`Err`) of type `serde_json::Error`.
+///
+/// # Errors
+///
+/// This function will return an error if the serialization process fails, encapsulated in `serde_json::Error`.
+///
 pub fn serialize_task(task: &FragmentTask) -> Result<String, serde_json::Error> {
     let fractal_details = match &task.fractal.fractal_type {
         FractalType::Julia(julia_descriptor) => {
