@@ -26,13 +26,13 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
       - name: Upload client artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: client-${{ matrix.os }}
           path: |
             ${{ (matrix.os == 'windows-latest' && 'target/release/client.exe') || 'target/release/client' }}
       - name: Upload server artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: server-${{ matrix.os }}
           path: |
