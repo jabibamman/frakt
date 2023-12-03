@@ -1,5 +1,6 @@
 use std::{io::{Read, self}, net::TcpStream};
 
+use log::{info, error, debug};
 use shared::types::messages::Message;
 
 use crate::services;
@@ -33,33 +34,33 @@ use super::{serialization::{deserialize_message, serialize_task}, fragment_maker
 /// }
 /// ```
 pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
-    println!("[SERVER] Handling client");
+    info!("Handling client");
     match stream.local_addr() {
-        Ok(addr) => println!("[SERVER] Connection established {}", addr),
-        Err(e) => println!("[SERVER] Failed to get local address: {}", e),
+        Ok(addr) => info!("Connection established {}", addr),
+        Err(e) => error!("Failed to get local address: {}", e),
     }
 
     let mut buffer = [0; 1024];
     let bytes_read = stream.read(&mut buffer)?;
     let data = String::from_utf8_lossy(&buffer[..bytes_read]);
 
-    println!("[SERVER] Readed data");
+    info!("Readed data");
 
     let trimmed_data = data.trim();
     let message_result = deserialize_message(trimmed_data);
 
-    println!("[SERVER] Deserialized data");
+    info!("Deserialized data");
     match message_result {
         Ok(Message::FragmentRequest(request)) => {
             let task = create_task_for_request(request);
             let serialized_task: String = serialize_task(&task)?;
-            println!("[SERVER] Sending serialized task to client at", );
+            info!("Sending serialized task to client at", );
             
             services::write::write(&mut stream, &serialized_task)?;
 
             let response = services::reader::get_response(&mut stream)?;
 
-            println!("[SERVER] Received response: {:?}", response);
+            debug!("Received response: {:?}", response);
         }
         Ok(Message::FragmentTask(_task)) => {
             todo!()
@@ -68,7 +69,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
             process_result(result);
         }
         Err(e) => {
-            println!("[SERVER] Error deserializing request: {:?}", e);
+            error!("[SERVER] Error deserializing request: {:?}", e);
         }
     }
 
