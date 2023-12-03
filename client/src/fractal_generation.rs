@@ -1,6 +1,7 @@
 use complex::complex_operations::ComplexOperations;
 use complex::fractal_operations::FractalOperations;
 use image::{ImageBuffer, Rgb};
+use log::info;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia};
 use shared::types::messages::FragmentTask;
@@ -30,6 +31,7 @@ pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>,
 
     let mut img = ImageBuffer::new(resolution.nx.into(), resolution.ny.into());
 
+    info!("Generating fractal set...");
     for (x, y, pixel) in img.enumerate_pixels_mut() {
         let scaled_x = x as f64 * scale_x + range.min.x;
         let scaled_y = y as f64 * scale_y + range.min.y;

@@ -19,8 +19,11 @@ use shared::types::range::Range;
 use shared::types::u8data::U8Data;
 use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
+use log::{info, error, debug};
 
 fn main() -> io::Result<()> {
+    shared::logger::init_logger();
+ 
     let cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
     let connection_result: Result<std::net::TcpStream, io::Error> = connect(&parse_to_address(cli_args));
 
@@ -32,22 +35,22 @@ fn main() -> io::Result<()> {
     let serialized_request = match serialize_request(&fragment_request) {
         Ok(serialized_request) => serialized_request,
         Err(e) => {
-            eprintln!("[CLIENT] Erreur lors de la sérialisation de la requête : {}", e);
+            error!("Erreur lors de la sérialisation de la requête : {}", e);
             return Ok(());
         }
     };
-
+ 
     if let Ok(mut stream) = connection_result {
-        println!("[CLIENT] Connected to the server!");
+        info!("Connected to the server!");
         match write(&mut stream, &serialized_request) {
-            Ok(_) => println!("[CLIENT] Message sent!"),
-            Err(error) => println!("[CLIENT] Failed to send message, {}", error),
+            Ok(_) => info!(" Message sent!"),
+            Err(error) => error!("Failed to send message, {}", error),
         }
 
         let response = get_response(&mut stream)?;
-        println!("[CLIENT] Response received: {:?}", response);
+        debug!("Response received: {:?}", response);
     } else if let Err(e) = connection_result {
-        println!("[CLIENT] Failed to connect to the server: {}", e);
+        error!("Failed to connect to the server: {}", e);
     }
 
     let img_path = match get_dir_path_buf() {
@@ -55,7 +58,7 @@ fn main() -> io::Result<()> {
             match get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG)) {
                 Ok(img_path) => img_path,
                 Err(e) => {
-                    eprintln!(
+                    error!(
                         "Erreur lors de la récupération du chemin du fichier : {}",
                         e
                     );
@@ -64,7 +67,7 @@ fn main() -> io::Result<()> {
             }
         }
         Err(e) => {
-            eprintln!("Erreur lors de la récupération du répertoire : {}", e);
+            error!("Erreur lors de la récupération du répertoire : {}", e);
             return Ok(());
         }
     };
@@ -91,8 +94,8 @@ fn main() -> io::Result<()> {
     };
 
     match generate_fractal_set(fragment_task).save(img_path.clone().as_str()) {
-        Ok(_) => println!("L'image du Julia Set a été sauvegardée !"),
-        Err(e) => println!(
+        Ok(_) => info!("L'image du Julia Set a été sauvegardée !"),
+        Err(e) => error!(
             "Erreur lors de la sauvegarde de l'image du Julia Set : {}",
             e
         ),
@@ -100,11 +103,11 @@ fn main() -> io::Result<()> {
 
     match open_image(img_path.as_str()) {
         Ok(_) => {
-            println!("L'image du Julia Set a été ouverte !");
+            info!("L'image du Julia Set a été ouverte !");
             Ok(())
         }
         Err(e) => {
-            println!("Erreur lors de l'ouverture de l'image du Julia Set : {}", e);
+            error!("Erreur lors de l'ouverture de l'image du Julia Set : {}", e);
             Err(e)
         }
     }
