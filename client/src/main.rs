@@ -1,3 +1,5 @@
+use shared::utils::fragment_request_impl::FragmentRequestOperation;
+
 mod fractal_generation;
 mod image;
 
@@ -12,7 +14,7 @@ use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
 use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
-use shared::types::messages::FragmentTask;
+use shared::types::messages::{FragmentRequest, FragmentTask};
 use shared::types::point::Point;
 use shared::types::range::Range;
 use shared::types::u8data::U8Data;
@@ -21,11 +23,18 @@ use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_pa
 
 fn main() -> io::Result<()> {
     let cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
+    let worker_name = match cli_args.clone() {
+        CliArgs::Client(args) => format!("{}", args.worker_name),
+        CliArgs::Server(_args) => String::new(),
+    };
+    let fragment_request = FragmentRequest::new(worker_name, 10);
+    let serialized_request = fragment_request.serialize()?;
     let connection_result = connect(&parse_to_address(cli_args));
 
     if let Ok(mut stream) = connection_result {
         println!("Connected to the server!");
-        match write(&mut stream, "Hello World !") {
+
+        match write(&mut stream, serialized_request.as_str()) {
             Ok(_) => println!("Message sent!"),
             Err(error) => println!("Failed to send message: {}", error),
         }

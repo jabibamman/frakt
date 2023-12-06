@@ -15,7 +15,7 @@ pub use clap::Parser;
 /// ```sh
 /// worker -H 192.168.1.0 -P 8787 -N my_group_name
 /// ```
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Clone)]
 pub struct CliClientArgs {
     /// The hostname of the client.
     /// Default: "localhost"
@@ -47,7 +47,7 @@ pub struct CliClientArgs {
 /// ```sh
 /// server -H 192.168.1.0 -P 8787
 /// ```
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Clone)]
 pub struct CliServerArgs {
     /// The hostname of the server.
     /// Default: "localhost"
@@ -68,6 +68,7 @@ pub struct CliServerArgs {
 /// ## Variants
 /// - `Client(CliClientArgs)`: Command line arguments specific to the client.
 /// - `Server(CliServerArgs)`: Command line arguments specific to the server.
+#[derive(Clone)]
 pub enum CliArgs {
     Client(CliClientArgs),
     Server(CliServerArgs),

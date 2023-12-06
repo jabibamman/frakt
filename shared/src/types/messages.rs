@@ -1,3 +1,4 @@
+use serde::Serialize;
 use crate::types::fractal_descriptor::FractalDescriptor;
 use crate::types::pixel_data::PixelData;
 use crate::types::range::Range;
@@ -9,10 +10,10 @@ use crate::types::u8data::U8Data;
 /// Attributes:
 /// - `worker_name`: A `String` representing the name of the worker making the request.
 /// - `maximal_work_load`: An `u32` indicating the maximum workload (in terms of pixels) the worker can handle.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct FragmentRequest {
-    worker_name: String,
-    maximal_work_load: u32,
+    pub worker_name: String,
+    pub maximal_work_load: u32,
 }
 
 /// Describes a task assigned to a worker for fractal computation by a Server.
