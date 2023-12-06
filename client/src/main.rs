@@ -10,8 +10,8 @@ use cli::operation::parse_to_address;
 use cli::parser::{CliArgs, CliClientArgs, Parser};
 use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
-use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
-use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
+use shared::types::fractal_descriptor::FractalType::BurningShip;
+use shared::types::fractal_descriptor::{FractalDescriptor, BurningShipDescriptor};
 use shared::types::messages::FragmentTask;
 use shared::types::point::Point;
 use shared::types::range::Range;
@@ -20,6 +20,7 @@ use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 fn main() -> io::Result<()> {
+    /*
     let cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
     let connection_result = connect(&parse_to_address(cli_args));
 
@@ -35,10 +36,11 @@ fn main() -> io::Result<()> {
     } else if let Err(e) = connection_result {
         println!("Failed to connect: {}", e);
     }
+    */
 
     let img_path = match get_dir_path_buf() {
         Ok(dir_path_buf) => {
-            match get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG)) {
+            match get_file_path("burningship", dir_path_buf, get_extension_str(FileExtension::PNG)) {
                 Ok(img_path) => img_path,
                 Err(e) => {
                     eprintln!(
@@ -61,20 +63,22 @@ fn main() -> io::Result<()> {
             count: 16,
         },
         fractal: FractalDescriptor {
-            fractal_type: IteratedSinZ(IteratedSinZDescriptor {
-                c: Complex { re: 0.2, im: 1.0 },
+            fractal_type: BurningShip(BurningShipDescriptor {
+                c: Complex { re: -1.8, im: -0.03 },
+                divergence_threshold_square: 4.0
             }),
         },
-        max_iteration: 64,
+        max_iteration: 100,
         resolution: Resolution { nx: 1080, ny: 1920 },
         range: Range {
             min: Point {
-                x: -2.0,
-                y: -3.55556,
+                x: -1.18,
+                y: -0.08,
             },
-            max: Point { x: 2.0, y: 3.55556 },
+            max: Point { x: -1.7, y: 0.01 },
         },
     };
+    
 
     match generate_fractal_set(fragment_task).save(img_path.clone().as_str()) {
         Ok(_) => println!("L'image du Julia Set a été sauvegardée !"),

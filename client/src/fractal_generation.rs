@@ -2,7 +2,7 @@ use complex::complex_operations::ComplexOperations;
 use complex::fractal_operations::FractalOperations;
 use image::{ImageBuffer, Rgb};
 use shared::types::complex::Complex;
-use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia};
+use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia, BurningShip};
 use shared::types::messages::FragmentTask;
 
 /// Generates an image of a Fractal Type based on the provided fragment task.
@@ -21,6 +21,7 @@ pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>,
     let descriptor: &dyn FractalOperations = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
         IteratedSinZ(iterated_sinz_descriptor) => iterated_sinz_descriptor,
+        BurningShip(burning_ship_descriptor) => burning_ship_descriptor,
     };
     let resolution = &fragment_task.resolution;
     let range = &fragment_task.range;
