@@ -5,11 +5,13 @@ use crate::types::complex::Complex;
 /// Variants:
 /// - `Julia(JuliaDescriptor)`: Represents a Julia fractal with its specific descriptor.
 /// - `Mandelbrot(MandelbrotDescriptor)`: Represents a Mandelbrot fractal (currently commented out).
+/// - `BurningShip(BurningShipDescriptor)`: Represents a BurningShip fractal with its specific descriptor.
 /// - `...`: Placeholder for additional fractal types.
 #[derive(Debug, Clone, PartialEq)]
 pub enum FractalType {
     Julia(JuliaDescriptor),
     IteratedSinZ(IteratedSinZDescriptor),
+    BurningShip(BurningShipDescriptor),
     //Mandelbrot(MandelbrotDescriptor),
     //...
 }
@@ -33,6 +35,18 @@ pub struct JuliaDescriptor {
 #[derive(Debug, Clone, PartialEq)]
 pub struct IteratedSinZDescriptor {
     pub c: Complex,
+}
+
+/// Describes parameters specific to a BurningShip fractal.
+///
+/// Attributes:
+/// - `c`: A `Complex` number representing the constant parameter of the BurningShip set.
+/// - `escape_time`: Maximum number of iterations to determine whether a point escapes.
+/// - `divergence_threshold_square`: The square of the divergence threshold. Points whose magnitude square exceeds this threshold are considered to diverge.
+#[derive(Debug, Clone, PartialEq)]
+pub struct BurningShipDescriptor {
+    pub c: Complex,
+    pub divergence_threshold_square: f64,
 }
 
 #[derive(Debug, Clone, PartialEq)]
