@@ -29,8 +29,6 @@ fn main() -> io::Result<()> {
     };
     let fragment_request = FragmentRequest::new(worker_name, 10);
     let serialized_request = fragment_request.serialize()?;
-    let deserialized_request = FragmentRequest::deserialize(serialized_request.as_str())?;
-    println!("{} {}", deserialized_request.worker_name, deserialized_request.maximal_work_load);
     let connection_result = connect(&parse_to_address(cli_args));
 
     if let Ok(mut stream) = connection_result {
