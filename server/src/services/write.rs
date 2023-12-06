@@ -59,7 +59,7 @@ mod tests {
     use super::*;
     use std::io::{Read, Result};
     use std::net::TcpListener;
-    use std::thread;
+    use std::{mem, thread};
 
     /// Test for `prepare_message` function.
     /// It verifies that the function correctly formats a given message.
