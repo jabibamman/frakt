@@ -26,7 +26,7 @@ fn main() -> io::Result<()> {
     println!("{}", message);*/
     let img_path = match get_dir_path_buf() {
         Ok(dir_path_buf) => {
-            match get_file_path("mouhhh", dir_path_buf, get_extension_str(FileExtension::PNG)) {
+            match get_file_path("z4", dir_path_buf, get_extension_str(FileExtension::PNG)) {
                 Ok(img_path) => img_path,
                 Err(e) => {
                     eprintln!(
@@ -49,7 +49,7 @@ fn main() -> io::Result<()> {
             count: 16,
         },
         fractal: FractalDescriptor {
-            fractal_type:NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor{
+            fractal_type:NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor{
                 //c: Complex { re: 0.2, im: 1.0 },
             }),
         },
