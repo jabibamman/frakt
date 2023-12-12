@@ -10,6 +10,7 @@ edition = "2021"
 complex = { path = "../complex" }
 shared = { path = "../shared" }
 cli = { path = "../cli" }
+byteorder = "1.4.3"
 
 [lib]
 path = "src/lib.rs"

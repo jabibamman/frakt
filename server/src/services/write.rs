@@ -1,6 +1,7 @@
 use std::io;
 use std::io::Write;
 use std::net::TcpStream;
+use byteorder::{BigEndian, WriteBytesExt};
 
 /// Prepare a message for sending.
 ///
@@ -46,9 +47,18 @@ fn prepare_message(message: &str) -> Vec<u8> {
 /// ```
 ///
 pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
+    let mut stream_clone = stream.try_clone()?;
+
     let message_bytes = prepare_message(message);
 
-    let mut stream_clone = stream.try_clone()?;
+    let mut json_size: Vec<u8> = vec![];
+    json_size.write_u32::<BigEndian>(message.len() as u32)?;
+
+    let mut total_size: Vec<u8> = vec![];
+    total_size.write_u32::<BigEndian>(message.len() as u32)?;
+
+    stream_clone.write_all(&total_size)?;
+    stream_clone.write_all(&json_size)?;
     stream_clone.write_all(&message_bytes)?;
 
     Ok(())
@@ -59,7 +69,7 @@ mod tests {
     use super::*;
     use std::io::{Read, Result};
     use std::net::TcpListener;
-    use std::{mem, thread};
+    use std::{thread};
 
     /// Test for `prepare_message` function.
     /// It verifies that the function correctly formats a given message.

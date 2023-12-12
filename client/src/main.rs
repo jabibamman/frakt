@@ -27,8 +27,8 @@ fn main() -> io::Result<()> {
         CliArgs::Client(args) => format!("{}", args.worker_name),
         CliArgs::Server(_args) => String::new(),
     };
-    let fragment_request = FragmentRequest::new(worker_name, 10);
-    let serialized_request = fragment_request.serialize();
+    let fragment_request = FragmentRequest::new(worker_name, 100);
+    let serialized_request = fragment_request.serialize()?;
     let connection_result = connect(&parse_to_address(cli_args));
 
     if let Ok(mut stream) = connection_result {
