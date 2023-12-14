@@ -22,7 +22,7 @@ pub trait ComplexOperations {
 
     /// Returns the Euclidean norm (magnitude) of the complex number.
     fn norm(&self) -> f64;
-    fn div(&self,other:Self) -> Self;
+    fn div(&self, other: Self) -> Self;
     fn abs(&self) -> f64;
     fn sin(&self) -> Self;
     fn exp(&self) -> Self;
@@ -59,13 +59,12 @@ impl ComplexOperations for Complex {
     fn norm(&self) -> f64 {
         self.magnitude_squared().sqrt()
     }
-    fn div(&self,other:Self) -> Self{
+    fn div(&self, other: Self) -> Self {
         let denominator = other.magnitude_squared();
         Complex::new(
             (self.re * other.re + self.im * other.im) / denominator,
             (self.im * other.re - self.re * other.im) / denominator,
         )
-
     }
     fn abs(&self) -> f64 {
         self.norm()

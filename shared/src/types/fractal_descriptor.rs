@@ -11,8 +11,8 @@ pub enum FractalType {
     Julia(JuliaDescriptor),
     IteratedSinZ(IteratedSinZDescriptor),
     Mandelbrot(MandelbrotDescriptor),
-   NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor),
-    NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor)
+    NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor),
+    NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor),
 }
 
 /// Describes parameters specific to a Julia fractal.
@@ -37,8 +37,7 @@ pub struct IteratedSinZDescriptor {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct MandelbrotDescriptor {
-}
+pub struct MandelbrotDescriptor {}
 
 /// General descriptor for a fractal, encompassing different fractal types.
 ///
@@ -49,10 +48,6 @@ pub struct FractalDescriptor {
     pub fractal_type: FractalType,
 }
 #[derive(Debug, Clone, PartialEq)]
-pub struct NewtonRaphsonZ3Descriptor{
-
-}
+pub struct NewtonRaphsonZ3Descriptor {}
 #[derive(Debug, Clone, PartialEq)]
-pub struct NewtonRaphsonZ4Descriptor{
-
-}
+pub struct NewtonRaphsonZ4Descriptor {}
