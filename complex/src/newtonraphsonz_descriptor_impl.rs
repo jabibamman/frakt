@@ -38,21 +38,23 @@ impl NewtonRaphsonOperations for NewtonRaphsonZ4Descriptor {
 ///
 /// Le nombre d'itérations nécessaires pour converger ou atteindre le nombre maximal d'itérations.
 
-fn iterate_common(complex_point: &Complex, max_iteration: u16, power: u32) -> u16 {
+fn iterate_common(complex_point: &Complex, max_iteration: u16, power: u32) -> Result<u16, String>  {
     let mut z = *complex_point;
     let mut iteration = 0u16;
     let convergence_threshold = 1e-12; // carré de 1e-6 pour la comparaison directe avec magnitude_squared
     while iteration < max_iteration {
-        let fz = match power {
-            3 => z.square().mul(&z).sub(&Complex::new(1.0, 0.0)), // z^3 - 1
-            4 => z.square().mul(&z).mul(&z).sub(&Complex::new(1.0, 0.0)), // z^4 - 1
-            _ => panic!("Unsupported power"),
+        let (fz, dfz) = match power {
+            3 => (
+                z.square().mul(&z).sub(&Complex::new(1.0, 0.0)), // z^3 - 1
+                z.square().mul(&Complex::new(3.0, 0.0)),         // 3z^2
+            ),
+            4 => (
+                z.square().mul(&z).mul(&z).sub(&Complex::new(1.0, 0.0)), // z^4 - 1
+                z.square().mul(&z).mul(&Complex::new(4.0, 0.0)),         // 4z^3
+            ),
+            _ => return Err(format!("Unsupported power: {}", power)),
         };
-        let dfz = match power {
-            3 => z.square().mul(&Complex::new(3.0, 0.0)), // 3z^2
-            4 => z.square().mul(&z).mul(&Complex::new(4.0, 0.0)), // 4z^3
-            _ => panic!("Unsupported power"),
-        };
+
         if dfz.magnitude_squared() < convergence_threshold {
             break;
         }
@@ -65,7 +67,7 @@ fn iterate_common(complex_point: &Complex, max_iteration: u16, power: u32) -> u1
         z = new_z;
         iteration += 1;
     }
-    iteration
+    Ok(iteration)
 }
 
 impl FractalOperations for NewtonRaphsonZ3Descriptor {
@@ -80,7 +82,13 @@ impl FractalOperations for NewtonRaphsonZ3Descriptor {
     ///
     /// Le nombre d'itérations nécessaires pour converger ou atteindre le nombre maximal d'itérations.
     fn iterate_complex_point(&self, complex_point: &Complex , max_iteration: u16) -> u16 {
-        iterate_common(complex_point, max_iteration, 3)
+        match iterate_common(complex_point, max_iteration, 3) {
+            Ok(iteration) => iteration,
+            Err(e) => {
+                eprintln!("{}", e);
+                0
+            }
+        }
     }
 
 }
@@ -96,7 +104,13 @@ impl FractalOperations for NewtonRaphsonZ4Descriptor {
     ///
     /// Le nombre d'itérations nécessaires pour converger ou atteindre le nombre maximal d'itérations.
     fn iterate_complex_point(&self, complex_point: &Complex,  max_iteration: u16) -> u16 {
-        iterate_common(complex_point, max_iteration, 4)
+        match iterate_common(complex_point, max_iteration, 4) {
+            Ok(iteration) => iteration,
+            Err(e) => {
+                eprintln!("{}", e);
+                0
+            }
+        }
     }
 }
 
