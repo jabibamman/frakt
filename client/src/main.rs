@@ -6,15 +6,13 @@ use std::io;
 use crate::fractal_generation::generate_fractal_set;
 use crate::image::open_image;
 
-use cli::parser::{CliArgs, Parser};
-use server::services::{connect::connect, reader::read_message};
-use shared::types::complex::Complex;
+use cli::operation::parse_to_address;
+use cli::parser::{CliArgs, CliClientArgs, Parser};
+use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
-use shared::types::fractal_descriptor::FractalType::{
-    Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,
-};
+use shared::types::fractal_descriptor::FractalType::NewtonRaphsonZ4;
 use shared::types::fractal_descriptor::{
-    FractalDescriptor, MandelbrotDescriptor, NewtonRaphsonZ3Descriptor, NewtonRaphsonZ4Descriptor,
+    FractalDescriptor, NewtonRaphsonZ4Descriptor,
 };
 use shared::types::messages::FragmentTask;
 use shared::types::point::Point;
@@ -24,10 +22,22 @@ use shared::types::u8data::U8Data;
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 fn main() -> io::Result<()> {
-    /*let args: CliArgs = CliArgs::parse();
-    let stream = connect(format!("{}:{}", args.hostname, args.port).as_str())?;
-    let message = read_message(stream);
-    println!("{}", message);*/
+    let cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
+    let connection_result = connect(&parse_to_address(cli_args));
+
+    if let Ok(mut stream) = connection_result {
+        println!("Connected to the server!");
+        match write(&mut stream, "Hello World !") {
+            Ok(_) => println!("Message sent!"),
+            Err(error) => println!("Failed to send message: {}", error),
+        }
+
+        let response = get_response(&mut stream)?;
+        println!("Response received: {:?}", response);
+    } else if let Err(e) = connection_result {
+        println!("Failed to connect: {}", e);
+    }
+
     let img_path = match get_dir_path_buf() {
         Ok(dir_path_buf) => {
             match get_file_path("z4", dir_path_buf, get_extension_str(FileExtension::PNG)) {

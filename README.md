@@ -37,6 +37,12 @@ To build all packages in release mode:
 cargo build --release
 ```
 
+To build a specific package in release mode:
+
+```bash
+cargo build -p <package_name> --release
+```
+
 ### Running Specific Packages
 
 To run a specific package, use `-p` followed by the package name. For example, to run the client package:
@@ -62,6 +68,7 @@ To build the server library (used by other components):
 
 ```bash
 cargo build -p server
+cargo run -p server
 ```
 
 ### Shared
@@ -88,6 +95,14 @@ You can read the CLI rustdoc documentation for more information on the CLI argum
 
 ```bash
 cargo run -p client -- -h
+```
+
+## Running the server with CLI
+
+To run the server with CLI, use the following command:
+
+```bash
+cargo run -p server -- -h
 ```
 
 ## Documentation
