@@ -1,7 +1,6 @@
 use std::io;
 use std::io::Write;
 use std::net::TcpStream;
-use byteorder::{BigEndian, WriteBytesExt};
 
 /// Prepare a message for sending.
 ///
@@ -50,12 +49,8 @@ pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
     let mut stream_clone = stream.try_clone()?;
 
     let message_bytes = prepare_message(message);
-
-    let mut json_size: Vec<u8> = vec![];
-    json_size.write_u32::<BigEndian>(message.len() as u32)?;
-
-    let mut total_size: Vec<u8> = vec![];
-    total_size.write_u32::<BigEndian>(message.len() as u32)?;
+    let json_size = (message.len() as u32).to_be_bytes();
+    let total_size = (message.len() as u32).to_be_bytes();
 
     stream_clone.write_all(&total_size)?;
     stream_clone.write_all(&json_size)?;
