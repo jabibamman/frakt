@@ -2,7 +2,9 @@ use complex::complex_operations::ComplexOperations;
 use complex::fractal_operations::FractalOperations;
 use image::{ImageBuffer, Rgb};
 use shared::types::complex::Complex;
-use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4};
+use shared::types::fractal_descriptor::FractalType::{
+    IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,
+};
 use shared::types::messages::FragmentTask;
 
 /// Generates an image of a Fractal Type based on the provided fragment task.
@@ -23,7 +25,7 @@ pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>,
         IteratedSinZ(iterated_sinz_descriptor) => iterated_sinz_descriptor,
         Mandelbrot(mandelbrot_descriptor) => mandelbrot_descriptor,
         NewtonRaphsonZ3(newton_raphson_z3_descriptor) => newton_raphson_z3_descriptor,
-        NewtonRaphsonZ4(newton_raphson_z4_descriptor) => newton_raphson_z4_descriptor
+        NewtonRaphsonZ4(newton_raphson_z4_descriptor) => newton_raphson_z4_descriptor,
     };
     let resolution = &fragment_task.resolution;
     let range = &fragment_task.range;
@@ -39,8 +41,7 @@ pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>,
         let complex_point = Complex::new(scaled_x, scaled_y);
 
         let iterations =
-            descriptor.
-                iterate_complex_point(&complex_point, fragment_task.max_iteration);
+            descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
         *pixel = Rgb(color((iterations as f32) / 255.0));
     }
 

@@ -3,20 +3,24 @@ mod image;
 
 use std::io;
 
-use crate::image::open_image;
 use crate::fractal_generation::generate_fractal_set;
+use crate::image::open_image;
 
 use cli::parser::{CliArgs, Parser};
 use server::services::{connect::connect, reader::read_message};
 use shared::types::complex::Complex;
 use shared::types::filesystem::FileExtension;
-use shared::types::fractal_descriptor::FractalType::{Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4};
-use shared::types::fractal_descriptor::{FractalDescriptor, MandelbrotDescriptor, NewtonRaphsonZ3Descriptor, NewtonRaphsonZ4Descriptor};
+use shared::types::fractal_descriptor::FractalType::{
+    Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,
+};
+use shared::types::fractal_descriptor::{
+    FractalDescriptor, MandelbrotDescriptor, NewtonRaphsonZ3Descriptor, NewtonRaphsonZ4Descriptor,
+};
 use shared::types::messages::FragmentTask;
 use shared::types::point::Point;
 use shared::types::range::Range;
-use shared::types::u8data::U8Data;
 use shared::types::resolution::Resolution;
+use shared::types::u8data::U8Data;
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 fn main() -> io::Result<()> {
@@ -49,7 +53,7 @@ fn main() -> io::Result<()> {
             count: 16,
         },
         fractal: FractalDescriptor {
-            fractal_type:NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor{
+            fractal_type: NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor{
                 //c: Complex { re: 0.2, im: 1.0 },
             }),
         },
@@ -78,7 +82,10 @@ fn main() -> io::Result<()> {
             Ok(())
         }
         Err(e) => {
-            println!("Erreur lors de l'ouverture de l'image de la fractale : {}", e);
+            println!(
+                "Erreur lors de l'ouverture de l'image de la fractale : {}",
+                e
+            );
             Err(e)
         }
     }
