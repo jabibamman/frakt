@@ -15,7 +15,9 @@ pub trait FragmentRequestOperation {
     /// or an Err containing the `serde_json::Error` if it fails.
     fn serialize(&self) -> Result<String, serde_json::Error>;
 
-    fn deserialize(message: &str) -> Result<Self, serde_json::Error> where Self: Sized;
+    fn deserialize(message: &str) -> Result<Self, serde_json::Error>
+    where
+        Self: Sized;
 }
 
 impl FragmentRequestOperation for FragmentRequest {
@@ -64,7 +66,10 @@ mod iterated_sinz_tests {
         let serialized = "{\"FragmentRequest\":{\"maximal_work_load\":1000,\"worker_name\":\"fractal painter\"}}";
         match FragmentRequest::deserialize(serialized) {
             Ok(deserialized) => {
-                assert_eq!(deserialized, FragmentRequest::new("fractal painter".to_string(), 1000));
+                assert_eq!(
+                    deserialized,
+                    FragmentRequest::new("fractal painter".to_string(), 1000)
+                );
             }
             Err(_) => {}
         }
