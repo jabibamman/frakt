@@ -1,5 +1,4 @@
-use crate::complex_operations::ComplexOperations;
-use crate::fractal_operations::FractalOperations;
+use crate::fractal_operations::BurningShipFractalOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::BurningShipDescriptor;
 
@@ -12,37 +11,22 @@ pub trait BurningShipOperations {
     fn divergence_threshold_square(&self) -> f64;
 }
 
-impl FractalOperations for BurningShipDescriptor {
-    fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> u16 {
-        fn recursive_iterate(
-            z: Complex,
-            c: &Complex,
-            divergence_threshold_square: f64,
-            max_iteration: u16,
-            current_iteration: u16,
-        ) -> u16 {
-            if z.norm() > divergence_threshold_square || current_iteration == max_iteration {
-                current_iteration
-            } else {
-                // next_z = (|(z.re)| - |(z.im)|)^2 + c
-                let next_z = Complex::new(z.re.abs(), z.im.abs()).square().add(c);
-                recursive_iterate(
-                    next_z,
-                    c,
-                    divergence_threshold_square,
-                    max_iteration,
-                    current_iteration + 1,
-                )
-            }
+impl BurningShipFractalOperations for BurningShipDescriptor {
+    fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> (u16, f64) {
+        let mut x: f64 = 0.0;
+        let mut y: f64 = 0.0;
+        let mut num_iterations = 0;
+        while ((x * x + y * y) < self.divergence_threshold_square) && num_iterations < max_iteration
+        {
+            let x_next = (x * x) - (y * y) + complex_point.re;
+            let y_next = 2.0 * (x * y).abs() + complex_point.im;
+
+            x = x_next;
+            y = y_next;
+            num_iterations = num_iterations + 1;
         }
 
-        recursive_iterate(
-            complex_point.clone(),
-            &self.c,
-            self.divergence_threshold_square,
-            max_iteration,
-            0,
-        )
+        (num_iterations, x * x + y * y)
     }
 
     fn c(&self) -> &Complex {

@@ -11,9 +11,13 @@ use crate::types::complex::Complex;
 pub enum FractalType {
     Julia(JuliaDescriptor),
     IteratedSinZ(IteratedSinZDescriptor),
-    BurningShip(BurningShipDescriptor),
     //Mandelbrot(MandelbrotDescriptor),
     //...
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum BurningFractalType {
+    BurningShip(BurningShipDescriptor),
 }
 
 /// Describes parameters specific to a Julia fractal.
@@ -62,4 +66,9 @@ pub struct MandelbrotDescriptor {
 #[derive(Debug, Clone, PartialEq)]
 pub struct FractalDescriptor {
     pub fractal_type: FractalType,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct BurningShipFractalDescriptor {
+    pub fractal_type: BurningFractalType,
 }

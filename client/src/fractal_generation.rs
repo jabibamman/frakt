@@ -1,9 +1,10 @@
 use complex::complex_operations::ComplexOperations;
-use complex::fractal_operations::FractalOperations;
-use image::{ImageBuffer, Rgb};
+use complex::fractal_operations::{BurningShipFractalOperations, FractalOperations};
+use image::{ImageBuffer, Rgb, Rgba};
 use shared::types::complex::Complex;
-use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia, BurningShip};
-use shared::types::messages::FragmentTask;
+use shared::types::fractal_descriptor::BurningFractalType::BurningShip;
+use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia};
+use shared::types::messages::{BurningShipFragmentTask, FragmentTask};
 
 /// Generates an image of a Fractal Type based on the provided fragment task.
 ///
@@ -21,7 +22,6 @@ pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>,
     let descriptor: &dyn FractalOperations = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
         IteratedSinZ(iterated_sinz_descriptor) => iterated_sinz_descriptor,
-        BurningShip(burning_ship_descriptor) => burning_ship_descriptor,
     };
     let resolution = &fragment_task.resolution;
     let range = &fragment_task.range;
@@ -44,6 +44,34 @@ pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>,
     img
 }
 
+pub fn generate_burning_ship_fractal_set(
+    fragment_task: BurningShipFragmentTask,
+) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
+    let descriptor = &fragment_task.fractal.fractal_type;
+    let descriptor: &dyn BurningShipFractalOperations = match descriptor {
+        BurningShip(burning_ship_descriptor) => burning_ship_descriptor,
+    };
+    let resolution = &fragment_task.resolution;
+    let range = &fragment_task.range;
+
+    let scale_x = (range.max.x - range.min.x) / resolution.nx as f64;
+    let scale_y = (range.max.y - range.min.y) / resolution.ny as f64;
+
+    let mut img = ImageBuffer::new(resolution.nx.into(), resolution.ny.into());
+
+    for (x, y, pixel) in img.enumerate_pixels_mut() {
+        let scaled_x = x as f64 * scale_x + range.min.x;
+        let scaled_y = y as f64 * scale_y + range.min.y;
+        let complex_point = Complex::new(scaled_x, scaled_y);
+
+        let (iterations, escape_distance) =
+            descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
+        *pixel = Rgba(burning_ship_color(iterations as f32));
+    }
+
+    img
+}
+
 ///Gets a number between 0 and 1 and return the color that correspond to its intensity
 fn color(intensity: f32) -> [u8; 3] {
     let brightness = (0.5, 0.5, 0.5);
@@ -57,6 +85,10 @@ fn color(intensity: f32) -> [u8; 3] {
     let b = bright_color.2 * (6.28318 * (frequency_change.2 * intensity + base_color.2)).cos()
         + brightness.2;
     [(255.0 * r) as u8, (255.0 * g) as u8, (255.0 * b) as u8]
+}
+
+fn burning_ship_color(intensity: f32) -> [u8; 4] {
+    [255, (intensity * 7.0) as u8, 0, (intensity * 15.0) as u8]
 }
 
 #[cfg(test)]

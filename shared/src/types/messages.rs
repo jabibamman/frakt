@@ -4,6 +4,8 @@ use crate::types::range::Range;
 use crate::types::resolution::Resolution;
 use crate::types::u8data::U8Data;
 
+use super::fractal_descriptor::BurningShipFractalDescriptor;
+
 /// Represents a request for a fragment of work from a worker.
 ///
 /// Attributes:
@@ -27,6 +29,15 @@ pub struct FragmentRequest {
 pub struct FragmentTask {
     pub id: U8Data,
     pub fractal: FractalDescriptor,
+    pub max_iteration: u16,
+    pub resolution: Resolution,
+    pub range: Range,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct BurningShipFragmentTask {
+    pub id: U8Data,
+    pub fractal: BurningShipFractalDescriptor,
     pub max_iteration: u16,
     pub resolution: Resolution,
     pub range: Range,
