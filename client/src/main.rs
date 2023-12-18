@@ -9,7 +9,7 @@ use crate::fractal_generation::generate_fractal_set;
 use crate::image::open_image;
 
 use cli::operation::parse_to_address;
-use cli::parser::{CliArgs, CliClientArgs, Parser};
+use cli::parser::{CliClientArgs, Parser};
 use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
@@ -22,14 +22,10 @@ use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 fn main() -> io::Result<()> {
-    let cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
-    let worker_name = match cli_args.clone() {
-        CliArgs::Client(args) => format!("{}", args.worker_name),
-        CliArgs::Server(_args) => String::new(),
-    };
-    let fragment_request = FragmentRequest::new(worker_name, 100);
+    let cli_args: CliClientArgs = CliClientArgs::parse();
+    let fragment_request = FragmentRequest::new(cli_args.worker_name, 100);
     let serialized_request = fragment_request.serialize()?;
-    let connection_result = connect(&parse_to_address(cli_args));
+    let connection_result = connect(format!("{}:{}", cli_args.hostname, cli_args.port).as_str());
 
     if let Ok(mut stream) = connection_result {
         println!("Connected to the server!");
