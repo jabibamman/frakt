@@ -66,7 +66,11 @@ pub fn generate_burning_ship_fractal_set(
 
         let (iterations, escape_distance) =
             descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
-        *pixel = Rgba(burning_ship_color(iterations as f32));
+        if (iterations != fragment_task.max_iteration) {
+            *pixel = Rgba(burning_ship_color(iterations as f32));
+        } else {
+            *pixel = Rgba([0, 0, 0, 1]);
+        }
     }
 
     img

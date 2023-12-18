@@ -77,8 +77,8 @@ fn main() -> io::Result<()> {
         max_iteration: 255,
         resolution: Resolution { nx: 1080, ny: 1080 },
         range: Range {
-            min: Point { x: -3.0, y: -2.0 },
-            max: Point { x: 3.0, y: 2.0 },
+            min: Point { x: -1.8, y: -0.08 },
+            max: Point { x: -1.7, y: 0.01 },
         },
     };
 
