@@ -13,7 +13,7 @@ use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::NewtonRaphsonZ4;
 use shared::types::fractal_descriptor::{FractalDescriptor, NewtonRaphsonZ4Descriptor};
-use shared::types::messages::FragmentTask;
+use shared::types::messages::{FragmentRequest, FragmentTask};
 use shared::types::point::Point;
 use shared::types::range::Range;
 use shared::types::resolution::Resolution;
