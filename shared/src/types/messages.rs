@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use crate::types::fractal_descriptor::FractalDescriptor;
 use crate::types::pixel_data::PixelData;
 use crate::types::range::Range;
 use crate::types::resolution::Resolution;
 use crate::types::u8data::U8Data;
+use serde::{Deserialize, Serialize};
 
 /// Represents a request for a fragment of work from a worker.
 ///
