@@ -120,6 +120,9 @@ pub fn serialize_task(task: &FragmentTask) -> Result<String, serde_json::Error> 
                 }
             })
         }
+        FractalType::Mandelbrot(_) => todo!(),
+        FractalType::NewtonRaphsonZ3(_) => todo!(),
+        FractalType::NewtonRaphsonZ4(_) => todo!(),
     };
 
     let task_json = json!({

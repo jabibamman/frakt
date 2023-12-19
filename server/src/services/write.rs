@@ -46,9 +46,14 @@ fn prepare_message(message: &str) -> Vec<u8> {
 /// ```
 ///
 pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
-    let message_bytes = prepare_message(message);
-
     let mut stream_clone = stream.try_clone()?;
+
+    let message_bytes = prepare_message(message);
+    let json_size = (message.len() as u32).to_be_bytes();
+    let total_size = (message.len() as u32).to_be_bytes();
+
+    stream_clone.write_all(&total_size)?;
+    stream_clone.write_all(&json_size)?;
     stream_clone.write_all(&message_bytes)?;
     Ok(())
 }

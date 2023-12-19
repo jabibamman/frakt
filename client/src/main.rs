@@ -1,3 +1,6 @@
+use shared::types::complex::Complex;
+use shared::utils::fragment_request_impl::FragmentRequestOperation;
+
 mod fractal_generation;
 mod image;
 
@@ -6,26 +9,27 @@ use std::io;
 use crate::fractal_generation::generate_fractal_set;
 use crate::image::open_image;
 
-use cli::operation::parse_to_address;
-use cli::parser::{CliArgs, CliClientArgs, Parser};
+use cli::parser::{CliClientArgs, Parser};
 use server::services::{connect::connect, reader::get_response, write::write};
 use server::messages::serialization::serialize_request;
 use shared::types::filesystem::FileExtension;
-use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
-use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
-use shared::types::messages::{FragmentTask, FragmentRequest};
+use shared::types::fractal_descriptor::FractalType::Julia;
+use shared::types::fractal_descriptor::{FractalDescriptor, JuliaDescriptor};
+use shared::types::messages::{FragmentRequest, FragmentTask};
 use shared::types::point::Point;
 use shared::types::range::Range;
+use shared::types::resolution::Resolution;
 use shared::types::u8data::U8Data;
-use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 use log::{info, error, debug};
 
 fn main() -> io::Result<()> {
     shared::logger::init_logger();
- 
-    let cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
-    let connection_result: Result<std::net::TcpStream, io::Error> = connect(&parse_to_address(cli_args));
+
+    let cli_args: CliClientArgs = CliClientArgs::parse();
+    let fragment_request = FragmentRequest::new(cli_args.worker_name, 100);
+    let _serialized_request = fragment_request.serialize()?;
+    let connection_result = connect(format!("{}:{}", cli_args.hostname, cli_args.port).as_str());
 
     let fragment_request = FragmentRequest {
         worker_name: "Worker 1".to_string(),
@@ -42,7 +46,7 @@ fn main() -> io::Result<()> {
  
     if let Ok(mut stream) = connection_result {
         info!("Connected to the server!");
-        match write(&mut stream, &serialized_request) {
+        match write(&mut stream, serialized_request.as_str()) {
             Ok(_) => info!(" Message sent!"),
             Err(error) => error!("Failed to send message, {}", error),
         }
@@ -78,8 +82,10 @@ fn main() -> io::Result<()> {
             count: 16,
         },
         fractal: FractalDescriptor {
-            fractal_type: IteratedSinZ(IteratedSinZDescriptor {
+            fractal_type: Julia(JuliaDescriptor{
                 c: Complex { re: 0.2, im: 1.0 },
+                divergence_threshold_square: 4.0
+
             }),
         },
         max_iteration: 64,
@@ -94,20 +100,22 @@ fn main() -> io::Result<()> {
     };
 
     match generate_fractal_set(fragment_task).save(img_path.clone().as_str()) {
-        Ok(_) => info!("L'image du Julia Set a été sauvegardée !"),
+        Ok(_) => info!("L'image de la fractale a été sauvegardée !"),
         Err(e) => error!(
-            "Erreur lors de la sauvegarde de l'image du Julia Set : {}",
+            "Erreur lors de la sauvegarde de l'image de la fractale : {}",
             e
         ),
     }
 
     match open_image(img_path.as_str()) {
         Ok(_) => {
-            info!("L'image du Julia Set a été ouverte !");
+            info!("L'image de la fractale a été ouverte !");
             Ok(())
         }
         Err(e) => {
-            error!("Erreur lors de l'ouverture de l'image du Julia Set : {}", e);
+            error!("Erreur lors de l'ouverture de l'image de la frctale: {}", 
+            e
+            );
             Err(e)
         }
     }

@@ -12,7 +12,7 @@ use crate::types::u8data::U8Data;
 /// Attributes:
 /// - `worker_name`: A `String` representing the name of the worker making the request.
 /// - `maximal_work_load`: An `u32` indicating the maximum workload (in terms of pixels) the worker can handle.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FragmentRequest {
     pub worker_name: String,
     pub maximal_work_load: u32,
