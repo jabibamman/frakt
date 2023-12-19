@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["filesystem","type_of"]};
+window.SIDEBAR_ITEMS = {"mod":["filesystem","fragment_request_impl","type_of"]};

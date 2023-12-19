@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"shared":[["impl <a class=\"trait\" href=\"https://docs.rs/serde/1.0.193/serde/ser/trait.Serialize.html\" title=\"trait serde::ser::Serialize\">Serialize</a> for <a class=\"struct\" href=\"shared/types/messages/struct.FragmentRequest.html\" title=\"struct shared::types::messages::FragmentRequest\">FragmentRequest</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
