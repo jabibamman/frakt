@@ -1,3 +1,5 @@
+use shared::utils::fragment_request_impl::FragmentRequestOperation;
+
 mod fractal_generation;
 mod image;
 
@@ -6,26 +8,28 @@ use std::io;
 use crate::fractal_generation::generate_fractal_set;
 use crate::image::open_image;
 
-use cli::operation::parse_to_address;
-use cli::parser::{CliArgs, CliClientArgs, Parser};
+use cli::parser::{CliClientArgs, Parser};
 use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
-use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
-use shared::types::fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor};
-use shared::types::messages::FragmentTask;
+use shared::types::fractal_descriptor::FractalType::NewtonRaphsonZ4;
+use shared::types::fractal_descriptor::{FractalDescriptor, NewtonRaphsonZ4Descriptor};
+use shared::types::messages::{FragmentRequest, FragmentTask};
 use shared::types::point::Point;
 use shared::types::range::Range;
+use shared::types::resolution::Resolution;
 use shared::types::u8data::U8Data;
-use shared::types::{complex::Complex, resolution::Resolution};
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 fn main() -> io::Result<()> {
-    let cli_args: CliArgs = CliArgs::Client(CliClientArgs::parse());
-    let connection_result = connect(&parse_to_address(cli_args));
+    let cli_args: CliClientArgs = CliClientArgs::parse();
+    let fragment_request = FragmentRequest::new(cli_args.worker_name, 100);
+    let serialized_request = fragment_request.serialize()?;
+    let connection_result = connect(format!("{}:{}", cli_args.hostname, cli_args.port).as_str());
 
     if let Ok(mut stream) = connection_result {
         println!("Connected to the server!");
-        match write(&mut stream, "Hello World !") {
+
+        match write(&mut stream, serialized_request.as_str()) {
             Ok(_) => println!("Message sent!"),
             Err(error) => println!("Failed to send message: {}", error),
         }
@@ -38,7 +42,7 @@ fn main() -> io::Result<()> {
 
     let img_path = match get_dir_path_buf() {
         Ok(dir_path_buf) => {
-            match get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG)) {
+            match get_file_path("z4", dir_path_buf, get_extension_str(FileExtension::PNG)) {
                 Ok(img_path) => img_path,
                 Err(e) => {
                     eprintln!(
@@ -61,8 +65,8 @@ fn main() -> io::Result<()> {
             count: 16,
         },
         fractal: FractalDescriptor {
-            fractal_type: IteratedSinZ(IteratedSinZDescriptor {
-                c: Complex { re: 0.2, im: 1.0 },
+            fractal_type: NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor{
+                //c: Complex { re: 0.2, im: 1.0 },
             }),
         },
         max_iteration: 64,
@@ -77,20 +81,23 @@ fn main() -> io::Result<()> {
     };
 
     match generate_fractal_set(fragment_task).save(img_path.clone().as_str()) {
-        Ok(_) => println!("L'image du Julia Set a été sauvegardée !"),
+        Ok(_) => println!("L'image de la fractale a été sauvegardée !"),
         Err(e) => println!(
-            "Erreur lors de la sauvegarde de l'image du Julia Set : {}",
+            "Erreur lors de la sauvegarde de l'image de la fractale : {}",
             e
         ),
     }
 
     match open_image(img_path.as_str()) {
         Ok(_) => {
-            println!("L'image du Julia Set a été ouverte !");
+            println!("L'image de la fractale a été ouverte !");
             Ok(())
         }
         Err(e) => {
-            println!("Erreur lors de l'ouverture de l'image du Julia Set : {}", e);
+            println!(
+                "Erreur lors de l'ouverture de l'image de la fractale : {}",
+                e
+            );
             Err(e)
         }
     }

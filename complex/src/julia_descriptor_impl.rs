@@ -10,6 +10,9 @@ pub trait JuliaOperations {
 
     /// Returns the square of the divergence threshold.
     fn divergence_threshold_square(&self) -> f64;
+
+    /// Returns a reference to the complex number `c` used in the Julia fractal formula.
+    fn c(&self) -> &Complex;
 }
 
 impl FractalOperations for JuliaDescriptor {
@@ -43,10 +46,6 @@ impl FractalOperations for JuliaDescriptor {
             0,
         )
     }
-
-    fn c(&self) -> &Complex {
-        &self.c
-    }
 }
 
 impl JuliaOperations for JuliaDescriptor {
@@ -59,5 +58,9 @@ impl JuliaOperations for JuliaDescriptor {
 
     fn divergence_threshold_square(&self) -> f64 {
         self.divergence_threshold_square
+    }
+
+    fn c(&self) -> &Complex {
+        &self.c
     }
 }

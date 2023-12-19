@@ -8,7 +8,11 @@ pub trait IteratedSinZOperations {
     /// Constructs a new `IteratedSinZDescriptor` with the specified complex number and divergence threshold.
     fn new(c: Complex) -> Self;
 
+    ///Fixed to 50
     fn max_iteration(&self) -> u16;
+
+    /// Returns a reference to the complex number `c` used in the IteratedSinZ fractal formula.
+    fn c(&self) -> &Complex;
 }
 
 impl FractalOperations for IteratedSinZDescriptor {
@@ -25,10 +29,6 @@ impl FractalOperations for IteratedSinZDescriptor {
 
         iterations
     }
-
-    fn c(&self) -> &Complex {
-        &self.c
-    }
 }
 
 impl IteratedSinZOperations for IteratedSinZDescriptor {
@@ -36,9 +36,12 @@ impl IteratedSinZOperations for IteratedSinZDescriptor {
         Self { c }
     }
 
-    ///Fixed to 50
     fn max_iteration(&self) -> u16 {
         50
+    }
+
+    fn c(&self) -> &Complex {
+        &self.c
     }
 }
 
