@@ -30,7 +30,7 @@ use std::net::TcpListener;
 /// }
 /// ```
 pub fn run_server(address: &str) -> std::io::Result<()> {
-    info!("Starting server on {}", address);
+    info!("Server is running on {}", address);
     let listener = match TcpListener::bind(address) {
         Ok(listener) => listener,
         Err(e) => {

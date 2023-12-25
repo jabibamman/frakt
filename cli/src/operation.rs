@@ -6,6 +6,8 @@ mod operation_tests {
         CliServerArgs {
             hostname: "127.0.0.1".to_string(),
             port: 8787,
+            verbose: false,
+            debug: false,
         }
     }
 
@@ -16,6 +18,9 @@ mod operation_tests {
             hostname: args.hostname.clone(),
             port: args.port.clone(),
             worker_name: "worker".to_string(),
+            verbose: args.verbose.clone(),
+            debug: args.debug.clone(),
+            open:  false,
         };
 
     
@@ -29,6 +34,8 @@ mod operation_tests {
         let server_args: CliServerArgs = CliServerArgs {
             hostname: args.hostname.clone(),
             port: args.port.clone(),
+            verbose: args.verbose.clone(),
+            debug: args.debug.clone(),
         };
 
         let address = format!("{}:{}", server_args.hostname, server_args.port);

@@ -94,16 +94,18 @@ fn main() -> io::Result<()> {
         ),
     }
 
-    match open_image(img_path.as_str()) {
-        Ok(_) => {
-            info!("L'image de la fractale a été ouverte !");
-            Ok(())
-        }
-        Err(e) => {
-            error!("Erreur lors de l'ouverture de l'image de la frctale: {}", 
-            e
-            );
-            Err(e)
+    if cli_args.open {
+        match open_image(img_path.as_str()) {
+            Ok(_) => {
+                info!("L'image de la fractale a été ouverte !");
+            }
+            Err(e) => {
+                error!("Erreur lors de l'ouverture de l'image de la fractale: {}", 
+                e
+                );
+            }
         }
     }
+
+    Ok(())
 }
