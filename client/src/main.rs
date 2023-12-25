@@ -11,7 +11,6 @@ use crate::image::open_image;
 
 use cli::parser::{CliClientArgs, Parser};
 use server::services::{connect::connect, reader::get_response, write::write};
-use server::messages::serialization::serialize_request;
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::Julia;
 use shared::types::fractal_descriptor::{FractalDescriptor, JuliaDescriptor};
@@ -27,32 +26,20 @@ fn main() -> io::Result<()> {
     shared::logger::init_logger();
 
     let cli_args: CliClientArgs = CliClientArgs::parse();
-    let fragment_request = FragmentRequest::new(cli_args.worker_name, 100);
-    let _serialized_request = fragment_request.serialize()?;
+    let fragment_request = FragmentRequest::new(cli_args.worker_name, 1000);
+    let serialized_request = fragment_request.serialize()?;
     let connection_result = connect(format!("{}:{}", cli_args.hostname, cli_args.port).as_str());
 
-    let fragment_request = FragmentRequest {
-        worker_name: "Worker 1".to_string(),
-        maximal_work_load: 1000,
-    };
-
-    let serialized_request = match serialize_request(&fragment_request) {
-        Ok(serialized_request) => serialized_request,
-        Err(e) => {
-            error!("Erreur lors de la sérialisation de la requête : {}", e);
-            return Ok(());
-        }
-    };
- 
     if let Ok(mut stream) = connection_result {
         info!("Connected to the server!");
+        debug!("Sending message: {}", serialized_request);
         match write(&mut stream, serialized_request.as_str()) {
-            Ok(_) => info!(" Message sent!"),
+            Ok(_) => info!("Message sent!"),
             Err(error) => error!("Failed to send message, {}", error),
         }
 
         let response = get_response(&mut stream)?;
-        debug!("Response received: {:?}", response);
+        info!("Response received: {:?}", response);
     } else if let Err(e) = connection_result {
         error!("Failed to connect to the server: {}", e);
     }

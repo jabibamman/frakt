@@ -1,4 +1,4 @@
-use std::{io::{Read, self}, net::TcpStream};
+use std::{io::{Read, self, BufReader}, net::TcpStream};
 
 use log::{info, error, debug};
 use shared::types::messages::Message;
@@ -40,16 +40,28 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         Err(e) => error!("Failed to get local address: {}", e),
     }
 
-    let mut buffer = [0; 1024];
-    let bytes_read = stream.read(&mut buffer)?;
-    let data = String::from_utf8_lossy(&buffer[..bytes_read]);
+    let mut reader = BufReader::new(&stream);
+    let mut buffer = Vec::new();
+    reader.read_to_end(&mut buffer)?;
 
-    info!("Readed data");
+    debug!("Read {} bytes", buffer.len());
 
-    let trimmed_data = data.trim();
-    let message_result = deserialize_message(trimmed_data);
+    let data_str = match std::str::from_utf8(&buffer) {
+        Ok(str) => str,
+        Err(e) => {
+            error!("Invalid UTF-8 sequence: {}", e);
+            return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
+        }
+    };
 
-    info!("Deserialized data");
+    let json_start = data_str.find('{').unwrap_or(0);
+    let json_str = &data_str[json_start..];
+    
+    debug!("Received data: {}", json_str);
+
+    let message_result = deserialize_message(json_str);
+    debug!("Deserialized data {:?}", message_result);
+    
     match message_result {
         Ok(Message::FragmentRequest(request)) => {
             let task = create_task_for_request(request);
@@ -70,7 +82,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
             process_result(result);
         }
         Err(e) => {
-            error!("[SERVER] Error deserializing request: {:?}", e);
+            error!("Error deserializing request: {:?}", e);
         }
     }
 

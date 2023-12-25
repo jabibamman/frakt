@@ -1,3 +1,7 @@
+use log::{error, debug};
+use serde::ser::Error;
+use serde_json::Value;
+
 use crate::types::messages::FragmentRequest;
 
 pub trait FragmentRequestOperation {
@@ -34,7 +38,13 @@ impl FragmentRequestOperation for FragmentRequest {
     }
 
     fn deserialize(message: &str) -> Result<Self, serde_json::Error> {
-        serde_json::from_str(message)
+        debug!("Deserializing message: {}", message);
+        let v: Value = serde_json::from_str(message)?;
+        if !v["FragmentRequest"].is_object() {
+            error!("Invalid format: FragmentRequest object not found");
+            return Err(serde_json::Error::custom("Invalid format"));
+        }
+        serde_json::from_value(v["FragmentRequest"].clone())
     }
 }
 
