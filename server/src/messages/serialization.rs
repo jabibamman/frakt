@@ -1,4 +1,4 @@
-use log::{info, debug};
+use log::debug;
 use serde_json::json;
 use shared::{types::{messages::{FragmentRequest, Message, FragmentTask}, fractal_descriptor::FractalType}, utils::fragment_request_impl::FragmentRequestOperation};
 use serde::de::Error as SerdeError;
@@ -68,7 +68,7 @@ pub fn deserialize_request(response: &str) -> serde_json::Result<FragmentRequest
 /// Currently, it only supports deserializing `FragmentRequest`. Other types like `FragmentTask` and `FragmentResult` are marked with `todo!()`.
 pub fn deserialize_message(response: &str) -> serde_json::Result<Message> {
     let response_value: serde_json::Value = serde_json::from_str(response)?;
-    info!("Response value: {:?}", response_value);
+    debug!("Response value: {:?}", response_value);
     match response_value.as_object().and_then(|obj| obj.keys().next()) {
         Some(key) if key == "FragmentRequest" => {
             debug!("Deserializing FragmentRequest");

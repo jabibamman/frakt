@@ -1,4 +1,4 @@
-use std::{io::{Read, self, BufReader}, net::TcpStream};
+use std::{io::{Read, self}, net::TcpStream};
 
 use log::{info, error, debug};
 use shared::types::messages::Message;
@@ -40,12 +40,25 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         Err(e) => error!("Failed to get local address: {}", e),
     }
 
-    let mut reader = BufReader::new(&stream);
-    let mut buffer = Vec::new();
-    reader.read_to_end(&mut buffer)?;
+    let mut total_size_buffer = [0; 4];
+    stream.read_exact(&mut total_size_buffer)?;
+    let total_size = u32::from_be_bytes(total_size_buffer) as usize;
+    debug!("Total size: {}", total_size);
 
-    debug!("Read {} bytes", buffer.len());
+    let mut json_size_buffer = [0; 4];
+    stream.read_exact(&mut json_size_buffer)?;
+    let json_size = u32::from_be_bytes(json_size_buffer) as usize;
+    debug!("JSON size: {}", json_size);
 
+    let mut buffer = vec![0; total_size];
+    stream.read_exact(&mut buffer)?;
+
+    let json_str = std::str::from_utf8(&buffer[0..json_size]).map_err(|e| {
+        error!("Invalid UTF-8 sequence: {}", e);
+        io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8")
+    })?;
+
+    debug!("Received JSON: {}", json_str);
     let data_str = match std::str::from_utf8(&buffer) {
         Ok(str) => str,
         Err(e) => {
@@ -54,12 +67,9 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         }
     };
 
-    let json_start = data_str.find('{').unwrap_or(0);
-    let json_str = &data_str[json_start..];
-    
-    debug!("Received data: {}", json_str);
+    debug!("Received data: {}", data_str);
 
-    let message_result = deserialize_message(json_str);
+    let message_result = deserialize_message(data_str);
     debug!("Deserialized data {:?}", message_result);
     
     match message_result {

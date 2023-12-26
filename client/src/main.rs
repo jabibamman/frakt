@@ -39,7 +39,7 @@ fn main() -> io::Result<()> {
         }
 
         let response = get_response(&mut stream)?;
-        info!("Response received: {:?}", response);
+        debug!("Response received: {:?}", response);
     } else if let Err(e) = connection_result {
         error!("Failed to connect to the server: {}", e);
     }
