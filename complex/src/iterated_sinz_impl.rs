@@ -2,6 +2,7 @@ use crate::complex_operations::ComplexOperations;
 use crate::fractal_operations::FractalOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::IteratedSinZDescriptor;
+use shared::types::pixel_intensity::PixelIntensity;
 
 /// Provides operations specific to the Iterated Sin(z) fractal.
 pub trait IteratedSinZOperations {
@@ -28,6 +29,23 @@ impl FractalOperations for IteratedSinZDescriptor {
         }
 
         iterations
+    }
+
+    /// Computes the pixel intensity of a complex point.
+    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> shared::types::pixel_intensity::PixelIntensity {
+        let mut z = complex_point.clone();
+        let mut iterations = 0;
+
+        while z.magnitude_squared() < 4.0 && iterations < max_iteration {
+            z = z.sin(); 
+            z = z.mul(&self.c());
+            iterations += 1;
+        }
+
+        let zn = z.norm() as f32;
+        let count = iterations as f32 / max_iteration as f32;
+
+        PixelIntensity { zn, count }
     }
 }
 

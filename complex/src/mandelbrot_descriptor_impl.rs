@@ -2,6 +2,7 @@ use crate::complex_operations::ComplexOperations;
 use crate::fractal_operations::FractalOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::MandelbrotDescriptor;
+use shared::types::pixel_intensity::PixelIntensity;
 /// Trait définissant les opérations de fractale de Mandelbrot.
 pub trait MandelbrotOperations {
     /// Crée une nouvelle instance du type de fractale de Mandelbrot.
@@ -37,5 +38,19 @@ impl FractalOperations for MandelbrotDescriptor {
         }
 
         iterations
+    }
+
+    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> shared::types::pixel_intensity::PixelIntensity {
+        let (mut z, mut i) = (Complex::new(0.0, 0.0), 0);
+
+        while z.abs() * &z.abs() <= 4.0 && i < max_iteration {
+            z = z.square().add(complex_point);
+            i += 1;
+        }
+
+        PixelIntensity {
+            zn: z.norm() as f32,
+            count: i as f32,
+        }
     }
 }

@@ -2,6 +2,7 @@ use crate::complex_operations::ComplexOperations;
 use crate::fractal_operations::FractalOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::JuliaDescriptor;
+use shared::types::pixel_intensity::PixelIntensity;
 
 /// Provides operations specific to the Julia fractal.
 pub trait JuliaOperations {
@@ -45,6 +46,21 @@ impl FractalOperations for JuliaDescriptor {
             max_iteration,
             0,
         )
+    }
+
+    /// Computes the pixel intensity of a complex point.
+    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> PixelIntensity {
+        let (mut z, mut i) = (complex_point.clone(), 0);
+
+        while z.magnitude_squared() < self.divergence_threshold_square && i < max_iteration {
+            z = z.square().add(&self.c);
+            i += 1;
+        }
+
+        PixelIntensity {
+            zn: z.norm() as f32, 
+            count: i as f32 / max_iteration as f32, 
+        }
     }
 }
 

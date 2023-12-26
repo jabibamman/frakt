@@ -22,9 +22,17 @@ pub trait ComplexOperations {
 
     /// Returns the Euclidean norm (magnitude) of the complex number.
     fn norm(&self) -> f64;
+
+    /// Divides two complex numbers and returns the result.
     fn div(&self, other: Self) -> Self;
+
+    /// Returns the absolute value of the complex number.
     fn abs(&self) -> f64;
+
+    /// Returns the sine of the complex number.
     fn sin(&self) -> Self;
+
+    /// Returns the exponential of the complex number.
     fn exp(&self) -> Self;
 }
 

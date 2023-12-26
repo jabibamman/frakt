@@ -1,8 +1,11 @@
+use std::f32::EPSILON;
+
 use crate::complex_operations::ComplexOperations;
 use crate::fractal_operations::FractalOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::NewtonRaphsonZ3Descriptor;
 use shared::types::fractal_descriptor::NewtonRaphsonZ4Descriptor;
+use shared::types::pixel_intensity::PixelIntensity;
 
 pub trait NewtonRaphsonOperations {
     /// Crée une nouvelle instance du type de fractale.
@@ -88,6 +91,10 @@ impl FractalOperations for NewtonRaphsonZ3Descriptor {
             }
         }
     }
+
+    fn compute_pixel_intensity(&self, _complex_point: &Complex, _max_iteration: u16) -> PixelIntensity {
+        todo!("Implement this method")
+    }
 }
 impl FractalOperations for NewtonRaphsonZ4Descriptor {
     /// Itère sur un point complexe selon la méthode Newton-Raphson pour Z^4.
@@ -108,5 +115,9 @@ impl FractalOperations for NewtonRaphsonZ4Descriptor {
                 0
             }
         }
+    }
+
+    fn compute_pixel_intensity(&self, _complex_point: &Complex, _max_iteration: u16) -> shared::types::pixel_intensity::PixelIntensity {
+        todo!("Implement this method")
     }
 }
