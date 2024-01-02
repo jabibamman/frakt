@@ -17,19 +17,23 @@ impl MandelbrotOperations for MandelbrotDescriptor {
 }
 impl FractalOperations for MandelbrotDescriptor {
     /// Calcule l'intensité d'un pixel selon la méthode de la fractale de Mandelbrot.
-    /// 
+    ///
     /// Cette fonction prend un point complexe et un nombre maximal d'itérations.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `complex_point` - Un point complexe à itérer.
     /// * `max_iteration` - Le nombre maximal d'itérations à effectuer.
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// L'intensité du pixel.
-    /// 
-    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> PixelIntensity {
+    ///
+    fn compute_pixel_intensity(
+        &self,
+        complex_point: &Complex,
+        max_iteration: u16,
+    ) -> PixelIntensity {
         let (mut z, mut i) = (Complex::new(0.0, 0.0), 0);
 
         while z.magnitude_squared() <= 4.0 && i < max_iteration {
@@ -38,8 +42,8 @@ impl FractalOperations for MandelbrotDescriptor {
         }
 
         PixelIntensity {
-            zn: (z.magnitude_squared() / 4.0) as f32, 
-            count: i as f32 / max_iteration as f32, 
+            zn: (z.magnitude_squared() / 4.0) as f32,
+            count: i as f32 / max_iteration as f32,
         }
     }
 }
