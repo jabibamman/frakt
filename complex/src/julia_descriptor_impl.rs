@@ -17,40 +17,9 @@ pub trait JuliaOperations {
 }
 
 impl FractalOperations for JuliaDescriptor {
-    fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> u16 {
-        fn recursive_iterate(
-            z: Complex,
-            c: &Complex,
-            divergence_threshold_square: f64,
-            max_iteration: u16,
-            current_iteration: u16,
-        ) -> u16 {
-            if z.norm() > divergence_threshold_square || current_iteration == max_iteration {
-                current_iteration
-            } else {
-                let next_z = z.square().add(c);
-                recursive_iterate(
-                    next_z,
-                    c,
-                    divergence_threshold_square,
-                    max_iteration,
-                    current_iteration + 1,
-                )
-            }
-        }
-
-        recursive_iterate(
-            complex_point.clone(),
-            &self.c,
-            self.divergence_threshold_square,
-            max_iteration,
-            0,
-        )
-    }
-
     /// Computes the pixel intensity of a complex point.
     fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> PixelIntensity {
-        let (mut z, mut i) = (complex_point.clone(), 0);
+        let (mut z, mut i) = (*complex_point, 0);
 
         while z.magnitude_squared() < self.divergence_threshold_square && i < max_iteration {
             z = z.square().add(&self.c);

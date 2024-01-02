@@ -34,6 +34,9 @@ pub trait ComplexOperations {
 
     /// Returns the exponential of the complex number.
     fn exp(&self) -> Self;
+
+    /// Returns the argument of the complex number in radians.
+    fn arg(&self) -> f64;
 }
 
 impl ComplexOperations for Complex {
@@ -92,6 +95,11 @@ impl ComplexOperations for Complex {
         let exp_re = Complex::new(self.re.exp(), 0.0);
         let exp_im = Complex::new(self.im.cos(), self.im.sin());
         exp_re.mul(&exp_im)
+    }
+
+    /// Returns the argument of the complex number in radians.
+    fn arg(&self) -> f64 {
+        self.im.atan2(self.re)
     }
 }
 
@@ -283,4 +291,34 @@ mod complex_tests {
         assert_eq!(a.re, -1.0);
         assert_eq!(a.im, -2.0);
     }
+
+    #[test]
+    fn test_complex_arg() {
+        let tolerance = 1e-6;
+
+        // nombre complexe dans le premier quadrant
+        let complex = Complex::new(1.0, 1.0);
+        let expected = std::f64::consts::FRAC_PI_4; // 45 degrés en radians
+        let difference = (complex.arg() - expected).abs();
+        assert!(difference < tolerance, "Failed at first quadrant");
+
+        // nombre complexe dans le deuxième quadrant
+        let complex = Complex::new(-1.0, 1.0);
+        let expected = 3.0 * std::f64::consts::FRAC_PI_4; // 135 degrés en radians
+        let difference = (complex.arg() - expected).abs();
+        assert!(difference < tolerance, "Failed at second quadrant");
+
+        // nombre complexe dans le troisième quadrant
+        let complex = Complex::new(-1.0, -1.0);
+        let expected = -3.0 * std::f64::consts::FRAC_PI_4; // -135 degrés en radians
+        let difference = (complex.arg() - expected).abs();
+        assert!(difference < tolerance, "Failed at third quadrant");
+
+        // nombre complexe dans le quatrième quadrant
+        let complex = Complex::new(1.0, -1.0);
+        let expected = -std::f64::consts::FRAC_PI_4; // -45 degrés en radians
+        let difference = (complex.arg() - expected).abs();
+        assert!(difference < tolerance, "Failed at fourth quadrant");
+    }
+    
 }

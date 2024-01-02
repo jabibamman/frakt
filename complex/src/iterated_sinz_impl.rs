@@ -14,38 +14,45 @@ pub trait IteratedSinZOperations {
 
     /// Returns a reference to the complex number `c` used in the IteratedSinZ fractal formula.
     fn c(&self) -> &Complex;
+
+    /// Returns the divergence threshold `η` used in the IteratedSinZ fractal formula.
+    /// 
+    /// # Description
+    /// 
+    /// In the context of the Iterated SinZ fractal, this divergence threshold (η) is used to determine when
+    /// the iterations should stop.
+    fn η(&self) -> f64;
 }
 
 impl FractalOperations for IteratedSinZDescriptor {
-    fn iterate_complex_point(&self, complex_point: &Complex, _max_iteration: u16) -> u16 {
-        let mut z = complex_point.clone();
-        let mut iterations = 0;
-        let max = 256;
-
-        while z.im.abs() < self.max_iteration() as f64 && iterations < max {
-            z = z.sin();
-            z = z.mul(&self.c);
-            iterations += 1;
-        }
-
-        iterations
-    }
-
     /// Computes the pixel intensity of a complex point.
-    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> shared::types::pixel_intensity::PixelIntensity {
-        let mut z = complex_point.clone();
+    /// 
+    /// # Description
+    /// 
+    /// This function takes a complex point and a maximum number of iterations.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `complex_point` - A complex point to iterate.
+    /// * `max_iteration` - The maximum number of iterations to perform.
+    /// 
+    /// # Returns
+    /// 
+    /// The pixel intensity.
+    /// 
+    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> PixelIntensity {
+        let mut z = *complex_point;
         let mut iterations = 0;
 
-        while z.magnitude_squared() < 4.0 && iterations < max_iteration {
-            z = z.sin(); 
-            z = z.mul(&self.c());
+        while z.magnitude_squared() < self.η() && iterations < max_iteration {
+            z = z.sin().mul(&self.c); // f(z_n) = sin(z_n) * c
             iterations += 1;
         }
 
-        let zn = z.norm() as f32;
-        let count = iterations as f32 / max_iteration as f32;
-
-        PixelIntensity { zn, count }
+        PixelIntensity {
+            zn: (z.magnitude_squared() / self.η()) as f32, // η = 50
+            count: iterations as f32 / max_iteration as f32, 
+        }
     }
 }
 
@@ -60,6 +67,10 @@ impl IteratedSinZOperations for IteratedSinZDescriptor {
 
     fn c(&self) -> &Complex {
         &self.c
+    }
+
+    fn η(&self) -> f64 {
+        50.0
     }
 }
 
