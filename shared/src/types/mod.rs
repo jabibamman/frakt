@@ -1,3 +1,4 @@
+pub mod color;
 pub mod complex;
 pub mod filesystem;
 pub mod fractal_descriptor;

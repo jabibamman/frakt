@@ -1,11 +1,13 @@
 use complex::complex_operations::ComplexOperations;
 use complex::fractal_operations::FractalOperations;
 use image::{ImageBuffer, Rgb};
+use shared::types::color::{HSL, RGB};
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::{
     IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,
 };
 use shared::types::messages::FragmentTask;
+use shared::types::pixel_intensity::PixelIntensity;
 
 /// Generates an image of a Fractal Type based on the provided fragment task.
 ///
@@ -40,27 +42,63 @@ pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>,
         let scaled_y = y as f64 * scale_y + range.min.y;
         let complex_point = Complex::new(scaled_x, scaled_y);
 
-        let iterations =
-            descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
-        *pixel = Rgb(color((iterations as f32) / 255.0));
+        let pixel_intensity =
+            descriptor.compute_pixel_intensity(&complex_point, fragment_task.max_iteration);
+        *pixel = Rgb(color(pixel_intensity));
     }
 
     img
 }
 
-///Gets a number between 0 and 1 and return the color that correspond to its intensity
-fn color(intensity: f32) -> [u8; 3] {
-    let brightness = (0.5, 0.5, 0.5);
-    let bright_color = (0.5, 0.5, 0.5);
-    let frequency_change = (1.0, 1.0, 1.0);
-    let base_color = (0.1, 0.2, 0.3);
-    let r = bright_color.0 * (6.28318 * (frequency_change.0 * intensity + base_color.0)).cos()
-        + brightness.0;
-    let g = bright_color.1 * (6.28318 * (frequency_change.1 * intensity + base_color.1)).cos()
-        + brightness.1;
-    let b = bright_color.2 * (6.28318 * (frequency_change.2 * intensity + base_color.2)).cos()
-        + brightness.2;
-    [(255.0 * r) as u8, (255.0 * g) as u8, (255.0 * b) as u8]
+///Generates a color based on the provided pixel intensity.
+/// # Arguments
+/// * `pixel_intensity`: A `PixelIntensity` containing the number of iterations and the norm of the complex point.
+///
+/// # Returns
+/// Returns an array containing the RGB values of the color.
+///
+fn color(pixel_intensity: PixelIntensity) -> [u8; 3] {
+    let hsl = HSL {
+        h: pixel_intensity.count * 360.0,
+        s: 0.5 + 0.5 * (pixel_intensity.zn * 3.14).cos(),
+        l: 0.5,
+    };
+
+    let color = hsl_to_rgb(hsl);
+
+    [color.r, color.g, color.b]
+}
+
+/// Convert a color from HSL to RGB
+/// # Arguments
+/// * `hsl`: A `HSL` containing the HSL values of the color (Hue, Saturation, Lightness)
+///
+/// # Returns
+/// Returns a tuple containing the RGB values of the color
+///
+/// # Details
+/// This function is based on the algorithm found at https://www.rapidtables.com/convert/color/hsl-to-rgb.html
+///
+fn hsl_to_rgb(hsl: HSL) -> RGB {
+    let c = (1.0 - (2.0 * hsl.l - 1.0).abs()) * hsl.s;
+    let h_prime = hsl.h / 60.0;
+    let x = c * (1.0 - (h_prime % 2.0 - 1.0).abs());
+    let m = hsl.l - c / 2.0;
+
+    let (r_temp, g_temp, b_temp) = match h_prime.floor() as u8 {
+        0 => (c, x, 0.0),
+        1 => (x, c, 0.0),
+        2 => (0.0, c, x),
+        3 => (0.0, x, c),
+        4 => (x, 0.0, c),
+        _ => (c, 0.0, x),
+    };
+
+    RGB {
+        r: ((r_temp + m) * 255.0) as u8,
+        g: ((g_temp + m) * 255.0) as u8,
+        b: ((b_temp + m) * 255.0) as u8,
+    }
 }
 
 #[cfg(test)]
@@ -106,9 +144,12 @@ mod julia_descriptor_tests {
 
     #[test]
     fn test_color() {
-        let intensity = 0.5;
+        let pixel_intensity = PixelIntensity {
+            zn: 0.5,
+            count: 0.5,
+        };
 
-        let result = color(intensity);
+        let result = color(pixel_intensity);
 
         let test0 = type_of(result[0]);
         let test1 = type_of(result[1]);
@@ -117,5 +158,33 @@ mod julia_descriptor_tests {
         assert!(test0.eq("u8"));
         assert!(test1.eq("u8"));
         assert!(test2.eq("u8"));
+
+        assert_eq!(result, [63, 191, 191]);
+    }
+
+    #[test]
+    fn test_generate_fractal_set() {
+        let fragment_task = FragmentTask {
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: Julia(JuliaDescriptor {
+                    c: Complex::new(-0.8, 0.156),
+                    divergence_threshold_square: 0.0,
+                }),
+            },
+            resolution: Resolution { nx: 800, ny: 600 },
+            range: Range {
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
+            },
+            max_iteration: 100,
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
+        };
+
+        let result = generate_fractal_set(fragment_task);
+
+        assert_eq!(result.dimensions(), (800, 600));
     }
 }
