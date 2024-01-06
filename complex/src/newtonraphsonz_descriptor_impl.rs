@@ -47,7 +47,7 @@ impl FractalOperations for NewtonRaphsonZ3Descriptor {
                 Ok(z) => z,
                 Err(_) => break,
             };
-            
+
             if (next_z.sub(&z)).magnitude_squared() < 1e-6 {
                 break;
             }
@@ -125,6 +125,6 @@ fn newton_raphson_step(z: &Complex, degree: u32) -> Result<Complex, &'static str
             let dpz = z.square().mul(z).mul(&Complex::new(4.0, 0.0));
             Ok(z.sub(&pz.div(dpz)))
         }
-        _ => Err("Degree must be 3 or 4")
+        _ => Err("Degree must be 3 or 4"),
     }
 }

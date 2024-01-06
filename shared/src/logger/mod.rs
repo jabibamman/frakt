@@ -1,4 +1,4 @@
-pub fn init_logger() { 
+pub fn init_logger() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
         .format_timestamp(Some(env_logger::TimestampPrecision::Millis))
         .init();

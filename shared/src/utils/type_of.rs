@@ -21,7 +21,7 @@ use std::any::type_name;
 ///
 /// ```rust
 /// use shared::utils::type_of::type_of;
-/// 
+///
 /// assert_eq!(type_of(42), "i32");
 /// assert_eq!(type_of("hello"), "&str");
 /// ```

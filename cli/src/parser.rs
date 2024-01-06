@@ -31,7 +31,7 @@ pub struct CliClientArgs {
     /// Default: "worker"
     #[clap(short = 'N', long = "name", default_value = "worker")]
     pub worker_name: String,
-    
+
     /// Optional: Add a flag to enable/disable logging.
     /// Default: false
     #[clap(short = 'v', long = "verbose", default_value = "false")]

@@ -1,5 +1,13 @@
-use shared::types::{messages::{FragmentRequest, FragmentTask, FragmentResult}, u8data::U8Data, fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor}, complex::Complex, range::Range, resolution::Resolution, point::Point};
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
+use shared::types::{
+    complex::Complex,
+    fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor},
+    messages::{FragmentRequest, FragmentResult, FragmentTask},
+    point::Point,
+    range::Range,
+    resolution::Resolution,
+    u8data::U8Data,
+};
 
 pub fn create_task_for_request(_request: FragmentRequest) -> FragmentTask {
     FragmentTask {

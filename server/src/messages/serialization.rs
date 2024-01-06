@@ -1,8 +1,13 @@
 use log::debug;
-use serde_json::json;
-use shared::{types::{messages::{FragmentRequest, Message, FragmentTask}, fractal_descriptor::FractalType}, utils::fragment_request_impl::FragmentRequestOperation};
 use serde::de::Error as SerdeError;
-
+use serde_json::json;
+use shared::{
+    types::{
+        fractal_descriptor::FractalType,
+        messages::{FragmentRequest, FragmentTask, Message},
+    },
+    utils::fragment_request_impl::FragmentRequestOperation,
+};
 
 /// Serializes a `FragmentRequest` into a JSON string.
 ///
@@ -39,10 +44,18 @@ pub fn serialize_request(request: &FragmentRequest) -> Result<String, serde_json
 /// or an Err containing the `serde_json::Error` if it fails.
 pub fn deserialize_request(response: &str) -> serde_json::Result<FragmentRequest> {
     let response_value: serde_json::Value = serde_json::from_str(response)?;
-    let response_details = response_value.get("FragmentRequest").ok_or_else(|| SerdeError::custom("FragmentRequest not found"))?;
+    let response_details = response_value
+        .get("FragmentRequest")
+        .ok_or_else(|| SerdeError::custom("FragmentRequest not found"))?;
 
-    let worker_name = response_details.get("worker_name").and_then(|c| c.as_str()).ok_or_else(|| SerdeError::custom("Invalid worker name"))?;
-    let maximal_work_load = response_details.get("maximal_work_load").and_then(|c| c.as_u64()).ok_or_else(|| SerdeError::custom("Invalid maximal work load"))?;
+    let worker_name = response_details
+        .get("worker_name")
+        .and_then(|c| c.as_str())
+        .ok_or_else(|| SerdeError::custom("Invalid worker name"))?;
+    let maximal_work_load = response_details
+        .get("maximal_work_load")
+        .and_then(|c| c.as_u64())
+        .ok_or_else(|| SerdeError::custom("Invalid maximal work load"))?;
 
     let response = FragmentRequest {
         worker_name: worker_name.to_string(),
@@ -80,7 +93,9 @@ pub fn deserialize_message(response: &str) -> serde_json::Result<Message> {
         Some(key) if key == "FragmentResult" => {
             todo!()
         }
-        _ => Err(serde_json::Error::custom("No recognizable message type found"))
+        _ => Err(serde_json::Error::custom(
+            "No recognizable message type found",
+        )),
     }
 }
 
@@ -158,8 +173,7 @@ pub fn serialize_task(task: &FragmentTask) -> Result<String, serde_json::Error> 
     serde_json::to_string(&request)
 }
 
-
-/* 
+/*
 // Un dispatcher qui décide quel builder utiliser en fonction du nom du fractal
 fn dispatch_fractal_builder(fractal_name: &str, fractal_value: &serde_json::Value) -> serde_json::Result<FractalType> {
     //println!("Fractal name: {}, {}", fractal_name, max_iteration);

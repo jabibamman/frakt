@@ -1,8 +1,8 @@
 use complex::complex_operations::ComplexOperations;
 use complex::fractal_operations::FractalOperations;
 use image::{ImageBuffer, Rgb};
-use shared::types::color::{HSL, RGB};
 use log::info;
+use shared::types::color::{HSL, RGB};
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::FractalType::{
     IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,

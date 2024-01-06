@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Represents the resolution of an image or a grid, defined by the number of pixels or cells along the x and y axes.
 ///

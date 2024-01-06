@@ -1,4 +1,4 @@
-use log::{info, error};
+use log::{error, info};
 
 use crate::messages::handler::handle_client;
 use std::net::TcpListener;

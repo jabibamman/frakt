@@ -1,4 +1,4 @@
-use log::{error, debug};
+use log::{debug, error};
 use serde::ser::Error;
 use serde_json::Value;
 

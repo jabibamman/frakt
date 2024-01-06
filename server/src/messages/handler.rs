@@ -1,11 +1,17 @@
-use std::{io::{Read, self}, net::TcpStream};
+use std::{
+    io::{self, Read},
+    net::TcpStream,
+};
 
-use log::{info, error, debug};
+use log::{debug, error, info};
 use shared::types::messages::Message;
 
 use crate::services;
 
-use super::{serialization::{deserialize_message, serialize_task}, fragment_maker::{create_task_for_request, process_result}};
+use super::{
+    fragment_maker::{create_task_for_request, process_result},
+    serialization::{deserialize_message, serialize_task},
+};
 
 /// Handles a client TCP stream.
 ///
@@ -71,14 +77,17 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
 
     let message_result = deserialize_message(data_str);
     debug!("Deserialized data {:?}", message_result);
-    
+
     match message_result {
         Ok(Message::FragmentRequest(request)) => {
             let task = create_task_for_request(request);
             let serialized_task: String = serialize_task(&task)?;
 
-            info!("Sending serialized task to client at {}", stream.peer_addr()?); 
-            
+            info!(
+                "Sending serialized task to client at {}",
+                stream.peer_addr()?
+            );
+
             services::write::write(&mut stream, &serialized_task)?;
 
             let response = services::reader::get_response(&mut stream)?;
