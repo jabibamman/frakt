@@ -1,5 +1,5 @@
 use cli::parser::{CliServerArgs, Parser};
-use log::{info, error};
+use log::{error, info};
 use server::services::server_runner::run_server;
 use shared::types::error::FractalError;
 

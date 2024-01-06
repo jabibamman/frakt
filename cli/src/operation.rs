@@ -20,10 +20,9 @@ mod operation_tests {
             worker_name: "worker".to_string(),
             verbose: args.verbose.clone(),
             debug: args.debug.clone(),
-            open:  false,
+            open: false,
         };
 
-    
         let address = format!("{}:{}", client_args.hostname, client_args.port);
         assert_eq!(address, "127.0.0.1:8787");
     }

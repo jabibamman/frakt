@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// A `Complex` number with real (`re`) and imaginary (`im`) parts.
 ///

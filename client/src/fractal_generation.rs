@@ -1,8 +1,8 @@
 use complex::complex_operations::ComplexOperations;
 use complex::fractal_operations::FractalOperations;
 use image::{ImageBuffer, Rgb};
-use shared::types::color::{HSL, RGB};
 use log::info;
+use shared::types::color::{HSL, RGB};
 use shared::types::complex::Complex;
 use shared::types::error::FractalError;
 use shared::types::fractal_descriptor::FractalType::{
@@ -141,7 +141,7 @@ mod julia_descriptor_tests {
 
         let result = generate_fractal_set(fragment_task);
 
-        assert_eq!(result.dimensions(), (800, 600));
+        assert_eq!(result.expect("dimensions").dimensions(), (800, 600));
     }
 
     #[test]
@@ -187,6 +187,6 @@ mod julia_descriptor_tests {
 
         let result = generate_fractal_set(fragment_task);
 
-        assert_eq!(result.dimensions(), (800, 600));
+        assert_eq!(result.expect("dimensions").dimensions(), (800, 600));
     }
 }

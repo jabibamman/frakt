@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Represents data associated with a set of pixels in an image or a fragment of an image.
 ///

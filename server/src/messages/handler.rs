@@ -1,4 +1,7 @@
-use std::{io::{Read, self}, net::TcpStream};
+use std::{
+    io::{self, Read},
+    net::TcpStream,
+};
 
 use log::{info, error, debug};
 use shared::{types::messages::Message, utils::fragment_task_impl::FragmentTaskOperation};
@@ -70,7 +73,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
 
     let message_result = deserialize_message(data_str);
     debug!("Deserialized data {:?}", message_result);
-    
+
     match message_result {
         Ok(Message::FragmentRequest(request)) => {
             let task = create_task_for_request(request);

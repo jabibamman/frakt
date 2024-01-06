@@ -6,7 +6,6 @@ use crate::types::range::Range;
 use crate::types::resolution::Resolution;
 use crate::types::u8data::U8Data;
 
-
 /// Represents a request for a fragment of work from a worker.
 ///
 /// Attributes:
