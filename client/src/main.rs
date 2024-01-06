@@ -10,6 +10,7 @@ use crate::fractal_generation::generate_fractal_set;
 use crate::image::open_image;
 
 use cli::parser::{CliClientArgs, Parser};
+use log::{debug, error, info};
 use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
 use shared::types::fractal_descriptor::FractalType::Julia;
@@ -20,7 +21,6 @@ use shared::types::range::Range;
 use shared::types::resolution::Resolution;
 use shared::types::u8data::U8Data;
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
-use log::{info, error, debug};
 
 fn main() -> io::Result<()> {
     shared::logger::init_logger();
@@ -69,10 +69,9 @@ fn main() -> io::Result<()> {
             count: 16,
         },
         fractal: FractalDescriptor {
-            fractal_type: Julia(JuliaDescriptor{
+            fractal_type: Julia(JuliaDescriptor {
                 c: Complex { re: 0.2, im: 1.0 },
-                divergence_threshold_square: 4.0
-
+                divergence_threshold_square: 4.0,
             }),
         },
         max_iteration: 64,
@@ -100,8 +99,9 @@ fn main() -> io::Result<()> {
                 info!("L'image de la fractale a été ouverte !");
             }
             Err(e) => {
-                error!("Erreur lors de l'ouverture de l'image de la fractale: {}", 
-                e
+                error!(
+                    "Erreur lors de l'ouverture de l'image de la fractale: {}",
+                    e
                 );
             }
         }
