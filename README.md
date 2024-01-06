@@ -105,6 +105,34 @@ To run the server with CLI, use the following command:
 cargo run -p server -- -h
 ```
 
+## Using debug log level
+
+To use the debug log level, use the following command:
+
+### Unix/Linux/MacOS
+
+```bash
+RUST_LOG=debug cargo run -p client
+RUST_LOG=debug cargo run -p server
+```
+
+### Windows
+
+#### CMD
+
+```bash
+set RUST_LOG=debug
+cargo run -p client
+cargo run -p server
+```
+
+#### PowerShell
+
+```bash
+$env:RUST_LOG="debug"; cargo run -p client
+$env:RUST_LOG="debug"; cargo run -p server
+```
+
 ## Documentation
 
 To generate documentation for all packages without including dependencies (recommended):

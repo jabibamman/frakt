@@ -8,6 +8,7 @@ edition = "2021"
 
 [dependencies]
 image = { version = "0.24.7", features = [] }
+log = "0.4.20"
 complex = { path = "../complex" }
 shared = { path = "../shared" }
 server = { path = "../server" }

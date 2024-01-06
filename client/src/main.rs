@@ -1,3 +1,4 @@
+use shared::types::complex::Complex;
 use shared::utils::fragment_request_impl::FragmentRequestOperation;
 
 mod fractal_generation;
@@ -9,10 +10,11 @@ use crate::fractal_generation::generate_fractal_set;
 use crate::image::open_image;
 
 use cli::parser::{CliClientArgs, Parser};
+use log::{debug, error, info};
 use server::services::{connect::connect, reader::get_response, write::write};
 use shared::types::filesystem::FileExtension;
-use shared::types::fractal_descriptor::FractalType::NewtonRaphsonZ4;
-use shared::types::fractal_descriptor::{FractalDescriptor, NewtonRaphsonZ4Descriptor};
+use shared::types::fractal_descriptor::FractalType::Julia;
+use shared::types::fractal_descriptor::{FractalDescriptor, JuliaDescriptor};
 use shared::types::messages::{FragmentRequest, FragmentTask};
 use shared::types::point::Point;
 use shared::types::range::Range;
@@ -21,31 +23,33 @@ use shared::types::u8data::U8Data;
 use shared::utils::filesystem::{get_dir_path_buf, get_extension_str, get_file_path};
 
 fn main() -> io::Result<()> {
+    shared::logger::init_logger();
+
     let cli_args: CliClientArgs = CliClientArgs::parse();
-    let fragment_request = FragmentRequest::new(cli_args.worker_name, 100);
+    let fragment_request = FragmentRequest::new(cli_args.worker_name, 1000);
     let serialized_request = fragment_request.serialize()?;
     let connection_result = connect(format!("{}:{}", cli_args.hostname, cli_args.port).as_str());
 
     if let Ok(mut stream) = connection_result {
-        println!("Connected to the server!");
-
+        info!("Connected to the server!");
+        debug!("Sending message: {}", serialized_request);
         match write(&mut stream, serialized_request.as_str()) {
-            Ok(_) => println!("Message sent!"),
-            Err(error) => println!("Failed to send message: {}", error),
+            Ok(_) => info!("Message sent!"),
+            Err(error) => error!("Failed to send message, {}", error),
         }
 
         let response = get_response(&mut stream)?;
-        println!("Response received: {:?}", response);
+        debug!("Response received: {:?}", response);
     } else if let Err(e) = connection_result {
-        println!("Failed to connect: {}", e);
+        error!("Failed to connect to the server: {}", e);
     }
 
     let img_path = match get_dir_path_buf() {
         Ok(dir_path_buf) => {
-            match get_file_path("z4", dir_path_buf, get_extension_str(FileExtension::PNG)) {
+            match get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG)) {
                 Ok(img_path) => img_path,
                 Err(e) => {
-                    eprintln!(
+                    error!(
                         "Erreur lors de la récupération du chemin du fichier : {}",
                         e
                     );
@@ -54,7 +58,7 @@ fn main() -> io::Result<()> {
             }
         }
         Err(e) => {
-            eprintln!("Erreur lors de la récupération du répertoire : {}", e);
+            error!("Erreur lors de la récupération du répertoire : {}", e);
             return Ok(());
         }
     };
@@ -65,8 +69,9 @@ fn main() -> io::Result<()> {
             count: 16,
         },
         fractal: FractalDescriptor {
-            fractal_type: NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor{
-                //c: Complex { re: 0.2, im: 1.0 },
+            fractal_type: Julia(JuliaDescriptor {
+                c: Complex { re: 0.2, im: 1.0 },
+                divergence_threshold_square: 4.0,
             }),
         },
         max_iteration: 64,
@@ -81,24 +86,26 @@ fn main() -> io::Result<()> {
     };
 
     match generate_fractal_set(fragment_task).save(img_path.clone().as_str()) {
-        Ok(_) => println!("L'image de la fractale a été sauvegardée !"),
-        Err(e) => println!(
+        Ok(_) => info!("L'image de la fractale a été sauvegardée !"),
+        Err(e) => error!(
             "Erreur lors de la sauvegarde de l'image de la fractale : {}",
             e
         ),
     }
 
-    match open_image(img_path.as_str()) {
-        Ok(_) => {
-            println!("L'image de la fractale a été ouverte !");
-            Ok(())
-        }
-        Err(e) => {
-            println!(
-                "Erreur lors de l'ouverture de l'image de la fractale : {}",
-                e
-            );
-            Err(e)
+    if cli_args.open {
+        match open_image(img_path.as_str()) {
+            Ok(_) => {
+                info!("L'image de la fractale a été ouverte !");
+            }
+            Err(e) => {
+                error!(
+                    "Erreur lors de l'ouverture de l'image de la fractale: {}",
+                    e
+                );
+            }
         }
     }
+
+    Ok(())
 }
