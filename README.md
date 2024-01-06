@@ -1,3 +1,9 @@
+
+![GitHub Release](https://img.shields.io/github/v/release/jabibamman/frakt)
+[![wakatime](https://wakatime.com/badge/github/jabibamman/frakt.svg)](https://wakatime.com/badge/github/jabibamman/frakt)
+[![codecov](https://codecov.io/gh/jabibamman/frakt/branch/master/graph/badge.svg)](https://codecov.io/gh/jabibamman/frakt)
+![GitHub issues](https://img.shields.io/github/issues/jabibamman/frakt.svg)
+
 # Frakt - Fractal calculation
 
 ## Description
@@ -105,32 +111,22 @@ To run the server with CLI, use the following command:
 cargo run -p server -- -h
 ```
 
+## Using verbose log level
+
+To use the verbose log level, use the following command:
+
+```bash
+cargo run -p client -- -v
+cargo run -p server -- -v
+```
+
 ## Using debug log level
 
 To use the debug log level, use the following command:
 
-### Unix/Linux/MacOS
-
 ```bash
-RUST_LOG=debug cargo run -p client
-RUST_LOG=debug cargo run -p server
-```
-
-### Windows
-
-#### CMD
-
-```bash
-set RUST_LOG=debug
-cargo run -p client
-cargo run -p server
-```
-
-#### PowerShell
-
-```bash
-$env:RUST_LOG="debug"; cargo run -p client
-$env:RUST_LOG="debug"; cargo run -p server
+cargo run -p client -- -d
+cargo run -p server -- -d
 ```
 
 ## Documentation
