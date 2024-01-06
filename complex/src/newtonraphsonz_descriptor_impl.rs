@@ -33,8 +33,12 @@ impl FractalOperations for NewtonRaphsonZ3Descriptor {
     /// # Returns
     ///
     /// L'intensité du pixel (PixelIntensity {zn, count}).
-    /// 
-    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> PixelIntensity {
+    ///
+    fn compute_pixel_intensity(
+        &self,
+        complex_point: &Complex,
+        max_iteration: u16,
+    ) -> PixelIntensity {
         let mut z = *complex_point;
         let mut iterations = 0;
 
@@ -64,8 +68,12 @@ impl FractalOperations for NewtonRaphsonZ4Descriptor {
     /// # Returns
     ///
     /// L'intensité du pixel (PixelIntensity {zn, count}).
-    /// 
-    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> shared::types::pixel_intensity::PixelIntensity {
+    ///
+    fn compute_pixel_intensity(
+        &self,
+        complex_point: &Complex,
+        max_iteration: u16,
+    ) -> shared::types::pixel_intensity::PixelIntensity {
         let mut z = complex_point.clone();
         let mut iterations = 0;
 
@@ -86,14 +94,14 @@ impl FractalOperations for NewtonRaphsonZ4Descriptor {
 }
 
 /// Calculates the next step in the Newton-Raphson method for a polynomial of degree 3 or 4.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `z` - Le point complexe actuel.
 /// * `degree` - La puissance du polynôme (3 pour Z^3, 4 pour Z^4).
-/// 
+///
 /// # Returns
-/// 
+///
 /// Le prochain point complexe dans l'itération pour NewtonRaphsonZ3.
 fn newton_raphson_step(z: &Complex, degree: u32) -> Complex {
     match degree {
@@ -102,16 +110,13 @@ fn newton_raphson_step(z: &Complex, degree: u32) -> Complex {
             let pz = z.square().mul(z).sub(&Complex::new(1.0, 0.0));
             let dpz = z.square().mul(&Complex::new(3.0, 0.0));
             z.sub(&pz.div(dpz))
-        },
+        }
         4 => {
             //  p(z) = z^4 - 1 et p'(z) = 4z^3
             let pz = z.square().square().sub(&Complex::new(1.0, 0.0));
             let dpz = z.square().mul(z).mul(&Complex::new(4.0, 0.0));
             z.sub(&pz.div(dpz))
-        },
+        }
         _ => panic!("Unsupported polynomial degree"),
     }
 }
-
-
-

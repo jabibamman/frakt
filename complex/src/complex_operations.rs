@@ -320,5 +320,4 @@ mod complex_tests {
         let difference = (complex.arg() - expected).abs();
         assert!(difference < tolerance, "Failed at fourth quadrant");
     }
-    
 }

@@ -1,3 +1,4 @@
+pub mod color;
 pub mod complex;
 pub mod filesystem;
 pub mod fractal_descriptor;
@@ -8,4 +9,3 @@ pub mod point;
 pub mod range;
 pub mod resolution;
 pub mod u8data;
-pub mod color;

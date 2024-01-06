@@ -18,7 +18,11 @@ pub trait JuliaOperations {
 
 impl FractalOperations for JuliaDescriptor {
     /// Computes the pixel intensity of a complex point.
-    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> PixelIntensity {
+    fn compute_pixel_intensity(
+        &self,
+        complex_point: &Complex,
+        max_iteration: u16,
+    ) -> PixelIntensity {
         let (mut z, mut i) = (*complex_point, 0);
 
         while z.magnitude_squared() < self.divergence_threshold_square && i < max_iteration {
@@ -27,8 +31,8 @@ impl FractalOperations for JuliaDescriptor {
         }
 
         PixelIntensity {
-            zn: z.norm() as f32, 
-            count: i as f32 / max_iteration as f32, 
+            zn: z.norm() as f32,
+            count: i as f32 / max_iteration as f32,
         }
     }
 }

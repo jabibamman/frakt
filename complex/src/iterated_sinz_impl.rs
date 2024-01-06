@@ -16,9 +16,9 @@ pub trait IteratedSinZOperations {
     fn c(&self) -> &Complex;
 
     /// Returns the divergence threshold `η` used in the IteratedSinZ fractal formula.
-    /// 
+    ///
     /// # Description
-    /// 
+    ///
     /// In the context of the Iterated SinZ fractal, this divergence threshold (η) is used to determine when
     /// the iterations should stop.
     fn η(&self) -> f64;
@@ -26,21 +26,25 @@ pub trait IteratedSinZOperations {
 
 impl FractalOperations for IteratedSinZDescriptor {
     /// Computes the pixel intensity of a complex point.
-    /// 
+    ///
     /// # Description
-    /// 
+    ///
     /// This function takes a complex point and a maximum number of iterations.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `complex_point` - A complex point to iterate.
     /// * `max_iteration` - The maximum number of iterations to perform.
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// The pixel intensity.
-    /// 
-    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> PixelIntensity {
+    ///
+    fn compute_pixel_intensity(
+        &self,
+        complex_point: &Complex,
+        max_iteration: u16,
+    ) -> PixelIntensity {
         let mut z = *complex_point;
         let mut iterations = 0;
 
@@ -51,7 +55,7 @@ impl FractalOperations for IteratedSinZDescriptor {
 
         PixelIntensity {
             zn: (z.magnitude_squared() / self.η()) as f32, // η = 50
-            count: iterations as f32 / max_iteration as f32, 
+            count: iterations as f32 / max_iteration as f32,
         }
     }
 }
