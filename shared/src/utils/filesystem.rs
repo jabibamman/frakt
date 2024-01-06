@@ -1,10 +1,8 @@
-use crate::types::filesystem::FileExtension;
+use crate::types::{filesystem::FileExtension, error::FractalError};
 /// Provides functions for file system operations, focusing on directories and file extensions.
 /// Includes utilities for working with the current working directory, workspace directory,
 /// and checking if a directory exists.
-use std::{env, io, path::PathBuf};
-
-use rand::random;
+use std::{env, path::PathBuf};
 
 /// Returns the current working directory as a `PathBuf`.
 /// Propagates any errors encountered.
@@ -47,17 +45,17 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
 /// # Note
 /// This function uses a recursive approach in debug mode to determine the workspace
 /// directory. It may append "target" to the workspace directory in this case.
-pub fn get_dir_path_buf() -> std::result::Result<PathBuf, io::Error> {
+pub fn get_dir_path_buf() -> Result<PathBuf, FractalError> {
     fn recursive_get_dir_path_buf(
         is_debug_mode: bool,
         workspace_dir: Option<PathBuf>,
-    ) -> std::result::Result<PathBuf, io::Error> {
+    ) -> Result<PathBuf, FractalError> {
         if !is_debug_mode {
-            get_current_working_dir()
+            get_current_working_dir().map_err(FractalError::from)
         } else {
             match workspace_dir {
                 None => {
-                    let dir = get_workspace_dir()?;
+                    let dir = get_workspace_dir().map_err(FractalError::from)?;
                     recursive_get_dir_path_buf(true, Some(dir))
                 }
                 Some(dir) => {
@@ -104,12 +102,11 @@ pub fn get_extension_str(extension: FileExtension) -> &'static str {
 ///     Err(e) => println!("Error: {}", e),
 /// }
 /// ```
-pub fn get_file_path(filename: &str, path: PathBuf, extension: &str) -> Result<String, String> {
-    let file_name_with_extension = format!("{}-{}.{}", filename, random::<u32>(), extension);
+pub fn get_file_path(filename: &str, path: PathBuf, extension: &str) -> Result<String, FractalError> {
+    let file_name_with_extension = format!("{}-{}.{}", filename, rand::random::<u32>(), extension);
     let new_path = path.join(file_name_with_extension);
-    new_path
-        .to_str()
-        .ok_or_else(|| "Failed to convert the path to a string".to_string())
+    new_path.to_str()
+        .ok_or_else(|| FractalError::PathConversion("Failed to convert the path to a string".to_string()))
         .map(|s| s.to_string())
 }
 
@@ -117,7 +114,6 @@ pub fn get_file_path(filename: &str, path: PathBuf, extension: &str) -> Result<S
 /// Returns `true` if the path exists and is a directory, `false` otherwise.
 pub fn dir_exists(path: &str) -> bool {
     let path_buf = PathBuf::from(path);
-
     path_buf.exists()
 }
 
@@ -128,7 +124,7 @@ pub fn dir_exists(path: &str) -> bool {
 mod tests {
     use super::dir_exists;
     use super::*;
-    use std::io::{self, ErrorKind};
+
     use std::path::PathBuf;
     use tempfile::tempdir;
     use tempfile::NamedTempFile;
@@ -162,38 +158,32 @@ mod tests {
 
     #[test]
     fn test_get_dir_str_current() -> Result<(), Box<dyn std::error::Error>> {
-        let current_dir_result: Result<String, io::Error> = get_dir_path_buf().and_then(|path| {
+        let current_dir_result: Result<String, FractalError> = get_dir_path_buf().and_then(|path| {
             path.to_str()
-                .ok_or_else(|| io::Error::new(ErrorKind::Other, "Failed to convert path to string"))
+                .ok_or_else(|| FractalError::PathConversion("Failed to convert path to string".to_string()))
                 .map(|s| s.to_owned())
         });
-
+    
         assert!(current_dir_result.is_ok());
         let dir_str = current_dir_result?;
         assert_ne!(dir_str, "");
-
+    
         Ok(())
     }
+    
 
     #[test]
     fn test_get_dir_str_workspace() -> Result<(), Box<dyn std::error::Error>> {
-        let workspace_dir_result = get_dir_path_buf().and_then(|path| {
+        let workspace_dir_result: Result<String, FractalError> = get_dir_path_buf().and_then(|path| {
             path.to_str()
-                .ok_or_else(|| {
-                    std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        "Failed to convert path to string",
-                    )
-                })
+                .ok_or_else(|| FractalError::PathConversion("Failed to convert path to string".to_string()))
                 .map(|s| s.to_owned())
         });
-
+    
         assert!(workspace_dir_result.is_ok());
-
         let dir_str = workspace_dir_result?;
-
         assert_ne!(dir_str, "");
-
+    
         Ok(())
     }
 
