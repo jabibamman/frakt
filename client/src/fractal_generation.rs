@@ -4,6 +4,7 @@ use image::{ImageBuffer, Rgb};
 use log::info;
 use shared::types::color::{HSL, RGB};
 use shared::types::complex::Complex;
+use shared::types::error::FractalError;
 use shared::types::fractal_descriptor::FractalType::{
     IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,
 };
@@ -21,8 +22,7 @@ use shared::types::pixel_intensity::PixelIntensity;
 /// # Details
 /// This function scales the coordinates based on the provided resolution and range, computes the number of
 /// iterations for each pixel, and then maps these iterations to a color value.
-pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
-    let descriptor = &fragment_task.fractal.fractal_type;
+pub fn generate_fractal_set(fragment_task: FragmentTask) -> Result<ImageBuffer<Rgb<u8>, Vec<u8>>, FractalError> {    let descriptor = &fragment_task.fractal.fractal_type;
     let descriptor: &dyn FractalOperations = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
         IteratedSinZ(iterated_sinz_descriptor) => iterated_sinz_descriptor,
@@ -49,7 +49,7 @@ pub fn generate_fractal_set(fragment_task: FragmentTask) -> ImageBuffer<Rgb<u8>,
         *pixel = Rgb(color(pixel_intensity));
     }
 
-    img
+    Ok(img)
 }
 
 ///Generates a color based on the provided pixel intensity.
@@ -141,7 +141,7 @@ mod julia_descriptor_tests {
 
         let result = generate_fractal_set(fragment_task);
 
-        assert_eq!(result.dimensions(), (800, 600));
+        assert_eq!(result.expect("dimensions").dimensions(), (800, 600));
     }
 
     #[test]
@@ -187,6 +187,6 @@ mod julia_descriptor_tests {
 
         let result = generate_fractal_set(fragment_task);
 
-        assert_eq!(result.dimensions(), (800, 600));
+        assert_eq!(result.expect("dimensions").dimensions(), (800, 600));
     }
 }
