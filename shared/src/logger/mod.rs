@@ -1,6 +1,6 @@
 use crate::types::error::FractalError;
-use log::LevelFilter;
 use env_logger::{Builder, Env};
+use log::LevelFilter;
 
 pub fn init_logger(verbose: bool, debug: bool) -> Result<(), FractalError> {
     let mut builder = Builder::from_env(Env::default());

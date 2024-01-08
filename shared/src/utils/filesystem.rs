@@ -1,4 +1,4 @@
-use crate::types::{filesystem::FileExtension, error::FractalError};
+use crate::types::{error::FractalError, filesystem::FileExtension};
 /// Provides functions for file system operations, focusing on directories and file extensions.
 /// Includes utilities for working with the current working directory, workspace directory,
 /// and checking if a directory exists.
@@ -102,11 +102,18 @@ pub fn get_extension_str(extension: FileExtension) -> &'static str {
 ///     Err(e) => println!("Error: {}", e),
 /// }
 /// ```
-pub fn get_file_path(filename: &str, path: PathBuf, extension: &str) -> Result<String, FractalError> {
+pub fn get_file_path(
+    filename: &str,
+    path: PathBuf,
+    extension: &str,
+) -> Result<String, FractalError> {
     let file_name_with_extension = format!("{}-{}.{}", filename, rand::random::<u32>(), extension);
     let new_path = path.join(file_name_with_extension);
-    new_path.to_str()
-        .ok_or_else(|| FractalError::PathConversion("Failed to convert the path to a string".to_string()))
+    new_path
+        .to_str()
+        .ok_or_else(|| {
+            FractalError::PathConversion("Failed to convert the path to a string".to_string())
+        })
         .map(|s| s.to_string())
 }
 
@@ -158,32 +165,37 @@ mod tests {
 
     #[test]
     fn test_get_dir_str_current() -> Result<(), Box<dyn std::error::Error>> {
-        let current_dir_result: Result<String, FractalError> = get_dir_path_buf().and_then(|path| {
-            path.to_str()
-                .ok_or_else(|| FractalError::PathConversion("Failed to convert path to string".to_string()))
-                .map(|s| s.to_owned())
-        });
-    
+        let current_dir_result: Result<String, FractalError> =
+            get_dir_path_buf().and_then(|path| {
+                path.to_str()
+                    .ok_or_else(|| {
+                        FractalError::PathConversion("Failed to convert path to string".to_string())
+                    })
+                    .map(|s| s.to_owned())
+            });
+
         assert!(current_dir_result.is_ok());
         let dir_str = current_dir_result?;
         assert_ne!(dir_str, "");
-    
+
         Ok(())
     }
-    
 
     #[test]
     fn test_get_dir_str_workspace() -> Result<(), Box<dyn std::error::Error>> {
-        let workspace_dir_result: Result<String, FractalError> = get_dir_path_buf().and_then(|path| {
-            path.to_str()
-                .ok_or_else(|| FractalError::PathConversion("Failed to convert path to string".to_string()))
-                .map(|s| s.to_owned())
-        });
-    
+        let workspace_dir_result: Result<String, FractalError> =
+            get_dir_path_buf().and_then(|path| {
+                path.to_str()
+                    .ok_or_else(|| {
+                        FractalError::PathConversion("Failed to convert path to string".to_string())
+                    })
+                    .map(|s| s.to_owned())
+            });
+
         assert!(workspace_dir_result.is_ok());
         let dir_str = workspace_dir_result?;
         assert_ne!(dir_str, "");
-    
+
         Ok(())
     }
 

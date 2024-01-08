@@ -1,4 +1,4 @@
-use std::{io, fmt, error};
+use std::{error, fmt, io};
 
 use image::ImageError;
 
@@ -24,9 +24,6 @@ pub enum FractalError {
     /// Generic error for other cases.
     Other(String),
 }
-
-
-
 
 impl fmt::Display for FractalError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

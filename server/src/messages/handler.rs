@@ -3,11 +3,14 @@ use std::{
     net::TcpStream,
 };
 
-use log::{info, error, debug};
+use log::{debug, error, info};
 use shared::{types::messages::Message, utils::fragment_task_impl::FragmentTaskOperation};
 
+use super::{
+    fragment_maker::{create_task_for_request, process_result},
+    serialization::deserialize_message,
+};
 use crate::services;
-use super::{serialization::deserialize_message, fragment_maker::{create_task_for_request, process_result}};
 
 /// Handles a client TCP stream.
 ///
@@ -84,8 +87,11 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
                     return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
                 }
             };
-            info!("Sending serialized task to client at {}", stream.peer_addr()?); 
-        
+            info!(
+                "Sending serialized task to client at {}",
+                stream.peer_addr()?
+            );
+
             services::write::write(&mut stream, &serialized_task)?;
 
             let response = services::reader::get_response(&mut stream)?;

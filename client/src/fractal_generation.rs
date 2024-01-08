@@ -22,7 +22,10 @@ use shared::types::pixel_intensity::PixelIntensity;
 /// # Details
 /// This function scales the coordinates based on the provided resolution and range, computes the number of
 /// iterations for each pixel, and then maps these iterations to a color value.
-pub fn generate_fractal_set(fragment_task: FragmentTask) -> Result<ImageBuffer<Rgb<u8>, Vec<u8>>, FractalError> {    let descriptor = &fragment_task.fractal.fractal_type;
+pub fn generate_fractal_set(
+    fragment_task: FragmentTask,
+) -> Result<ImageBuffer<Rgb<u8>, Vec<u8>>, FractalError> {
+    let descriptor = &fragment_task.fractal.fractal_type;
     let descriptor: &dyn FractalOperations = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
         IteratedSinZ(iterated_sinz_descriptor) => iterated_sinz_descriptor,
