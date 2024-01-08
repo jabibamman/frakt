@@ -42,8 +42,8 @@ pub struct FragmentTask {
 /// - `pixels`: A `PixelData` containing the computed pixel data for the fragment.
 #[derive(Debug, Clone, PartialEq)]
 pub struct FragmentResult {
-    id: U8Data,
-    resolution: Resolution,
-    range: Range,
-    pixels: PixelData,
+    pub id: U8Data,
+    pub resolution: Resolution,
+    pub range: Range,
+    pub pixels: PixelData,
 }
