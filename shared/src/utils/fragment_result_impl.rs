@@ -1,4 +1,4 @@
-use crate::types::fractal_descriptor::FractalDescriptor;
+
 use crate::types::messages::FragmentResult;
 use crate::types::pixel_data::PixelData;
 use crate::types::range::Range;
