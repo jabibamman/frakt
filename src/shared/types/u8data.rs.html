@@ -8,12 +8,16 @@
 <a href="#8" id="8">8</a>
 <a href="#9" id="9">9</a>
 <a href="#10" id="10">10</a>
-</pre></div><pre class="rust"><code><span class="doccomment">/// Represents a segment of data, typically used for handling parts of a byte stream.
+<a href="#11" id="11">11</a>
+<a href="#12" id="12">12</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
+
+<span class="doccomment">/// Represents a segment of data, typically used for handling parts of a byte stream.
 ///
 /// Attributes:
 /// - `offset`: A `u32` indicating the starting position in a byte stream or array.
 /// - `count`: A `u32` denoting the length or the number of elements in the segment starting from `offset`.
-</span><span class="attr">#[derive(Debug, Clone, PartialEq)]
+</span><span class="attr">#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 </span><span class="kw">pub struct </span>U8Data {
     <span class="kw">pub </span>offset: u32,
     <span class="kw">pub </span>count: u32,

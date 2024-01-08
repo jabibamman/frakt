@@ -66,7 +66,13 @@
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
 <a href="#68" id="68">68</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::handler::handle_client;
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>log::{error, info};
+
+<span class="kw">use </span><span class="kw">crate</span>::messages::handler::handle_client;
 <span class="kw">use </span>std::net::TcpListener;
 
 <span class="doccomment">/// Starts a TCP server on the specified address.
@@ -96,17 +102,17 @@
 /// }
 /// ```
 </span><span class="kw">pub fn </span>run_server(address: <span class="kw-2">&amp;</span>str) -&gt; std::io::Result&lt;()&gt; {
-    <span class="macro">println!</span>(<span class="string">&quot;[SERVER] Starting server on {}&quot;</span>, address);
+    <span class="macro">info!</span>(<span class="string">&quot;Server is running on {}&quot;</span>, address);
     <span class="kw">let </span>listener = <span class="kw">match </span>TcpListener::bind(address) {
         <span class="prelude-val">Ok</span>(listener) =&gt; listener,
         <span class="prelude-val">Err</span>(e) =&gt; {
-            <span class="macro">println!</span>(<span class="string">&quot;[SERVER] Failed to bind to address: {}&quot;</span>, e);
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+            <span class="macro">error!</span>(<span class="string">&quot;Failed to bind to address: {}&quot;</span>, e);
+            <span class="kw">return </span><span class="prelude-val">Err</span>(e);
         }
     };
 
     <span class="kw">for </span>stream <span class="kw">in </span>listener.incoming() {
-        handle_client(stream<span class="question-mark">?</span>);
+        <span class="kw">let _ </span>= handle_client(stream<span class="question-mark">?</span>);
     }
 
     <span class="prelude-val">Ok</span>(())
@@ -114,6 +120,8 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>server_runner_tests {
+    <span class="kw">use </span>log::error;
+
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>std::net::TcpStream;
     <span class="kw">use </span>std::thread;
@@ -129,8 +137,8 @@
         thread::sleep(Duration::from_millis(<span class="number">100</span>));
 
         <span class="kw">match </span>TcpStream::connect(address) {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">println!</span>(<span class="string">&quot;Successfully connected to server&quot;</span>),
-            <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Failed to connect to server: {}&quot;</span>, e),
+            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">info!</span>(<span class="string">&quot;Successfully connected to server&quot;</span>),
+            <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">error!</span>(<span class="string">&quot;Failed to connect to server: {}&quot;</span>, e),
         }
     }
 }

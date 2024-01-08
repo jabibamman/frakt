@@ -8,12 +8,16 @@
 <a href="#8" id="8">8</a>
 <a href="#9" id="9">9</a>
 <a href="#10" id="10">10</a>
-</pre></div><pre class="rust"><code><span class="doccomment">/// Represents data associated with a set of pixels in an image or a fragment of an image.
+<a href="#11" id="11">11</a>
+<a href="#12" id="12">12</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
+
+<span class="doccomment">/// Represents data associated with a set of pixels in an image or a fragment of an image.
 ///
 /// Attributes:
 /// - `offset`: A `u32` indicating the starting point or offset in a larger array or buffer where the pixel data begins.
 /// - `count`: A `u32` representing the number of pixels (or data points) that are included starting from the `offset`.
-</span><span class="attr">#[derive(Debug, Clone, PartialEq)]
+</span><span class="attr">#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 </span><span class="kw">pub struct </span>PixelData {
     <span class="kw">pub </span>offset: u32,
     <span class="kw">pub </span>count: u32,

@@ -73,6 +73,31 @@
 <a href="#73" id="73">73</a>
 <a href="#74" id="74">74</a>
 <a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
 </pre></div><pre class="rust"><code><span class="kw">pub use </span>clap::Parser;
 
 <span class="doccomment">/// Represents command line arguments for a client in a CLI application.
@@ -92,20 +117,35 @@
 /// ```
 </span><span class="attr">#[derive(Parser, Debug, Clone)]
 </span><span class="kw">pub struct </span>CliClientArgs {
-    <span class="doccomment">/// The hostname of the client.
+    <span class="doccomment">/// Optional: The hostname of the client.
     /// Default: &quot;localhost&quot;
     </span><span class="attr">#[clap(short = <span class="string">&#39;H&#39;</span>, long = <span class="string">&quot;hostname&quot;</span>, default_value = <span class="string">&quot;localhost&quot;</span>)]
     </span><span class="kw">pub </span>hostname: String,
 
-    <span class="doccomment">/// The port number to connect on.
+    <span class="doccomment">/// Optional: The port number to connect on.
     /// Default: 8787
     </span><span class="attr">#[clap(short = <span class="string">&#39;P&#39;</span>, long = <span class="string">&quot;port&quot;</span>, default_value = <span class="string">&quot;8787&quot;</span>)]
     </span><span class="kw">pub </span>port: u16,
 
-    <span class="doccomment">/// The name of the worker.
+    <span class="doccomment">/// Optional: The name of the worker.
     /// Default: &quot;worker&quot;
     </span><span class="attr">#[clap(short = <span class="string">&#39;N&#39;</span>, long = <span class="string">&quot;name&quot;</span>, default_value = <span class="string">&quot;worker&quot;</span>)]
     </span><span class="kw">pub </span>worker_name: String,
+
+    <span class="doccomment">/// Optional: Add a flag to enable/disable logging.
+    /// Default: false
+    </span><span class="attr">#[clap(short = <span class="string">&#39;v&#39;</span>, long = <span class="string">&quot;verbose&quot;</span>, default_value = <span class="string">&quot;false&quot;</span>)]
+    </span><span class="kw">pub </span>verbose: bool,
+
+    <span class="doccomment">/// Optional: Add a flag to enable/disable debug mode.
+    /// Default: false
+    </span><span class="attr">#[clap(short = <span class="string">&#39;d&#39;</span>, long = <span class="string">&quot;debug&quot;</span>, default_value = <span class="string">&quot;false&quot;</span>)]
+    </span><span class="kw">pub </span>debug: bool,
+
+    <span class="doccomment">/// Optional: Add a flag to enable/disable opening the browser.
+    /// Default: false
+    </span><span class="attr">#[clap(short = <span class="string">&#39;o&#39;</span>, long = <span class="string">&quot;open&quot;</span>, default_value = <span class="string">&quot;false&quot;</span>)]
+    </span><span class="kw">pub </span>open: bool,
 }
 
 <span class="doccomment">/// Represents command line arguments for a server in a CLI application.
@@ -133,6 +173,16 @@
     /// Default: 8787
     </span><span class="attr">#[clap(short = <span class="string">&#39;P&#39;</span>, long = <span class="string">&quot;port&quot;</span>, default_value = <span class="string">&quot;8787&quot;</span>)]
     </span><span class="kw">pub </span>port: u16,
+
+    <span class="doccomment">/// Optional: Add a flag to enable/disable logging.
+    /// Default: false
+    </span><span class="attr">#[clap(short = <span class="string">&#39;v&#39;</span>, long = <span class="string">&quot;verbose&quot;</span>, default_value = <span class="string">&quot;false&quot;</span>)]
+    </span><span class="kw">pub </span>verbose: bool,
+
+    <span class="doccomment">/// Optional: Add a flag to enable/disable debug mode.
+    /// Default: false
+    </span><span class="attr">#[clap(short = <span class="string">&#39;d&#39;</span>, long = <span class="string">&quot;debug&quot;</span>, default_value = <span class="string">&quot;false&quot;</span>)]
+    </span><span class="kw">pub </span>debug: bool,
 }
 
 <span class="doccomment">/// An enumeration representing the possible types of command line arguments.

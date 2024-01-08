@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["parse_to_address"]};
+window.SIDEBAR_ITEMS = {};

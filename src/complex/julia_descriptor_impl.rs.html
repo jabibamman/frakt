@@ -53,21 +53,11 @@
 <a href="#53" id="53">53</a>
 <a href="#54" id="54">54</a>
 <a href="#55" id="55">55</a>
-<a href="#56" id="56">56</a>
-<a href="#57" id="57">57</a>
-<a href="#58" id="58">58</a>
-<a href="#59" id="59">59</a>
-<a href="#60" id="60">60</a>
-<a href="#61" id="61">61</a>
-<a href="#62" id="62">62</a>
-<a href="#63" id="63">63</a>
-<a href="#64" id="64">64</a>
-<a href="#65" id="65">65</a>
-<a href="#66" id="66">66</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::complex_operations::ComplexOperations;
 <span class="kw">use </span><span class="kw">crate</span>::fractal_operations::FractalOperations;
 <span class="kw">use </span>shared::types::complex::Complex;
 <span class="kw">use </span>shared::types::fractal_descriptor::JuliaDescriptor;
+<span class="kw">use </span>shared::types::pixel_intensity::PixelIntensity;
 
 <span class="doccomment">/// Provides operations specific to the Julia fractal.
 </span><span class="kw">pub trait </span>JuliaOperations {
@@ -82,35 +72,23 @@
 }
 
 <span class="kw">impl </span>FractalOperations <span class="kw">for </span>JuliaDescriptor {
-    <span class="kw">fn </span>iterate_complex_point(<span class="kw-2">&amp;</span><span class="self">self</span>, complex_point: <span class="kw-2">&amp;</span>Complex, max_iteration: u16) -&gt; u16 {
-        <span class="kw">fn </span>recursive_iterate(
-            z: Complex,
-            c: <span class="kw-2">&amp;</span>Complex,
-            divergence_threshold_square: f64,
-            max_iteration: u16,
-            current_iteration: u16,
-        ) -&gt; u16 {
-            <span class="kw">if </span>z.norm() &gt; divergence_threshold_square || current_iteration == max_iteration {
-                current_iteration
-            } <span class="kw">else </span>{
-                <span class="kw">let </span>next_z = z.square().add(c);
-                recursive_iterate(
-                    next_z,
-                    c,
-                    divergence_threshold_square,
-                    max_iteration,
-                    current_iteration + <span class="number">1</span>,
-                )
-            }
+    <span class="doccomment">/// Computes the pixel intensity of a complex point.
+    </span><span class="kw">fn </span>compute_pixel_intensity(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        complex_point: <span class="kw-2">&amp;</span>Complex,
+        max_iteration: u16,
+    ) -&gt; PixelIntensity {
+        <span class="kw">let </span>(<span class="kw-2">mut </span>z, <span class="kw-2">mut </span>i) = (<span class="kw-2">*</span>complex_point, <span class="number">0</span>);
+
+        <span class="kw">while </span>z.magnitude_squared() &lt; <span class="self">self</span>.divergence_threshold_square &amp;&amp; i &lt; max_iteration {
+            z = z.square().add(<span class="kw-2">&amp;</span><span class="self">self</span>.c);
+            i += <span class="number">1</span>;
         }
 
-        recursive_iterate(
-            complex_point.clone(),
-            <span class="kw-2">&amp;</span><span class="self">self</span>.c,
-            <span class="self">self</span>.divergence_threshold_square,
-            max_iteration,
-            <span class="number">0</span>,
-        )
+        PixelIntensity {
+            zn: z.norm() <span class="kw">as </span>f32,
+            count: i <span class="kw">as </span>f32 / max_iteration <span class="kw">as </span>f32,
+        }
     }
 }
 

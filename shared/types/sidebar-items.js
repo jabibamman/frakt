@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["complex","filesystem","fractal_descriptor","messages","pixel_data","pixel_intensity","point","range","resolution","u8data"]};
+window.SIDEBAR_ITEMS = {"mod":["color","complex","error","filesystem","fractal_descriptor","messages","pixel_data","pixel_intensity","point","range","resolution","u8data"]};

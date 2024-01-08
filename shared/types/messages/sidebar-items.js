@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["FragmentRequest","FragmentResult","FragmentTask"]};
+window.SIDEBAR_ITEMS = {"enum":["Message"],"struct":["FragmentRequest","FragmentResult","FragmentTask"]};

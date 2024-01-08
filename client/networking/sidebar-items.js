@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["connect_to_server","process_fragment_task","receive_fragment_task","save_fractal_image","send_request"]};

@@ -215,13 +215,13 @@
 <a href="#215" id="215">215</a>
 <a href="#216" id="216">216</a>
 <a href="#217" id="217">217</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::types::filesystem::FileExtension;
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::types::{error::FractalError, filesystem::FileExtension};
 <span class="doccomment">/// Provides functions for file system operations, focusing on directories and file extensions.
 /// Includes utilities for working with the current working directory, workspace directory,
 /// and checking if a directory exists.
-</span><span class="kw">use </span>std::{env, io, path::PathBuf};
-
-<span class="kw">use </span>rand::random;
+</span><span class="kw">use </span>std::{env, path::PathBuf};
 
 <span class="doccomment">/// Returns the current working directory as a `PathBuf`.
 /// Propagates any errors encountered.
@@ -264,17 +264,17 @@
 /// # Note
 /// This function uses a recursive approach in debug mode to determine the workspace
 /// directory. It may append &quot;target&quot; to the workspace directory in this case.
-</span><span class="kw">pub fn </span>get_dir_path_buf() -&gt; std::result::Result&lt;PathBuf, io::Error&gt; {
+</span><span class="kw">pub fn </span>get_dir_path_buf() -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf, FractalError&gt; {
     <span class="kw">fn </span>recursive_get_dir_path_buf(
         is_debug_mode: bool,
         workspace_dir: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
-    ) -&gt; std::result::Result&lt;PathBuf, io::Error&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf, FractalError&gt; {
         <span class="kw">if </span>!is_debug_mode {
-            get_current_working_dir()
+            get_current_working_dir().map_err(FractalError::from)
         } <span class="kw">else </span>{
             <span class="kw">match </span>workspace_dir {
                 <span class="prelude-val">None </span>=&gt; {
-                    <span class="kw">let </span>dir = get_workspace_dir()<span class="question-mark">?</span>;
+                    <span class="kw">let </span>dir = get_workspace_dir().map_err(FractalError::from)<span class="question-mark">?</span>;
                     recursive_get_dir_path_buf(<span class="bool-val">true</span>, <span class="prelude-val">Some</span>(dir))
                 }
                 <span class="prelude-val">Some</span>(dir) =&gt; {
@@ -321,12 +321,18 @@
 ///     Err(e) =&gt; println!(&quot;Error: {}&quot;, e),
 /// }
 /// ```
-</span><span class="kw">pub fn </span>get_file_path(filename: <span class="kw-2">&amp;</span>str, path: PathBuf, extension: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;String, String&gt; {
-    <span class="kw">let </span>file_name_with_extension = <span class="macro">format!</span>(<span class="string">&quot;{}-{}.{}&quot;</span>, filename, random::&lt;u32&gt;(), extension);
+</span><span class="kw">pub fn </span>get_file_path(
+    filename: <span class="kw-2">&amp;</span>str,
+    path: PathBuf,
+    extension: <span class="kw-2">&amp;</span>str,
+) -&gt; <span class="prelude-ty">Result</span>&lt;String, FractalError&gt; {
+    <span class="kw">let </span>file_name_with_extension = <span class="macro">format!</span>(<span class="string">&quot;{}-{}.{}&quot;</span>, filename, rand::random::&lt;u32&gt;(), extension);
     <span class="kw">let </span>new_path = path.join(file_name_with_extension);
     new_path
         .to_str()
-        .ok_or_else(|| <span class="string">&quot;Failed to convert the path to a string&quot;</span>.to_string())
+        .ok_or_else(|| {
+            FractalError::PathConversion(<span class="string">&quot;Failed to convert the path to a string&quot;</span>.to_string())
+        })
         .map(|s| s.to_string())
 }
 
@@ -334,7 +340,6 @@
 /// Returns `true` if the path exists and is a directory, `false` otherwise.
 </span><span class="kw">pub fn </span>dir_exists(path: <span class="kw-2">&amp;</span>str) -&gt; bool {
     <span class="kw">let </span>path_buf = PathBuf::from(path);
-
     path_buf.exists()
 }
 
@@ -345,7 +350,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span><span class="kw">super</span>::dir_exists;
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span>std::io::{<span class="self">self</span>, ErrorKind};
+
     <span class="kw">use </span>std::path::PathBuf;
     <span class="kw">use </span>tempfile::tempdir;
     <span class="kw">use </span>tempfile::NamedTempFile;
@@ -379,11 +384,14 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_get_dir_str_current() -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; {
-        <span class="kw">let </span>current_dir_result: <span class="prelude-ty">Result</span>&lt;String, io::Error&gt; = get_dir_path_buf().and_then(|path| {
-            path.to_str()
-                .ok_or_else(|| io::Error::new(ErrorKind::Other, <span class="string">&quot;Failed to convert path to string&quot;</span>))
-                .map(|s| s.to_owned())
-        });
+        <span class="kw">let </span>current_dir_result: <span class="prelude-ty">Result</span>&lt;String, FractalError&gt; =
+            get_dir_path_buf().and_then(|path| {
+                path.to_str()
+                    .ok_or_else(|| {
+                        FractalError::PathConversion(<span class="string">&quot;Failed to convert path to string&quot;</span>.to_string())
+                    })
+                    .map(|s| s.to_owned())
+            });
 
         <span class="macro">assert!</span>(current_dir_result.is_ok());
         <span class="kw">let </span>dir_str = current_dir_result<span class="question-mark">?</span>;
@@ -394,21 +402,17 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_get_dir_str_workspace() -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; {
-        <span class="kw">let </span>workspace_dir_result = get_dir_path_buf().and_then(|path| {
-            path.to_str()
-                .ok_or_else(|| {
-                    std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        <span class="string">&quot;Failed to convert path to string&quot;</span>,
-                    )
-                })
-                .map(|s| s.to_owned())
-        });
+        <span class="kw">let </span>workspace_dir_result: <span class="prelude-ty">Result</span>&lt;String, FractalError&gt; =
+            get_dir_path_buf().and_then(|path| {
+                path.to_str()
+                    .ok_or_else(|| {
+                        FractalError::PathConversion(<span class="string">&quot;Failed to convert path to string&quot;</span>.to_string())
+                    })
+                    .map(|s| s.to_owned())
+            });
 
         <span class="macro">assert!</span>(workspace_dir_result.is_ok());
-
         <span class="kw">let </span>dir_str = workspace_dir_result<span class="question-mark">?</span>;
-
         <span class="macro">assert_ne!</span>(dir_str, <span class="string">&quot;&quot;</span>);
 
         <span class="prelude-val">Ok</span>(())

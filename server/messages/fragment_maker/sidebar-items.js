@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["create_task_for_request","process_result"]};

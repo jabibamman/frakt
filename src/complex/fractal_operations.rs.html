@@ -4,10 +4,18 @@
 <a href="#4" id="4">4</a>
 <a href="#5" id="5">5</a>
 <a href="#6" id="6">6</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>shared::types::complex::Complex;
+<a href="#7" id="7">7</a>
+<a href="#8" id="8">8</a>
+<a href="#9" id="9">9</a>
+<a href="#10" id="10">10</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>shared::types::{complex::Complex, pixel_intensity::PixelIntensity};
 
 <span class="kw">pub trait </span>FractalOperations {
-    <span class="doccomment">/// Iterates over a complex point and returns the number of iterations before it diverges.
-    </span><span class="kw">fn </span>iterate_complex_point(<span class="kw-2">&amp;</span><span class="self">self</span>, complex_point: <span class="kw-2">&amp;</span>Complex, max_iteration: u16) -&gt; u16;
+    <span class="doccomment">/// Computes the pixel intensity of a complex point.
+    </span><span class="kw">fn </span>compute_pixel_intensity(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        complex_point: <span class="kw-2">&amp;</span>Complex,
+        max_iteration: u16,
+    ) -&gt; PixelIntensity;
 }
 </code></pre></div></section></main></body></html>

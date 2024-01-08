@@ -110,11 +110,30 @@
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
 <a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::complex_operations::ComplexOperations;
 <span class="kw">use </span><span class="kw">crate</span>::fractal_operations::FractalOperations;
 <span class="kw">use </span>shared::types::complex::Complex;
 <span class="kw">use </span>shared::types::fractal_descriptor::NewtonRaphsonZ3Descriptor;
 <span class="kw">use </span>shared::types::fractal_descriptor::NewtonRaphsonZ4Descriptor;
+<span class="kw">use </span>shared::types::pixel_intensity::PixelIntensity;
 
 <span class="kw">pub trait </span>NewtonRaphsonOperations {
     <span class="doccomment">/// Crée une nouvelle instance du type de fractale.
@@ -132,53 +151,6 @@
         <span class="self">Self </span>{}
     }
 }
-<span class="doccomment">/// Fonction générique pour itérer sur un point complexe selon la méthode Newton-Raphson.
-///
-/// Cette fonction prend un point complexe, un nombre maximal d&#39;itérations et la puissance du polynôme.
-/// Elle itère sur le point complexe en utilisant la méthode Newton-Raphson et retourne le nombre
-/// d&#39;itérations nécessaires pour converger ou atteindre le nombre maximal d&#39;itérations.
-///
-/// # Arguments
-///
-/// * `complex_point` - Un point complexe à itérer.
-/// * `max_iteration` - Le nombre maximal d&#39;itérations à effectuer.
-/// * `power` - La puissance du polynôme (3 pour Z^3, 4 pour Z^4).
-///
-/// # Returns
-///
-/// Le nombre d&#39;itérations nécessaires pour converger ou atteindre le nombre maximal d&#39;itérations.
-
-</span><span class="kw">fn </span>iterate_common(complex_point: <span class="kw-2">&amp;</span>Complex, max_iteration: u16, power: u32) -&gt; <span class="prelude-ty">Result</span>&lt;u16, String&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>z = <span class="kw-2">*</span>complex_point;
-    <span class="kw">let </span><span class="kw-2">mut </span>iteration = <span class="number">0u16</span>;
-    <span class="kw">let </span>convergence_threshold = <span class="number">1e-12</span>; <span class="comment">// carré de 1e-6 pour la comparaison directe avec magnitude_squared
-    </span><span class="kw">while </span>iteration &lt; max_iteration {
-        <span class="kw">let </span>(fz, dfz) = <span class="kw">match </span>power {
-            <span class="number">3 </span>=&gt; (
-                z.square().mul(<span class="kw-2">&amp;</span>z).sub(<span class="kw-2">&amp;</span>Complex::new(<span class="number">1.0</span>, <span class="number">0.0</span>)), <span class="comment">// z^3 - 1
-                </span>z.square().mul(<span class="kw-2">&amp;</span>Complex::new(<span class="number">3.0</span>, <span class="number">0.0</span>)),         <span class="comment">// 3z^2
-            </span>),
-            <span class="number">4 </span>=&gt; (
-                z.square().mul(<span class="kw-2">&amp;</span>z).mul(<span class="kw-2">&amp;</span>z).sub(<span class="kw-2">&amp;</span>Complex::new(<span class="number">1.0</span>, <span class="number">0.0</span>)), <span class="comment">// z^4 - 1
-                </span>z.square().mul(<span class="kw-2">&amp;</span>z).mul(<span class="kw-2">&amp;</span>Complex::new(<span class="number">4.0</span>, <span class="number">0.0</span>)),         <span class="comment">// 4z^3
-            </span>),
-            <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Unsupported power: {}&quot;</span>, power)),
-        };
-
-        <span class="kw">if </span>dfz.magnitude_squared() &lt; convergence_threshold {
-            <span class="kw">break</span>;
-        }
-        <span class="kw">let </span>fz_over_dfz = fz.div(dfz);
-        <span class="kw">let </span>new_z = z.sub(<span class="kw-2">&amp;</span>fz_over_dfz);
-
-        <span class="kw">if </span>new_z.sub(<span class="kw-2">&amp;</span>z).magnitude_squared() &lt; convergence_threshold {
-            <span class="kw">break</span>;
-        }
-        z = new_z;
-        iteration += <span class="number">1</span>;
-    }
-    <span class="prelude-val">Ok</span>(iteration)
-}
 
 <span class="kw">impl </span>FractalOperations <span class="kw">for </span>NewtonRaphsonZ3Descriptor {
     <span class="doccomment">/// Itère sur un point complexe selon la méthode Newton-Raphson pour Z^3.
@@ -190,14 +162,32 @@
     ///
     /// # Returns
     ///
-    /// Le nombre d&#39;itérations nécessaires pour converger ou atteindre le nombre maximal d&#39;itérations.
-    </span><span class="kw">fn </span>iterate_complex_point(<span class="kw-2">&amp;</span><span class="self">self</span>, complex_point: <span class="kw-2">&amp;</span>Complex, max_iteration: u16) -&gt; u16 {
-        <span class="kw">match </span>iterate_common(complex_point, max_iteration, <span class="number">3</span>) {
-            <span class="prelude-val">Ok</span>(iteration) =&gt; iteration,
-            <span class="prelude-val">Err</span>(e) =&gt; {
-                <span class="macro">eprintln!</span>(<span class="string">&quot;{}&quot;</span>, e);
-                <span class="number">0
-            </span>}
+    /// L&#39;intensité du pixel (PixelIntensity {zn, count}).
+    ///
+    </span><span class="kw">fn </span>compute_pixel_intensity(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        complex_point: <span class="kw-2">&amp;</span>Complex,
+        max_iteration: u16,
+    ) -&gt; PixelIntensity {
+        <span class="kw">let </span><span class="kw-2">mut </span>z = <span class="kw-2">*</span>complex_point;
+        <span class="kw">let </span><span class="kw-2">mut </span>iterations = <span class="number">0</span>;
+
+        <span class="kw">while </span>iterations &lt; max_iteration {
+            <span class="kw">let </span>next_z = <span class="kw">match </span>newton_raphson_step(<span class="kw-2">&amp;</span>z, <span class="number">3</span>) {
+                <span class="prelude-val">Ok</span>(z) =&gt; z,
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">break</span>,
+            };
+
+            <span class="kw">if </span>(next_z.sub(<span class="kw-2">&amp;</span>z)).magnitude_squared() &lt; <span class="number">1e-6 </span>{
+                <span class="kw">break</span>;
+            }
+            z = next_z;
+            iterations += <span class="number">1</span>;
+        }
+
+        PixelIntensity {
+            zn: (<span class="number">0.5 </span>+ z.arg() / (<span class="number">2.0 </span>* std::f64::consts::PI)) <span class="kw">as </span>f32,
+            count: iterations <span class="kw">as </span>f32 / max_iteration <span class="kw">as </span>f32,
         }
     }
 }
@@ -211,15 +201,61 @@
     ///
     /// # Returns
     ///
-    /// Le nombre d&#39;itérations nécessaires pour converger ou atteindre le nombre maximal d&#39;itérations.
-    </span><span class="kw">fn </span>iterate_complex_point(<span class="kw-2">&amp;</span><span class="self">self</span>, complex_point: <span class="kw-2">&amp;</span>Complex, max_iteration: u16) -&gt; u16 {
-        <span class="kw">match </span>iterate_common(complex_point, max_iteration, <span class="number">4</span>) {
-            <span class="prelude-val">Ok</span>(iteration) =&gt; iteration,
-            <span class="prelude-val">Err</span>(e) =&gt; {
-                <span class="macro">eprintln!</span>(<span class="string">&quot;{}&quot;</span>, e);
-                <span class="number">0
-            </span>}
+    /// L&#39;intensité du pixel (PixelIntensity {zn, count}).
+    ///
+    </span><span class="kw">fn </span>compute_pixel_intensity(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        complex_point: <span class="kw-2">&amp;</span>Complex,
+        max_iteration: u16,
+    ) -&gt; shared::types::pixel_intensity::PixelIntensity {
+        <span class="kw">let </span><span class="kw-2">mut </span>z = complex_point.clone();
+        <span class="kw">let </span><span class="kw-2">mut </span>iterations = <span class="number">0</span>;
+
+        <span class="kw">while </span>iterations &lt; max_iteration {
+            <span class="kw">let </span>next_z = <span class="kw">match </span>newton_raphson_step(<span class="kw-2">&amp;</span>z, <span class="number">4</span>) {
+                <span class="prelude-val">Ok</span>(z) =&gt; z,
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">break</span>,
+            };
+
+            <span class="kw">if </span>(next_z.sub(<span class="kw-2">&amp;</span>z)).magnitude_squared() &lt; <span class="number">1e-6 </span>{
+                <span class="kw">break</span>;
+            }
+            z = next_z;
+            iterations += <span class="number">1</span>;
         }
+
+        PixelIntensity {
+            zn: (<span class="number">0.5 </span>+ z.arg() / (<span class="number">2.0 </span>* std::f64::consts::PI)) <span class="kw">as </span>f32,
+            count: iterations <span class="kw">as </span>f32 / max_iteration <span class="kw">as </span>f32,
+        }
+    }
+}
+
+<span class="doccomment">/// Calculates the next step in the Newton-Raphson method for a polynomial of degree 3 or 4.
+///
+/// # Arguments
+///
+/// * `z` - Le point complexe actuel.
+/// * `degree` - La puissance du polynôme (3 pour Z^3, 4 pour Z^4).
+///
+/// # Returns
+///
+/// Le prochain point complexe dans l&#39;itération pour NewtonRaphsonZ3.
+</span><span class="kw">fn </span>newton_raphson_step(z: <span class="kw-2">&amp;</span>Complex, degree: u32) -&gt; <span class="prelude-ty">Result</span>&lt;Complex, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt; {
+    <span class="kw">match </span>degree {
+        <span class="number">3 </span>=&gt; {
+            <span class="comment">// p(z) = z^3 - 1 et p&#39;(z) = 3z^2
+            </span><span class="kw">let </span>pz = z.square().mul(z).sub(<span class="kw-2">&amp;</span>Complex::new(<span class="number">1.0</span>, <span class="number">0.0</span>));
+            <span class="kw">let </span>dpz = z.square().mul(<span class="kw-2">&amp;</span>Complex::new(<span class="number">3.0</span>, <span class="number">0.0</span>));
+            <span class="prelude-val">Ok</span>(z.sub(<span class="kw-2">&amp;</span>pz.div(dpz)))
+        }
+        <span class="number">4 </span>=&gt; {
+            <span class="comment">//  p(z) = z^4 - 1 et p&#39;(z) = 4z^3
+            </span><span class="kw">let </span>pz = z.square().square().sub(<span class="kw-2">&amp;</span>Complex::new(<span class="number">1.0</span>, <span class="number">0.0</span>));
+            <span class="kw">let </span>dpz = z.square().mul(z).mul(<span class="kw-2">&amp;</span>Complex::new(<span class="number">4.0</span>, <span class="number">0.0</span>));
+            <span class="prelude-val">Ok</span>(z.sub(<span class="kw-2">&amp;</span>pz.div(dpz)))
+        }
+        <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="string">&quot;Degree must be 3 or 4&quot;</span>),
     }
 }
 </code></pre></div></section></main></body></html>
