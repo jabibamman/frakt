@@ -1,3 +1,4 @@
 pub mod client;
-pub mod fractal_generation;
 pub mod networking;
+pub mod fractal_generation;
+pub mod image;

@@ -3,6 +3,7 @@ use crate::fractal_operations::FractalOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::NewtonRaphsonZ3Descriptor;
 use shared::types::fractal_descriptor::NewtonRaphsonZ4Descriptor;
+use shared::types::pixel_intensity::PixelIntensity;
 
 pub trait NewtonRaphsonOperations {
     /// Crée une nouvelle instance du type de fractale.
@@ -20,53 +21,6 @@ impl NewtonRaphsonOperations for NewtonRaphsonZ4Descriptor {
         Self {}
     }
 }
-/// Fonction générique pour itérer sur un point complexe selon la méthode Newton-Raphson.
-///
-/// Cette fonction prend un point complexe, un nombre maximal d'itérations et la puissance du polynôme.
-/// Elle itère sur le point complexe en utilisant la méthode Newton-Raphson et retourne le nombre
-/// d'itérations nécessaires pour converger ou atteindre le nombre maximal d'itérations.
-///
-/// # Arguments
-///
-/// * `complex_point` - Un point complexe à itérer.
-/// * `max_iteration` - Le nombre maximal d'itérations à effectuer.
-/// * `power` - La puissance du polynôme (3 pour Z^3, 4 pour Z^4).
-///
-/// # Returns
-///
-/// Le nombre d'itérations nécessaires pour converger ou atteindre le nombre maximal d'itérations.
-
-fn iterate_common(complex_point: &Complex, max_iteration: u16, power: u32) -> Result<u16, String> {
-    let mut z = *complex_point;
-    let mut iteration = 0u16;
-    let convergence_threshold = 1e-12; // carré de 1e-6 pour la comparaison directe avec magnitude_squared
-    while iteration < max_iteration {
-        let (fz, dfz) = match power {
-            3 => (
-                z.square().mul(&z).sub(&Complex::new(1.0, 0.0)), // z^3 - 1
-                z.square().mul(&Complex::new(3.0, 0.0)),         // 3z^2
-            ),
-            4 => (
-                z.square().mul(&z).mul(&z).sub(&Complex::new(1.0, 0.0)), // z^4 - 1
-                z.square().mul(&z).mul(&Complex::new(4.0, 0.0)),         // 4z^3
-            ),
-            _ => return Err(format!("Unsupported power: {}", power)),
-        };
-
-        if dfz.magnitude_squared() < convergence_threshold {
-            break;
-        }
-        let fz_over_dfz = fz.div(dfz);
-        let new_z = z.sub(&fz_over_dfz);
-
-        if new_z.sub(&z).magnitude_squared() < convergence_threshold {
-            break;
-        }
-        z = new_z;
-        iteration += 1;
-    }
-    Ok(iteration)
-}
 
 impl FractalOperations for NewtonRaphsonZ3Descriptor {
     /// Itère sur un point complexe selon la méthode Newton-Raphson pour Z^3.
@@ -78,14 +32,32 @@ impl FractalOperations for NewtonRaphsonZ3Descriptor {
     ///
     /// # Returns
     ///
-    /// Le nombre d'itérations nécessaires pour converger ou atteindre le nombre maximal d'itérations.
-    fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> u16 {
-        match iterate_common(complex_point, max_iteration, 3) {
-            Ok(iteration) => iteration,
-            Err(e) => {
-                eprintln!("{}", e);
-                0
+    /// L'intensité du pixel (PixelIntensity {zn, count}).
+    ///
+    fn compute_pixel_intensity(
+        &self,
+        complex_point: &Complex,
+        max_iteration: u16,
+    ) -> PixelIntensity {
+        let mut z = *complex_point;
+        let mut iterations = 0;
+
+        while iterations < max_iteration {
+            let next_z = match newton_raphson_step(&z, 3) {
+                Ok(z) => z,
+                Err(_) => break,
+            };
+
+            if (next_z.sub(&z)).magnitude_squared() < 1e-6 {
+                break;
             }
+            z = next_z;
+            iterations += 1;
+        }
+
+        PixelIntensity {
+            zn: (0.5 + z.arg() / (2.0 * std::f64::consts::PI)) as f32,
+            count: iterations as f32 / max_iteration as f32,
         }
     }
 }
@@ -99,14 +71,60 @@ impl FractalOperations for NewtonRaphsonZ4Descriptor {
     ///
     /// # Returns
     ///
-    /// Le nombre d'itérations nécessaires pour converger ou atteindre le nombre maximal d'itérations.
-    fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> u16 {
-        match iterate_common(complex_point, max_iteration, 4) {
-            Ok(iteration) => iteration,
-            Err(e) => {
-                eprintln!("{}", e);
-                0
+    /// L'intensité du pixel (PixelIntensity {zn, count}).
+    ///
+    fn compute_pixel_intensity(
+        &self,
+        complex_point: &Complex,
+        max_iteration: u16,
+    ) -> shared::types::pixel_intensity::PixelIntensity {
+        let mut z = complex_point.clone();
+        let mut iterations = 0;
+
+        while iterations < max_iteration {
+            let next_z = match newton_raphson_step(&z, 4) {
+                Ok(z) => z,
+                Err(_) => break,
+            };
+
+            if (next_z.sub(&z)).magnitude_squared() < 1e-6 {
+                break;
             }
+            z = next_z;
+            iterations += 1;
         }
+
+        PixelIntensity {
+            zn: (0.5 + z.arg() / (2.0 * std::f64::consts::PI)) as f32,
+            count: iterations as f32 / max_iteration as f32,
+        }
+    }
+}
+
+/// Calculates the next step in the Newton-Raphson method for a polynomial of degree 3 or 4.
+///
+/// # Arguments
+///
+/// * `z` - Le point complexe actuel.
+/// * `degree` - La puissance du polynôme (3 pour Z^3, 4 pour Z^4).
+///
+/// # Returns
+///
+/// Le prochain point complexe dans l'itération pour NewtonRaphsonZ3.
+fn newton_raphson_step(z: &Complex, degree: u32) -> Result<Complex, &'static str> {
+    match degree {
+        3 => {
+            // p(z) = z^3 - 1 et p'(z) = 3z^2
+            let pz = z.square().mul(z).sub(&Complex::new(1.0, 0.0));
+            let dpz = z.square().mul(&Complex::new(3.0, 0.0));
+            Ok(z.sub(&pz.div(dpz)))
+        }
+        4 => {
+            //  p(z) = z^4 - 1 et p'(z) = 4z^3
+            let pz = z.square().square().sub(&Complex::new(1.0, 0.0));
+            let dpz = z.square().mul(z).mul(&Complex::new(4.0, 0.0));
+            Ok(z.sub(&pz.div(dpz)))
+        }
+        _ => Err("Degree must be 3 or 4"),
     }
 }

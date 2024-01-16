@@ -4,6 +4,8 @@ use std::{
     time::Duration,
 };
 
+use log::debug;
+
 /// Reads a message from a TCP stream, parsing and returning the JSON component.
 ///
 /// This function first reads the message size and JSON size from the stream.
@@ -63,14 +65,14 @@ pub fn read_message(stream: &mut TcpStream) -> io::Result<String> {
         Err(e) => return Err(io::Error::new(io::ErrorKind::InvalidData, e)),
     };
 
-    println!("Réponse JSON du serveur: {}", json_str);
+    debug!("Réponse JSON du serveur: {}", json_str);
 
     // donnée supplémentaire en binaire
     let binary_data_size = total_size - json_size;
     if binary_data_size > 0 {
         let mut binary_buffer = vec![0; binary_data_size];
         stream.read_exact(&mut binary_buffer)?;
-        println!("Données binaires reçues: {:?}", binary_buffer);
+        debug!("Données binaires reçues: {:?}", binary_buffer);
     }
 
     Ok(json_str)

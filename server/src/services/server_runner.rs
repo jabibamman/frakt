@@ -1,4 +1,6 @@
-use crate::handler::handle_client;
+use log::{error, info};
+
+use crate::messages::handler::handle_client;
 use std::net::TcpListener;
 
 /// Starts a TCP server on the specified address.
@@ -28,17 +30,17 @@ use std::net::TcpListener;
 /// }
 /// ```
 pub fn run_server(address: &str) -> std::io::Result<()> {
-    println!("[SERVER] Starting server on {}", address);
+    info!("Server is running on {}", address);
     let listener = match TcpListener::bind(address) {
         Ok(listener) => listener,
         Err(e) => {
-            println!("[SERVER] Failed to bind to address: {}", e);
-            return Ok(());
+            error!("Failed to bind to address: {}", e);
+            return Err(e);
         }
     };
 
     for stream in listener.incoming() {
-        handle_client(stream?);
+        let _ = handle_client(stream?);
     }
 
     Ok(())
@@ -46,6 +48,8 @@ pub fn run_server(address: &str) -> std::io::Result<()> {
 
 #[cfg(test)]
 mod server_runner_tests {
+    use log::error;
+
     use super::*;
     use std::net::TcpStream;
     use std::thread;
@@ -61,8 +65,8 @@ mod server_runner_tests {
         thread::sleep(Duration::from_millis(100));
 
         match TcpStream::connect(address) {
-            Ok(_) => println!("Successfully connected to server"),
-            Err(e) => panic!("Failed to connect to server: {}", e),
+            Ok(_) => info!("Successfully connected to server"),
+            Err(e) => error!("Failed to connect to server: {}", e),
         }
     }
 }

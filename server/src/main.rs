@@ -1,15 +1,16 @@
-use cli::{
-    operation::parse_to_address,
-    parser::{CliArgs, CliServerArgs, Parser},
-};
+use cli::parser::{CliServerArgs, Parser};
+use log::{error, info};
 use server::services::server_runner::run_server;
+use shared::types::error::FractalError;
 
-fn main() -> std::io::Result<()> {
-    let cli_args: CliArgs = CliArgs::Server(CliServerArgs::parse());
-    let address = parse_to_address(cli_args);
+fn main() -> Result<(), FractalError> {
+    let cli_args: CliServerArgs = CliServerArgs::parse();
+    shared::logger::init_logger(cli_args.verbose, cli_args.debug)?;
+
+    let address = format!("{}:{}", cli_args.hostname, cli_args.port);
     match run_server(address.as_str()) {
-        Ok(_) => println!("[SERVER] Server stopped."),
-        Err(e) => println!("[SERVER] Server stopped with error: {}", e),
+        Ok(_) => info!("Server stopped successfully!"),
+        Err(_e) => error!("Could not start the server"),
     }
 
     Ok(())

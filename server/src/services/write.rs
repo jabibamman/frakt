@@ -55,7 +55,6 @@ pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
     stream_clone.write_all(&total_size)?;
     stream_clone.write_all(&json_size)?;
     stream_clone.write_all(&message_bytes)?;
-
     Ok(())
 }
 
