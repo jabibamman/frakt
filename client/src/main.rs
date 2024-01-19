@@ -20,7 +20,7 @@ fn main() -> Result<(), FractalError> {
     let fragment_task = receive_fragment_task(&mut stream)?;
 
     if let Some(task) = fragment_task {
-        process_fragment_task(task, cli_args.open)?;
+        process_fragment_task(task, cli_args.open, &mut stream)?;
     }
 
     Ok(())

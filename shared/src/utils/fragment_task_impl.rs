@@ -74,6 +74,7 @@ impl FragmentTaskOperation for FragmentTask {
     fn deserialize(message: &str) -> Result<Self, serde_json::Error> {
         debug!("Deserializing message: {}", message);
         let v: Value = serde_json::from_str(message)?;
+
         if !v["FragmentTask"].is_object() {
             error!("Invalid format: FragmentTask object not found");
             return Err(serde_json::Error::custom("Invalid format"));
@@ -124,15 +125,16 @@ mod fragment_task_tests {
             
         match fragment_task.serialize() {
             Ok(serialized) => {
-                assert_eq!(serialized,"{\"FragmentTask\":{\"fractal\":{\"fractal_type\":{\"IteratedSinZ\":{\"c\":{\"im\":1.0,\"re\":0.2}}}},\"id\":{\"count\":16,\"offset\":0},\"max_iteration\":64,\"range\":{\"max\":{\"x\":2.0,\"y\":3.55556},\"min\":{\"x\":-2.0,\"y\":-3.55556}},\"resolution\":{\"nx\":1080,\"ny\":1920}}}");
+                assert_eq!(serialized,"{\"FragmentTask\":{\"fractal\":{\"IteratedSinZ\":{\"c\":{\"im\":1.0,\"re\":0.2}}},\"id\":{\"count\":16,\"offset\":0},\"max_iteration\":64,\"range\":{\"max\":{\"x\":2.0,\"y\":3.55556},\"min\":{\"x\":-2.0,\"y\":-3.55556}},\"resolution\":{\"nx\":1080,\"ny\":1920}}}");
             }
             Err(_) => {}
         }
     }
 
+
     #[test]
     fn test_deserialize() {
-        let serialized_fragment_task = "{\"FragmentTask\":{\"fractal\":{\"fractal_type\":{\"IteratedSinZ\":{\"c\":{\"im\":1.0,\"re\":0.2}}}},\"id\":{\"count\":16,\"offset\":0},\"max_iteration\":64,\"range\":{\"max\":{\"x\":2.0,\"y\":3.55556},\"min\":{\"x\":-2.0,\"y\":-3.55556}},\"resolution\":{\"nx\":1080,\"ny\":1920}}}";
+        let serialized_fragment_task = "{\"FragmentTask\":{\"fractal\":{\"IteratedSinZ\":{\"c\":{\"im\":1.0,\"re\":0.2}}}},\"id\":{\"count\":16,\"offset\":0},\"max_iteration\":64,\"range\":{\"max\":{\"x\":2.0,\"y\":3.55556},\"min\":{\"x\":-2.0,\"y\":-3.55556}},\"resolution\":{\"nx\":1080,\"ny\":1920}}}";
         match FragmentTask::deserialize(serialized_fragment_task) {
             Ok(deserialized) => {
                 assert_eq!(
