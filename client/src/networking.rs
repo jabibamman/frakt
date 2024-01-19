@@ -158,15 +158,9 @@ fn send_fragment_result(stream: &mut TcpStream, img: &ImageBuffer<Rgb<u8>, Vec<u
         .map_err(FractalError::Image)?;
 
     let pixel_data = convert_to_pixel_data(buf.into_inner());
-
-    let fragment_result = FragmentResult {
-        id: fragment_task.id.clone(), 
-        resolution: fragment_task.resolution.clone(),
-        range: fragment_task.range.clone(),
-        pixels: pixel_data,
-    };
-
+    let fragment_result = FragmentResult::new(fragment_task.id, fragment_task.resolution, fragment_task.range, pixel_data);
     let serialized = FragmentResult::serialize(&fragment_result)?;
+    
     debug!("Sending fragment result: {}", serialized);
     write(stream, &serialized)?;
     Ok(())
