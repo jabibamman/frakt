@@ -46,7 +46,13 @@ pub struct CliClientArgs {
     /// Default: false
     #[clap(short = 'o', long = "open", default_value = "false")]
     pub open: bool,
+
+    /// Optional: Add a flag to save the image to a file.
+    /// Default: false
+    #[clap(short = 's', long = "save", default_value = "false")]
+    pub save: bool,
 }
+
 
 /// Represents command line arguments for a server in a CLI application.
 ///

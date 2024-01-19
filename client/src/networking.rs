@@ -115,7 +115,7 @@ pub fn save_fractal_image(
 ///
 pub fn process_fragment_task(
     task: FragmentTask,
-    open_after_save: bool,
+    cli_args: &CliClientArgs,
     stream: &mut TcpStream,
 ) -> Result<(), FractalError> {
     let dir_path_buf = get_dir_path_buf()?;
@@ -123,11 +123,13 @@ pub fn process_fragment_task(
     let img_path = get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG))?;
     let img = generate_fractal_set(task.clone())?; 
     
-    save_fractal_image(img.clone(), &img_path)?;
+    if cli_args.save {
+        save_fractal_image(img.clone(), &img_path)?;
+    }
 
     send_fragment_result(stream, &img, &task)?;
 
-    if open_after_save {
+    if cli_args.open {
         open_image(&img_path)?;
     }
 
@@ -150,7 +152,7 @@ pub fn process_fragment_task(
 /// 
 /// This function converts the `ImageBuffer` to a `Vec<u8>` and then to a `PixelData` struct.
 /// 
-fn send_fragment_result(mut stream: &mut TcpStream, img: &ImageBuffer<Rgb<u8>, Vec<u8>>, fragment_task: &FragmentTask) -> Result<(), FractalError> {
+fn send_fragment_result(stream: &mut TcpStream, img: &ImageBuffer<Rgb<u8>, Vec<u8>>, fragment_task: &FragmentTask) -> Result<(), FractalError> {
     let mut buf = Cursor::new(Vec::new());
     img.write_to(&mut buf, image::ImageOutputFormat::Png)
         .map_err(FractalError::Image)?;
