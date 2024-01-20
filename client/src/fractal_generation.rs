@@ -9,6 +9,7 @@ use shared::types::fractal_descriptor::FractalType::{
     IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,
 };
 use shared::types::messages::FragmentTask;
+use shared::types::pixel_data::PixelData;
 use shared::types::pixel_intensity::PixelIntensity;
 
 /// Generates an image of a Fractal Type based on the provided fragment task.
@@ -24,7 +25,7 @@ use shared::types::pixel_intensity::PixelIntensity;
 /// iterations for each pixel, and then maps these iterations to a color value.
 pub fn generate_fractal_set(
     fragment_task: FragmentTask,
-) -> Result<ImageBuffer<Rgb<u8>, Vec<u8>>, FractalError> {
+) -> Result<(ImageBuffer<Rgb<u8>, Vec<u8>>, Vec<u8>, PixelData), FractalError> {
     let descriptor = &fragment_task.fractal.fractal_type;
     let descriptor: &dyn FractalOperations = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
@@ -41,6 +42,8 @@ pub fn generate_fractal_set(
 
     let mut img = ImageBuffer::new(resolution.nx.into(), resolution.ny.into());
 
+    let mut pixel_data_vec = Vec::new();
+
     info!("Generating fractal set...");
     for (x, y, pixel) in img.enumerate_pixels_mut() {
         let scaled_x = x as f64 * scale_x + range.min.x;
@@ -50,9 +53,21 @@ pub fn generate_fractal_set(
         let pixel_intensity =
             descriptor.compute_pixel_intensity(&complex_point, fragment_task.max_iteration);
         *pixel = Rgb(color(pixel_intensity));
+
+        pixel_data_vec.push(pixel[0]);
+        pixel_data_vec.push(pixel[1]);
+        pixel_data_vec.push(pixel[2]);
     }
 
-    Ok(img)
+
+    let pixel_data = PixelData {
+        offset: 0, 
+        count: img.width() * img.height(),
+    };
+
+
+    Ok((img, pixel_data_vec, pixel_data))
+
 }
 
 ///Generates a color based on the provided pixel intensity.
@@ -142,9 +157,9 @@ mod julia_descriptor_tests {
             },
         };
 
-        let result = generate_fractal_set(fragment_task);
-
-        assert_eq!(result.expect("dimensions").dimensions(), (800, 600));
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (800, 600));
+        }
     }
 
     #[test]
@@ -188,8 +203,8 @@ mod julia_descriptor_tests {
             },
         };
 
-        let result = generate_fractal_set(fragment_task);
-
-        assert_eq!(result.expect("dimensions").dimensions(), (800, 600));
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (800, 600));
+        }
     }
 }

@@ -1,7 +1,5 @@
 use std::{
-    io::{self, Cursor},
-    net::{TcpStream, ToSocketAddrs},
-    time::Duration,
+    io, net::{TcpStream, ToSocketAddrs}, time::Duration
 };
 
 use cli::parser::CliClientArgs;
@@ -107,7 +105,6 @@ pub fn save_fractal_image(
 ///
 /// * `task` - A `FragmentTask` containing details such as the fractal type, resolution, and range.
 /// * `open_after_save` - A boolean indicating whether the image should be opened after it is saved.
-/// * `stream` - A mutable reference to the `TcpStream` for sending the fragment result.
 ///
 /// # Return
 ///
@@ -116,18 +113,18 @@ pub fn save_fractal_image(
 pub fn process_fragment_task(
     task: FragmentTask,
     cli_args: &CliClientArgs,
-    stream: &mut TcpStream,
 ) -> Result<(), FractalError> {
     let dir_path_buf = get_dir_path_buf()?;
 
     let img_path = get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG))?;
-    let img = generate_fractal_set(task.clone())?; 
-    
+    let (img, pixel_data_bytes, _) = generate_fractal_set(task.clone())?;
+    let pixel_data = convert_to_pixel_data(pixel_data_bytes.clone(), task.clone());
+
     if cli_args.save {
         save_fractal_image(img.clone(), &img_path)?;
     }
 
-    send_fragment_result(stream, &img, &task)?;
+    send_fragment_result(&task, cli_args, pixel_data)?;
 
     if cli_args.open {
         open_image(&img_path)?;
@@ -143,6 +140,7 @@ pub fn process_fragment_task(
 /// * `stream` - A mutable reference to the `TcpStream` for sending the fragment result.
 /// * `img` - An `ImageBuffer` containing the fractal image.
 /// * `fragment_task` - A `FragmentTask` containing details such as the fractal type, resolution, and range.
+/// * `cli_args` - A `CliClientArgs` containing the command line arguments.
 /// 
 /// # Return
 /// 
@@ -152,17 +150,15 @@ pub fn process_fragment_task(
 /// 
 /// This function converts the `ImageBuffer` to a `Vec<u8>` and then to a `PixelData` struct.
 /// 
-fn send_fragment_result(stream: &mut TcpStream, img: &ImageBuffer<Rgb<u8>, Vec<u8>>, fragment_task: &FragmentTask) -> Result<(), FractalError> {
-    let mut buf = Cursor::new(Vec::new());
-    img.write_to(&mut buf, image::ImageOutputFormat::Png)
-        .map_err(FractalError::Image)?;
-
-    let pixel_data = convert_to_pixel_data(buf.into_inner());
+fn send_fragment_result(fragment_task: &FragmentTask, cli_args: &CliClientArgs, pixel_data: PixelData) -> Result<(), FractalError> {
     let fragment_result = FragmentResult::new(fragment_task.id, fragment_task.resolution, fragment_task.range, pixel_data);
     let serialized = FragmentResult::serialize(&fragment_result)?;
-    
+
+    let mut new_stream = connect_to_server(cli_args)?;
     debug!("Sending fragment result: {}", serialized);
-    write(stream, &serialized)?;
+
+    write(&mut new_stream, &serialized)?;
+    
     Ok(())
 }
 
@@ -179,10 +175,12 @@ fn send_fragment_result(stream: &mut TcpStream, img: &ImageBuffer<Rgb<u8>, Vec<u
 /// # Details
 /// 
 /// This function converts the `Vec<u8>` to a `PixelData` struct.
-fn convert_to_pixel_data(data: Vec<u8>) -> PixelData {
-    // Supposons que chaque pixel est représenté par 3 octets (RGB)
-    let pixel_size = 3;
+fn convert_to_pixel_data(data: Vec<u8>, task: FragmentTask) -> PixelData {
+    let pixel_size = 3; // Pour RGB, 4 pour RGBA, etc.
     let total_pixels = data.len() / pixel_size;
 
-    PixelData::new(0, total_pixels as u32)
+    PixelData {
+        offset: task.id.count,
+        count: total_pixels as u32,
+    }
 }

@@ -65,14 +65,21 @@ pub fn read_message(stream: &mut TcpStream) -> io::Result<String> {
         Err(e) => return Err(io::Error::new(io::ErrorKind::InvalidData, e)),
     };
 
-    debug!("Réponse JSON du serveur: {}", json_str);
+    debug!("Réponse String message du serveur: {}", json_str);
 
     // donnée supplémentaire en binaire
     let binary_data_size = total_size - json_size;
     if binary_data_size > 0 {
         let mut binary_buffer = vec![0; binary_data_size];
         stream.read_exact(&mut binary_buffer)?;
-        debug!("Données binaires reçues: {:?}", binary_buffer);
+
+        let hex_string = binary_buffer.iter()
+                                  .map(|&b| format!("{:02X}", b))
+                                  .collect::<Vec<String>>()
+                                  .join(", ");
+
+        let formatted_hex_string = format!("[{}]", hex_string);
+        debug!("Read data: {}", formatted_hex_string);
     }
 
     Ok(json_str)

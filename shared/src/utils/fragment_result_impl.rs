@@ -26,6 +26,7 @@ impl FragmentResultOperation for FragmentResult {
 
     fn serialize(&self) -> Result<String, serde_json::Error> {
         let fragment_json = serde_json::json!({"FragmentResult": &self});
+        debug!("Serialized message: {}", serde_json::to_string(&fragment_json)?);
         serde_json::to_string(&fragment_json)
     }
 
@@ -75,7 +76,7 @@ mod fragment_result_tests {
         );
         
         let result = fragment_result.serialize();
-        assert!(result.is_ok());
+        assert_eq!(result.is_ok(), true);
     }
     
     #[test]

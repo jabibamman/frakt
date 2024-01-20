@@ -46,8 +46,9 @@ pub struct MandelbrotDescriptor {}
 ///
 /// Attributes:
 /// - `fractal_type`: A variant of `FractalType` specifying the type of fractal and its parameters.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FractalDescriptor {
+    #[serde(flatten)]
     pub fractal_type: FractalType,
 }
 

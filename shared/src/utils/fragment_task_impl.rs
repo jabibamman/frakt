@@ -79,6 +79,7 @@ impl FragmentTaskOperation for FragmentTask {
             error!("Invalid format: FragmentTask object not found");
             return Err(serde_json::Error::custom("Invalid format"));
         }
+        
         serde_json::from_value(v["FragmentTask"].clone())
     }
 }
