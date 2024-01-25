@@ -1,4 +1,3 @@
-
 ![GitHub Release](https://img.shields.io/github/v/release/jabibamman/frakt)
 [![wakatime](https://wakatime.com/badge/github/jabibamman/frakt.svg)](https://wakatime.com/badge/github/jabibamman/frakt)
 [![codecov](https://codecov.io/gh/jabibamman/frakt/branch/master/graph/badge.svg)](https://codecov.io/gh/jabibamman/frakt)
