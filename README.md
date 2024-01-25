@@ -10,6 +10,8 @@
 
 Frakt is a Rust-based project focused on the computation and visualization of fractals. This workspace includes several components, such as clients, servers, and shared libraries.
 
+Our documentation is available [here](https://jabibamman.github.io/frakt/client).
+
 ## Installation
 
 ### Prerequisites
