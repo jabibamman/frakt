@@ -49,7 +49,7 @@ pub fn read_message(stream: &mut TcpStream) -> io::Result<(String, Vec<u8>)> {
 
     let json_size = u32::from_be_bytes(json_message) as usize;
     let total_size = u32::from_be_bytes(total_message) as usize;
-    
+
     let mut json_buffer = vec![0; json_size];
     stream.read_exact(&mut json_buffer)?;
 
@@ -62,7 +62,7 @@ pub fn read_message(stream: &mut TcpStream) -> io::Result<(String, Vec<u8>)> {
 
     // donnée supplémentaire en binaire
     let binary_data_size = total_size - json_size;
-    let mut data   = Vec::new();
+    let mut data = Vec::new();
     if binary_data_size > 0 {
         data = vec![0; binary_data_size];
         stream.read_exact(&mut data)?;

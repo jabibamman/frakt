@@ -26,14 +26,14 @@ fn main() -> Result<(), FractalError> {
             }
             Ok(None) => {
                 info!("No more tasks to process");
-                break; 
+                break;
             }
             Err(e) => {
                 error!("Error receiving fragment task: {:?}", e);
-                break; 
+                break;
             }
         }
     }
-    
+
     Ok(())
 }

@@ -1,15 +1,27 @@
 use std::{
-    io, net::{TcpStream, ToSocketAddrs}, time::Duration
+    io,
+    net::{TcpStream, ToSocketAddrs},
+    time::Duration,
 };
 
 use cli::parser::CliClientArgs;
 use image::{ImageBuffer, Rgb};
 use log::{debug, error, info};
-use server::services::{reader::get_response, write::{write, write_img}};
+use server::services::{
+    reader::get_response,
+    write::{write, write_img},
+};
 use shared::{
-    types::{error::FractalError, filesystem::FileExtension, messages::{FragmentResult, FragmentTask}, pixel_data::PixelData},
+    types::{
+        error::FractalError,
+        filesystem::FileExtension,
+        messages::{FragmentResult, FragmentTask},
+        pixel_data::PixelData,
+    },
     utils::{
-        filesystem::{get_dir_path_buf, get_extension_str, get_file_path}, fragment_result_impl::FragmentResultOperation, fragment_task_impl::FragmentTaskOperation
+        filesystem::{get_dir_path_buf, get_extension_str, get_file_path},
+        fragment_result_impl::FragmentResultOperation,
+        fragment_task_impl::FragmentTaskOperation,
     },
 };
 
@@ -63,7 +75,9 @@ pub fn send_request(stream: &mut TcpStream, serialized_request: &str) -> io::Res
 ///
 /// * `Result<Option<FragmentTask, Vec<u8>>>, FractalError>` - A `FragmentTask` if the response was successful, or a `FractalError` if the response failed.
 ///
-pub fn receive_fragment_task(stream: &mut TcpStream) -> Result<Option<(FragmentTask, Vec<u8>)>, FractalError> {
+pub fn receive_fragment_task(
+    stream: &mut TcpStream,
+) -> Result<Option<(FragmentTask, Vec<u8>)>, FractalError> {
     let (fragment_task, data) = get_response(stream)?;
     debug!("Received response: {}", fragment_task);
     debug!("Received data in receive fragment task: {:?}", data);
@@ -123,11 +137,11 @@ pub fn process_fragment_task(
     let (img, pixel_data_bytes, pixel_intensity_matrice) = generate_fractal_set(task.clone())?;
 
     debug!("Pixel data bytes: {:?}", pixel_data_bytes);
-    
+
     let pixel_data = convert_to_pixel_data(pixel_data_bytes.clone(), task.clone());
 
     let mut vec_data = data.clone();
-    
+
     for i in 0..pixel_intensity_matrice.len() {
         vec_data.extend(pixel_intensity_matrice[i].zn.to_be_bytes());
         vec_data.extend(pixel_intensity_matrice[i].count.to_be_bytes());
@@ -149,46 +163,56 @@ pub fn process_fragment_task(
 }
 
 /// Send a `FragmentResult` to the server after generating a fractal image.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `img` - An `ImageBuffer` containing the fractal image.
 /// * `fragment_task` - A `FragmentTask` containing details such as the fractal type, resolution, and range.
 /// * `cli_args` - A `CliClientArgs` containing the command line arguments.
 /// * `pixel_data` - A `PixelData` struct containing the image data.
 /// * `data` - A `Vec<u8>` containing the image data.
-/// 
+///
 /// # Return
-/// 
+///
 /// * `Result<(), FractalError>` - An `io::Error` if the image could not be saved.
-/// 
+///
 /// # Details
-/// 
+///
 /// This function converts the `ImageBuffer` to a `Vec<u8>` and then to a `PixelData` struct.
-/// 
-fn send_fragment_result(fragment_task: &FragmentTask, cli_args: &CliClientArgs, pixel_data: PixelData, data: Vec<u8>) -> Result<TcpStream, FractalError> {
-    let fragment_result = FragmentResult::new(fragment_task.id, fragment_task.resolution, fragment_task.range, pixel_data);
+///
+fn send_fragment_result(
+    fragment_task: &FragmentTask,
+    cli_args: &CliClientArgs,
+    pixel_data: PixelData,
+    data: Vec<u8>,
+) -> Result<TcpStream, FractalError> {
+    let fragment_result = FragmentResult::new(
+        fragment_task.id,
+        fragment_task.resolution,
+        fragment_task.range,
+        pixel_data,
+    );
     let serialized = FragmentResult::serialize(&fragment_result)?;
 
     let mut new_stream = connect_to_server(cli_args)?;
     debug!("Sending fragment result: {}", serialized);
     write_img(&mut new_stream, &serialized, data)?;
-    
+
     Ok(new_stream)
 }
 
 /// Convert a `Vec<u8>` to a `PixelData` struct.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `data` - A `Vec<u8>` containing the image data.
-/// 
+///
 /// # Return
-/// 
+///
 /// * `PixelData` - A `PixelData` struct containing the image data.
-/// 
+///
 /// # Details
-/// 
+///
 /// This function converts the `Vec<u8>` to a `PixelData` struct.
 fn convert_to_pixel_data(data: Vec<u8>, task: FragmentTask) -> PixelData {
     let pixel_size = 3; // Pour RGB, 4 pour RGBA, etc.
