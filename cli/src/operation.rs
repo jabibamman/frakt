@@ -21,6 +21,7 @@ mod operation_tests {
             verbose: args.verbose.clone(),
             debug: args.debug.clone(),
             open: false,
+            save: false,
         };
 
         let address = format!("{}:{}", client_args.hostname, client_args.port);

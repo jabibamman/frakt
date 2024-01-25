@@ -1,4 +1,3 @@
-
 ![GitHub Release](https://img.shields.io/github/v/release/jabibamman/frakt)
 [![wakatime](https://wakatime.com/badge/github/jabibamman/frakt.svg)](https://wakatime.com/badge/github/jabibamman/frakt)
 [![codecov](https://codecov.io/gh/jabibamman/frakt/branch/master/graph/badge.svg)](https://codecov.io/gh/jabibamman/frakt)
@@ -9,6 +8,8 @@
 ## Description
 
 Frakt is a Rust-based project focused on the computation and visualization of fractals. This workspace includes several components, such as clients, servers, and shared libraries.
+
+Our documentation is available [here](https://jabibamman.github.io/frakt/client).
 
 ## Installation
 

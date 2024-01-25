@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 /// Attributes:
 /// - `nx`: A `u16` representing the number of pixels or cells along the x-axis (width).
 /// - `ny`: A `u16` representing the number of pixels or cells along the y-axis (height).
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct Resolution {
     pub nx: u16,
     pub ny: u16,
