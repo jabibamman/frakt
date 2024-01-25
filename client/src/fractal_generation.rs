@@ -9,7 +9,6 @@ use shared::types::fractal_descriptor::FractalType::{
     IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,
 };
 use shared::types::messages::FragmentTask;
-use shared::types::pixel_data::PixelData;
 use shared::types::pixel_intensity::PixelIntensity;
 
 /// Generates an image of a Fractal Type based on the provided fragment task.
@@ -18,14 +17,14 @@ use shared::types::pixel_intensity::PixelIntensity;
 /// * `fragment_task`: A `FragmentTask` containing details such as the fractal type, resolution, and range.
 ///
 /// # Returns
-/// Returns an `ImageBuffer` containing the generated Fractal.
+/// Returns a tuple containing the generated image, the pixel data, and the pixel intensity matrice.
 ///
 /// # Details
 /// This function scales the coordinates based on the provided resolution and range, computes the number of
 /// iterations for each pixel, and then maps these iterations to a color value.
 pub fn generate_fractal_set(
     fragment_task: FragmentTask,
-) -> Result<(ImageBuffer<Rgb<u8>, Vec<u8>>, Vec<u8>, PixelData), FractalError> {
+) -> Result<(ImageBuffer<Rgb<u8>, Vec<u8>>, Vec<u8>, Vec<PixelIntensity>), FractalError> {
     let descriptor = &fragment_task.fractal.fractal_type;
     let descriptor: &dyn FractalOperations = match descriptor {
         Julia(julia_descriptor) => julia_descriptor,
@@ -44,6 +43,9 @@ pub fn generate_fractal_set(
 
     let mut pixel_data_vec = Vec::new();
 
+    // crée une matrice de pixel_intensity
+    let mut pixel_matrice_intensity = Vec::new();
+
     info!("Generating fractal set...");
     for (x, y, pixel) in img.enumerate_pixels_mut() {
         let scaled_x = x as f64 * scale_x + range.min.x;
@@ -54,19 +56,14 @@ pub fn generate_fractal_set(
             descriptor.compute_pixel_intensity(&complex_point, fragment_task.max_iteration);
         *pixel = Rgb(color(pixel_intensity));
 
+        pixel_matrice_intensity.push(pixel_intensity);
         pixel_data_vec.push(pixel[0]);
         pixel_data_vec.push(pixel[1]);
         pixel_data_vec.push(pixel[2]);
+        
     }
 
-
-    let pixel_data = PixelData {
-        offset: 0, 
-        count: img.width() * img.height(),
-    };
-
-
-    Ok((img, pixel_data_vec, pixel_data))
+    Ok((img, pixel_data_vec, pixel_matrice_intensity))
 
 }
 

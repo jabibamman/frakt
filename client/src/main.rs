@@ -1,3 +1,4 @@
+use log::{error, info};
 use networking::{connect_to_server, process_fragment_task, receive_fragment_task, send_request};
 use shared::{types::error::FractalError, utils::fragment_request_impl::FragmentRequestOperation};
 
@@ -17,11 +18,22 @@ fn main() -> Result<(), FractalError> {
 
     let mut stream = connect_to_server(&cli_args)?;
     send_request(&mut stream, &serialized_request)?;
-    let fragment_task = receive_fragment_task(&mut stream)?;
 
-    if let Some(task) = fragment_task {
-        process_fragment_task(task, &cli_args)?;
+    loop {
+        match receive_fragment_task(&mut stream) {
+            Ok(Some((fragment_task, data))) => {
+                stream = process_fragment_task(fragment_task, data, &cli_args)?;
+            }
+            Ok(None) => {
+                info!("No more tasks to process");
+                break; 
+            }
+            Err(e) => {
+                error!("Error receiving fragment task: {:?}", e);
+                break; 
+            }
+        }
     }
-
+    
     Ok(())
 }

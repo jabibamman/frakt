@@ -17,8 +17,8 @@ use log::debug;
 /// * `stream`: A mutable reference to a `TcpStream` from which the message will be read.
 ///
 /// # Returns
-/// An `io::Result<String>` which is `Ok` containing the JSON string if the read is successful,
-/// or an `io::Error` if an error occurs during the read operation.
+/// An `io::Result` containing a tuple of the JSON data as a `String` and the binary data as a `Vec<u8>`.
+/// The binary data is empty if there's no additional data.
 ///
 /// # Errors
 /// Returns an `io::Error` if there's an issue with stream reading or if the JSON data
@@ -33,30 +33,23 @@ use log::debug;
 /// fn main() -> io::Result<()> {
 ///     let mut stream = TcpStream::connect("localhost:8787").unwrap();
 ///     match read_message(&mut stream) {
-///         Ok(json_msg) => println!("Received JSON: {}", json_msg),
+///         Ok((json_str, data)) => println!("Message: {}, Data: {:?}", json_str, data),
 ///         Err(e) => eprintln!("Failed to read message: {}", e),
 ///     }
 ///
 ///     Ok(())
 /// }
 /// ```
-pub fn read_message(stream: &mut TcpStream) -> io::Result<String> {
-    let mut size_buffer = [0u8; 8];
-    stream.read_exact(&mut size_buffer)?;
+pub fn read_message(stream: &mut TcpStream) -> io::Result<(String, Vec<u8>)> {
+    let mut total_message = [0; 4];
+    let mut json_message = [0; 4];
 
-    let total_size = u32::from_be_bytes([
-        size_buffer[0],
-        size_buffer[1],
-        size_buffer[2],
-        size_buffer[3],
-    ]) as usize;
-    let json_size = u32::from_be_bytes([
-        size_buffer[4],
-        size_buffer[5],
-        size_buffer[6],
-        size_buffer[7],
-    ]) as usize;
+    stream.read_exact(&mut total_message)?;
+    stream.read_exact(&mut json_message)?;
 
+    let json_size = u32::from_be_bytes(json_message) as usize;
+    let total_size = u32::from_be_bytes(total_message) as usize;
+    
     let mut json_buffer = vec![0; json_size];
     stream.read_exact(&mut json_buffer)?;
 
@@ -69,24 +62,16 @@ pub fn read_message(stream: &mut TcpStream) -> io::Result<String> {
 
     // donnée supplémentaire en binaire
     let binary_data_size = total_size - json_size;
+    let mut data   = Vec::new();
     if binary_data_size > 0 {
-        let mut binary_buffer = vec![0; binary_data_size];
-        stream.read_exact(&mut binary_buffer)?;
-
-        let hex_string = binary_buffer.iter()
-                                  .map(|&b| format!("{:02X}", b))
-                                  .collect::<Vec<String>>()
-                                  .join(", ");
-
-        let formatted_hex_string = format!("[{}]", hex_string);
-        debug!("Read data: {}", formatted_hex_string);
+        data = vec![0; binary_data_size];
+        stream.read_exact(&mut data)?;
     }
 
-    Ok(json_str)
+    Ok((json_str, data))
 }
 
-pub fn get_response(stream: &mut TcpStream) -> io::Result<String> {
+pub fn get_response(stream: &mut TcpStream) -> io::Result<(String, Vec<u8>)> {
     stream.set_read_timeout(Some(Duration::new(5, 0)))?;
-    let response = read_message(stream)?;
-    Ok(response)
+    Ok(read_message(stream)?)
 }
