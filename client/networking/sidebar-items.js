@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["connect_to_server","process_fragment_task","receive_fragment_task","save_fractal_image","send_request"]};
+window.SIDEBAR_ITEMS = {"fn":["connect_to_server","convert_to_pixel_data","process_fragment_task","receive_fragment_task","save_fractal_image","send_fragment_result","send_request"]};

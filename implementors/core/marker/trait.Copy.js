@@ -1,3 +1,0 @@
-(function() {var implementors = {
-"shared":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.74.1/core/marker/trait.Copy.html\" title=\"trait core::marker::Copy\">Copy</a> for <a class=\"struct\" href=\"shared/types/color/struct.RGB.html\" title=\"struct shared::types::color::RGB\">RGB</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.74.1/core/marker/trait.Copy.html\" title=\"trait core::marker::Copy\">Copy</a> for <a class=\"struct\" href=\"shared/types/complex/struct.Complex.html\" title=\"struct shared::types::complex::Complex\">Complex</a>"]]
-};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
