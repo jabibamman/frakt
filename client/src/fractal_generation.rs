@@ -60,11 +60,9 @@ pub fn generate_fractal_set(
         pixel_data_vec.push(pixel[0]);
         pixel_data_vec.push(pixel[1]);
         pixel_data_vec.push(pixel[2]);
-        
     }
 
     Ok((img, pixel_data_vec, pixel_matrice_intensity))
-
 }
 
 ///Generates a color based on the provided pixel intensity.

@@ -55,7 +55,7 @@ pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
     stream_clone.write_all(&total_size)?;
     stream_clone.write_all(&json_size)?;
     stream_clone.write_all(&message_bytes)?;
-    
+
     Ok(())
 }
 
@@ -69,7 +69,7 @@ pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
 ///
 /// * `Vec<u8>` - The formatted message as a vector of bytes (`Vec<u8>`).
 ///
-/// 
+///
 /// This function takes a string slice and converts it into a vector of bytes. It formats the message by calling `format!` macro with the provided message and converts the formatted message into bytes using `as_bytes()` method. The resulting bytes are then converted into a vector using `to_vec()` method and returned.
 pub fn write_img(stream: &mut TcpStream, message: &str, img_data: Vec<u8>) -> io::Result<()> {
     let mut stream_clone = stream.try_clone()?;
@@ -86,7 +86,6 @@ pub fn write_img(stream: &mut TcpStream, message: &str, img_data: Vec<u8>) -> io
     for byte in img_data {
         stream_clone.write_all(&[byte])?;
     }
-
 
     Ok(())
 }

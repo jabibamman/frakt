@@ -53,7 +53,6 @@ pub struct CliClientArgs {
     pub save: bool,
 }
 
-
 /// Represents command line arguments for a server in a CLI application.
 ///
 /// Similar to `CliClientArgs`, this struct is for parsing server-specific command line arguments.
