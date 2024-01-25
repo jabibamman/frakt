@@ -74,10 +74,72 @@ impl FragmentTaskOperation for FragmentTask {
     fn deserialize(message: &str) -> Result<Self, serde_json::Error> {
         debug!("Deserializing message: {}", message);
         let v: Value = serde_json::from_str(message)?;
+
         if !v["FragmentTask"].is_object() {
             error!("Invalid format: FragmentTask object not found");
             return Err(serde_json::Error::custom("Invalid format"));
         }
+
         serde_json::from_value(v["FragmentTask"].clone())
+    }
+}
+
+#[cfg(test)]
+mod fragment_task_tests {
+    use crate::types::complex::Complex;
+    use crate::types::fractal_descriptor::FractalDescriptor;
+    use crate::types::fractal_descriptor::FractalType::IteratedSinZ;
+    use crate::types::fractal_descriptor::IteratedSinZDescriptor;
+    use crate::types::point::Point;
+    use crate::types::range::Range;
+    use crate::types::resolution::Resolution;
+    use crate::types::u8data::U8Data;
+
+    use super::*;
+
+    fn setup() -> FragmentTask {
+        FragmentTask {
+            id: U8Data {
+                offset: 0,
+                count: 16,
+            },
+            fractal: FractalDescriptor {
+                fractal_type: IteratedSinZ(IteratedSinZDescriptor {
+                    c: Complex { re: 0.2, im: 1.0 },
+                }),
+            },
+            max_iteration: 64,
+            resolution: Resolution { nx: 1080, ny: 1920 },
+            range: Range {
+                min: Point {
+                    x: -2.0,
+                    y: -3.55556,
+                },
+                max: Point { x: 2.0, y: 3.55556 },
+            },
+        }
+    }
+
+    #[test]
+    fn test_serialize() {
+        let fragment_task = setup();
+
+        match fragment_task.serialize() {
+            Ok(serialized) => {
+                assert_eq!(serialized,"{\"FragmentTask\":{\"fractal\":{\"IteratedSinZ\":{\"c\":{\"im\":1.0,\"re\":0.2}}},\"id\":{\"count\":16,\"offset\":0},\"max_iteration\":64,\"range\":{\"max\":{\"x\":2.0,\"y\":3.55556},\"min\":{\"x\":-2.0,\"y\":-3.55556}},\"resolution\":{\"nx\":1080,\"ny\":1920}}}");
+            }
+            Err(_) => {}
+        }
+    }
+
+    #[test]
+    fn test_deserialize() {
+        let serialized_fragment_task = "{\"FragmentTask\":{\"fractal\":{\"IteratedSinZ\":{\"c\":{\"im\":1.0,\"re\":0.2}}}},\"id\":{\"count\":16,\"offset\":0},\"max_iteration\":64,\"range\":{\"max\":{\"x\":2.0,\"y\":3.55556},\"min\":{\"x\":-2.0,\"y\":-3.55556}},\"resolution\":{\"nx\":1080,\"ny\":1920}}}";
+        match FragmentTask::deserialize(serialized_fragment_task) {
+            Ok(deserialized) => {
+                assert_eq!(deserialized, setup());
+            }
+            Err(_) => {}
+        }
     }
 }

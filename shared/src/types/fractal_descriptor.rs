@@ -38,6 +38,7 @@ pub struct IteratedSinZDescriptor {
     pub c: Complex,
 }
 
+/// Describes parameters specific to a Mandelbrot fractal.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MandelbrotDescriptor {}
 
@@ -47,9 +48,14 @@ pub struct MandelbrotDescriptor {}
 /// - `fractal_type`: A variant of `FractalType` specifying the type of fractal and its parameters.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FractalDescriptor {
+    #[serde(flatten)]
     pub fractal_type: FractalType,
 }
+
+/// Describes parameters specific to a Newton-Raphson z3 fractal.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NewtonRaphsonZ3Descriptor {}
+
+/// Describes parameters specific to a Newton-Raphson z3 fractal.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NewtonRaphsonZ4Descriptor {}
