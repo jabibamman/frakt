@@ -52,7 +52,6 @@ pub struct FractalDescriptor {
     pub fractal_type: FractalType,
 }
 
-
 /// Describes parameters specific to a Newton-Raphson z3 fractal.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NewtonRaphsonZ3Descriptor {}

@@ -2,7 +2,11 @@ use crate::types::{error::FractalError, filesystem::FileExtension};
 /// Provides functions for file system operations, focusing on directories and file extensions.
 /// Includes utilities for working with the current working directory, workspace directory,
 /// and checking if a directory exists.
-use std::{env::{self, current_exe}, io, path::PathBuf};
+use std::{
+    env::{self, current_exe},
+    io,
+    path::PathBuf,
+};
 
 /// Returns the current working directory as a `PathBuf`.
 /// Propagates any errors encountered.
@@ -27,9 +31,9 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
 ///
 /// Returns an `io::Result` indicating success or failure. If an error occurs during serialization or file writing,
 /// an `io::Error` will be returned.
-/// 
+///
 /// # Details
-/// 
+///
 /// There are 4 levels of directories between the executable and the project root:
 /// * target/debug/deps
 /// * target/debug
@@ -39,14 +43,35 @@ pub fn get_workspace_dir() -> std::io::Result<PathBuf> {
 pub fn project_root() -> io::Result<PathBuf> {
     let exe_path = current_exe()?;
 
-    exe_path.parent()
-        .ok_or_else(|| io::Error::new(io::ErrorKind::NotFound, "Failed to find the parent of the executable path"))?
+    exe_path
         .parent()
-        .ok_or_else(|| io::Error::new(io::ErrorKind::NotFound, "Failed to find the debug or release directory"))?
+        .ok_or_else(|| {
+            io::Error::new(
+                io::ErrorKind::NotFound,
+                "Failed to find the parent of the executable path",
+            )
+        })?
         .parent()
-        .ok_or_else(|| io::Error::new(io::ErrorKind::NotFound, "Failed to find the target directory"))?
+        .ok_or_else(|| {
+            io::Error::new(
+                io::ErrorKind::NotFound,
+                "Failed to find the debug or release directory",
+            )
+        })?
         .parent()
-        .ok_or_else(|| io::Error::new(io::ErrorKind::NotFound, "Failed to find the project root directory"))
+        .ok_or_else(|| {
+            io::Error::new(
+                io::ErrorKind::NotFound,
+                "Failed to find the target directory",
+            )
+        })?
+        .parent()
+        .ok_or_else(|| {
+            io::Error::new(
+                io::ErrorKind::NotFound,
+                "Failed to find the project root directory",
+            )
+        })
         .map(|path| path.to_path_buf())
 }
 
