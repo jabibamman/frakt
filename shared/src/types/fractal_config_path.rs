@@ -31,7 +31,7 @@ impl FractalConfigPath {
             Some("mandelbrot") => Ok(FractalConfigPath::Mandelbrot),
             Some("newton_raphson_z3") => Ok(FractalConfigPath::NewtonRaphsonZ3),
             Some("newton_raphson_z4") => Ok(FractalConfigPath::NewtonRaphsonZ4),
-            _ => Err("Invalid fractal type".to_string())
+            _ => Err("Invalid fractal type".to_string()),
         }
     }
 }
