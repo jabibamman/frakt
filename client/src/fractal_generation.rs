@@ -5,9 +5,8 @@ use log::info;
 use shared::types::color::{HSL, RGB};
 use shared::types::complex::Complex;
 use shared::types::error::FractalError;
-use shared::types::fractal_descriptor::BurningFractalType::BurningShip;
-use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4};
-use shared::types::messages::{BurningShipFragmentTask, FragmentTask};
+use shared::types::fractal_descriptor::FractalType::{BurningShip, IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4};
+use shared::types::messages::{FragmentTask};
 use shared::types::pixel_intensity::PixelIntensity;
 
 /// Generates an image of a Fractal Type based on the provided fragment task.
@@ -31,6 +30,7 @@ pub fn generate_fractal_set(
         Mandelbrot(mandelbrot_descriptor) => mandelbrot_descriptor,
         NewtonRaphsonZ3(newton_raphson_z3_descriptor) => newton_raphson_z3_descriptor,
         NewtonRaphsonZ4(newton_raphson_z4_descriptor) => newton_raphson_z4_descriptor,
+        BurningShip(burning_ship_descriptor) => burning_ship_descriptor,
     };
     let resolution = &fragment_task.resolution;
     let range = &fragment_task.range;
@@ -53,7 +53,11 @@ pub fn generate_fractal_set(
 
         let pixel_intensity =
             descriptor.compute_pixel_intensity(&complex_point, fragment_task.max_iteration);
-        *pixel = Rgb(color(pixel_intensity));
+        if pixel_intensity.count != 1.0 {
+            *pixel = Rgb(color(pixel_intensity));
+        } else {
+            *pixel = Rgb([0, 0, 0]);
+        }
 
         pixel_matrice_intensity.push(pixel_intensity);
         pixel_data_vec.push(pixel[0]);
@@ -64,37 +68,6 @@ pub fn generate_fractal_set(
     Ok((img, pixel_data_vec, pixel_matrice_intensity))
 }
 
-
-pub fn generate_burning_ship_fractal_set(
-    fragment_task: BurningShipFragmentTask,
-) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
-    let descriptor = &fragment_task.fractal.fractal_type;
-    let descriptor: &dyn FractalOperations = match descriptor {
-        BurningShip(burning_ship_descriptor) => burning_ship_descriptor,
-    };
-    let resolution = &fragment_task.resolution;
-    let range = &fragment_task.range;
-
-    let scale_x = (range.max.x - range.min.x) / resolution.nx as f64;
-    let scale_y = (range.max.y - range.min.y) / resolution.ny as f64;
-
-    let mut img = ImageBuffer::new(resolution.nx.into(), resolution.ny.into());
-
-    for (x, y, pixel) in img.enumerate_pixels_mut() {
-        let scaled_x = x as f64 * scale_x + range.min.x;
-        let scaled_y = y as f64 * scale_y + range.min.y;
-        let complex_point = Complex::new(scaled_x, scaled_y);
-
-        let pixel_intensity = descriptor.compute_pixel_intensity(&complex_point, fragment_task.max_iteration);
-        if pixel_intensity.count != 1.0 {
-            *pixel = Rgb(color(pixel_intensity));
-        } else {
-            *pixel = Rgb([0, 0, 0]);
-        }
-    }
-
-    img
-}
 
 ///Generates a color based on the provided pixel intensity.
 /// # Arguments
@@ -152,7 +125,7 @@ mod julia_descriptor_tests {
     use complex::complex_operations::ComplexOperations;
     use shared::types::complex::Complex;
     use shared::types::fractal_descriptor::FractalType::Julia;
-    use shared::types::fractal_descriptor::JuliaDescriptor;
+    use shared::types::fractal_descriptor::{BurningShipDescriptor, JuliaDescriptor};
     use shared::types::messages::FragmentTask;
     use shared::types::point::Point;
     use shared::types::range::Range;
@@ -185,6 +158,32 @@ mod julia_descriptor_tests {
 
         if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
             assert_eq!(img.dimensions(), (800, 600));
+        }
+    }
+
+    #[test]
+    fn test_generate_burning_ship() {
+        let fragment_task: FragmentTask = FragmentTask {
+            id: U8Data {
+                offset: 0,
+                count: 16,
+            },
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: BurningShip(BurningShipDescriptor {
+                    c: Complex { re: 0.0, im: 0.0 },
+                    divergence_threshold_square: 4.0,
+                }),
+            },
+            max_iteration: 255,
+            resolution: Resolution { nx: 1080, ny: 1080 },
+            range: Range {
+                min: Point { x: -1.8, y: -0.08 },
+                max: Point { x: -1.7, y: 0.01 },
+            },
+        };
+
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (1080, 1080));
         }
     }
 

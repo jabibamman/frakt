@@ -2,6 +2,16 @@ use serde::{Deserialize, Serialize};
 
 use crate::types::complex::Complex;
 
+/// General descriptor for a fractal, encompassing different fractal types.
+///
+/// Attributes:
+/// - `fractal_type`: A variant of `FractalType` specifying the type of fractal and its parameters.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct FractalDescriptor {
+    #[serde(flatten)]
+    pub fractal_type: FractalType,
+}
+
 /// Represents the type of fractal to be generated.
 ///
 /// Variants:
@@ -16,10 +26,6 @@ pub enum FractalType {
     Mandelbrot(MandelbrotDescriptor),
     NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor),
     NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor),
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum BurningFractalType {
     BurningShip(BurningShipDescriptor),
 }
 
@@ -53,21 +59,10 @@ pub struct MandelbrotDescriptor {}
 /// - `c`: A `Complex` number representing the constant parameter of the BurningShip set.
 /// - `escape_time`: Maximum number of iterations to determine whether a point escapes.
 /// - `divergence_threshold_square`: The square of the divergence threshold. Points whose magnitude square exceeds this threshold are considered to diverge.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BurningShipDescriptor {
     pub c: Complex,
     pub divergence_threshold_square: f64,
-}
-
-
-/// General descriptor for a fractal, encompassing different fractal types.
-///
-/// Attributes:
-/// - `fractal_type`: A variant of `FractalType` specifying the type of fractal and its parameters.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct FractalDescriptor {
-    #[serde(flatten)]
-    pub fractal_type: FractalType,
 }
 
 /// Describes parameters specific to a Newton-Raphson z3 fractal.
@@ -78,7 +73,3 @@ pub struct NewtonRaphsonZ3Descriptor {}
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NewtonRaphsonZ4Descriptor {}
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct BurningShipFractalDescriptor {
-    pub fractal_type: BurningFractalType,
-}
