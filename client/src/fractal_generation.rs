@@ -1,6 +1,6 @@
 use complex::complex_operations::ComplexOperations;
-use complex::fractal_operations::{BurningShipFractalOperations, FractalOperations};
-use image::{ImageBuffer, Rgb, Rgba};
+use complex::fractal_operations::FractalOperations;
+use image::{ImageBuffer, Rgb};
 use log::info;
 use shared::types::color::{HSL, RGB};
 use shared::types::complex::Complex;
@@ -67,9 +67,9 @@ pub fn generate_fractal_set(
 
 pub fn generate_burning_ship_fractal_set(
     fragment_task: BurningShipFragmentTask,
-) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
+) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let descriptor = &fragment_task.fractal.fractal_type;
-    let descriptor: &dyn BurningShipFractalOperations = match descriptor {
+    let descriptor: &dyn FractalOperations = match descriptor {
         BurningShip(burning_ship_descriptor) => burning_ship_descriptor,
     };
     let resolution = &fragment_task.resolution;
@@ -85,12 +85,11 @@ pub fn generate_burning_ship_fractal_set(
         let scaled_y = y as f64 * scale_y + range.min.y;
         let complex_point = Complex::new(scaled_x, scaled_y);
 
-        let (iterations, _) =
-            descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
-        if iterations != fragment_task.max_iteration {
-            *pixel = Rgba(burning_ship_color(iterations as f32));
+        let pixel_intensity = descriptor.compute_pixel_intensity(&complex_point, fragment_task.max_iteration);
+        if pixel_intensity.count != 1.0 {
+            *pixel = Rgb(color(pixel_intensity));
         } else {
-            *pixel = Rgba([0, 0, 0, 1]);
+            *pixel = Rgb([0, 0, 0]);
         }
     }
 
@@ -146,10 +145,6 @@ fn hsl_to_rgb(hsl: HSL) -> RGB {
         g: ((g_temp + m) * 255.0) as u8,
         b: ((b_temp + m) * 255.0) as u8,
     }
-}
-
-fn burning_ship_color(intensity: f32) -> [u8; 4] {
-    [255, (intensity * 7.0) as u8, 0, (intensity * 15.0) as u8]
 }
 
 #[cfg(test)]

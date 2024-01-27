@@ -1,6 +1,7 @@
-use crate::fractal_operations::BurningShipFractalOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::BurningShipDescriptor;
+use shared::types::pixel_intensity::PixelIntensity;
+use crate::fractal_operations::FractalOperations;
 
 /// Provides operations specific to the BurningShip fractal.
 pub trait BurningShipOperations {
@@ -9,10 +10,14 @@ pub trait BurningShipOperations {
 
     /// Returns the square of the divergence threshold.
     fn divergence_threshold_square(&self) -> f64;
+
+    /// Returns a reference to the complex number `c` used in the Julia fractal formula.
+    fn c(&self) -> &Complex;
 }
 
-impl BurningShipFractalOperations for BurningShipDescriptor {
-    fn iterate_complex_point(&self, complex_point: &Complex, max_iteration: u16) -> (u16, f64) {
+
+impl FractalOperations for BurningShipDescriptor {
+    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> PixelIntensity {
         let mut x: f64 = 0.0;
         let mut y: f64 = 0.0;
         let mut num_iterations = 0;
@@ -26,11 +31,11 @@ impl BurningShipFractalOperations for BurningShipDescriptor {
             num_iterations = num_iterations + 1;
         }
 
-        (num_iterations, x * x + y * y)
-    }
-
-    fn c(&self) -> &Complex {
-        &self.c
+        //(num_iterations, x * x + y * y)
+        PixelIntensity {
+            zn: (x * x + y * y) as f32,
+            count: num_iterations as f32 / max_iteration as f32,
+        }
     }
 }
 
@@ -44,5 +49,9 @@ impl BurningShipOperations for BurningShipDescriptor {
 
     fn divergence_threshold_square(&self) -> f64 {
         self.divergence_threshold_square
+    }
+
+    fn c(&self) -> &Complex {
+        &self.c
     }
 }
