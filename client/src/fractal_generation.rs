@@ -1,9 +1,14 @@
 use complex::complex_operations::ComplexOperations;
-use complex::fractal_operations::FractalOperations;
-use image::{ImageBuffer, Rgb};
+use complex::fractal_operations::{BurningShipFractalOperations, FractalOperations};
+use image::{ImageBuffer, Rgb, Rgba};
+use log::info;
+use shared::types::color::{HSL, RGB};
 use shared::types::complex::Complex;
-use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia};
-use shared::types::messages::FragmentTask;
+use shared::types::error::FractalError;
+use shared::types::fractal_descriptor::BurningFractalType::BurningShip;
+use shared::types::fractal_descriptor::FractalType::{IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4};
+use shared::types::messages::{BurningShipFragmentTask, FragmentTask};
+use shared::types::pixel_intensity::PixelIntensity;
 
 /// Generates an image of a Fractal Type based on the provided fragment task.
 ///
@@ -59,10 +64,11 @@ pub fn generate_fractal_set(
     Ok((img, pixel_data_vec, pixel_matrice_intensity))
 }
 
+
 pub fn generate_burning_ship_fractal_set(
     fragment_task: BurningShipFragmentTask,
-    let descriptor = &fragment_task.fractal.fractal_type;
 ) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
+    let descriptor = &fragment_task.fractal.fractal_type;
     let descriptor: &dyn BurningShipFractalOperations = match descriptor {
         BurningShip(burning_ship_descriptor) => burning_ship_descriptor,
     };
@@ -79,9 +85,9 @@ pub fn generate_burning_ship_fractal_set(
         let scaled_y = y as f64 * scale_y + range.min.y;
         let complex_point = Complex::new(scaled_x, scaled_y);
 
-        let (iterations, escape_distance) =
-        if (iterations != fragment_task.max_iteration) {
+        let (iterations, _) =
             descriptor.iterate_complex_point(&complex_point, fragment_task.max_iteration);
+        if iterations != fragment_task.max_iteration {
             *pixel = Rgba(burning_ship_color(iterations as f32));
         } else {
             *pixel = Rgba([0, 0, 0, 1]);
