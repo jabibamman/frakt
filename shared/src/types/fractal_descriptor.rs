@@ -43,8 +43,7 @@ pub struct JuliaDescriptor {
 /// Describes parameters specific to a Mandelbrot fractal.
 ///
 /// Attributes:
-/// - `divergence_threshold_square`: The square of the divergence threshold. Points whose magnitude square exceeds this threshold are considered to diverge.
-/// - `max_iteration`: Maximum number of iterations to determine whether a point diverges.
+/// - `c`: A `Complex` number representing the constant parameter of the IteratedSinZ set.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IteratedSinZDescriptor {
     pub c: Complex,
@@ -57,7 +56,6 @@ pub struct MandelbrotDescriptor {}
 ///
 /// Attributes:
 /// - `c`: A `Complex` number representing the constant parameter of the BurningShip set.
-/// - `escape_time`: Maximum number of iterations to determine whether a point escapes.
 /// - `divergence_threshold_square`: The square of the divergence threshold. Points whose magnitude square exceeds this threshold are considered to diverge.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BurningShipDescriptor {

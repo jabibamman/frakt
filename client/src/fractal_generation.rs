@@ -125,7 +125,7 @@ mod julia_descriptor_tests {
     use complex::complex_operations::ComplexOperations;
     use shared::types::complex::Complex;
     use shared::types::fractal_descriptor::FractalType::Julia;
-    use shared::types::fractal_descriptor::{BurningShipDescriptor, JuliaDescriptor};
+    use shared::types::fractal_descriptor::{BurningShipDescriptor, IteratedSinZDescriptor, JuliaDescriptor, MandelbrotDescriptor, NewtonRaphsonZ3Descriptor, NewtonRaphsonZ4Descriptor};
     use shared::types::messages::FragmentTask;
     use shared::types::point::Point;
     use shared::types::range::Range;
@@ -162,6 +162,100 @@ mod julia_descriptor_tests {
     }
 
     #[test]
+    fn test_generate_iterated_sin_z() {
+        let fragment_task = FragmentTask {
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: IteratedSinZ(IteratedSinZDescriptor {
+                    c: Complex::new(-0.8, 0.156)
+                }),
+            },
+            resolution: Resolution { nx: 800, ny: 600 },
+            range: Range {
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
+            },
+            max_iteration: 100,
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
+        };
+
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (800, 600));
+        }
+    }
+
+    #[test]
+    fn test_generate_mandelbrot() {
+        let fragment_task = FragmentTask {
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: Mandelbrot(MandelbrotDescriptor {}),
+            },
+            resolution: Resolution { nx: 800, ny: 600 },
+            range: Range {
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
+            },
+            max_iteration: 100,
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
+        };
+
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (800, 600));
+        }
+    }
+
+    #[test]
+    fn test_generate_newton_raphson_z3() {
+        let fragment_task = FragmentTask {
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor {}),
+            },
+            resolution: Resolution { nx: 800, ny: 600 },
+            range: Range {
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
+            },
+            max_iteration: 100,
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
+        };
+
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (800, 600));
+        }
+    }
+
+    #[test]
+    fn test_generate_newton_raphson_z4() {
+        let fragment_task = FragmentTask {
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor {}),
+            },
+            resolution: Resolution { nx: 800, ny: 600 },
+            range: Range {
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
+            },
+            max_iteration: 100,
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
+        };
+
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (800, 600));
+        }
+    }
+
+    #[test]
     fn test_generate_burning_ship() {
         let fragment_task: FragmentTask = FragmentTask {
             id: U8Data {
@@ -175,7 +269,7 @@ mod julia_descriptor_tests {
                 }),
             },
             max_iteration: 255,
-            resolution: Resolution { nx: 1080, ny: 1080 },
+            resolution: Resolution { nx: 800, ny: 600 },
             range: Range {
                 min: Point { x: -1.8, y: -0.08 },
                 max: Point { x: -1.7, y: 0.01 },
@@ -183,7 +277,7 @@ mod julia_descriptor_tests {
         };
 
         if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
-            assert_eq!(img.dimensions(), (1080, 1080));
+            assert_eq!(img.dimensions(), (800, 600));
         }
     }
 
