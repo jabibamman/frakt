@@ -70,4 +70,3 @@ pub struct NewtonRaphsonZ3Descriptor {}
 /// Describes parameters specific to a Newton-Raphson z3 fractal.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NewtonRaphsonZ4Descriptor {}
-

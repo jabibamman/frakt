@@ -1,7 +1,7 @@
+use crate::fractal_operations::FractalOperations;
 use shared::types::complex::Complex;
 use shared::types::fractal_descriptor::BurningShipDescriptor;
 use shared::types::pixel_intensity::PixelIntensity;
-use crate::fractal_operations::FractalOperations;
 
 /// Provides operations specific to the BurningShip fractal.
 pub trait BurningShipOperations {
@@ -15,9 +15,12 @@ pub trait BurningShipOperations {
     fn c(&self) -> &Complex;
 }
 
-
 impl FractalOperations for BurningShipDescriptor {
-    fn compute_pixel_intensity(&self, complex_point: &Complex, max_iteration: u16) -> PixelIntensity {
+    fn compute_pixel_intensity(
+        &self,
+        complex_point: &Complex,
+        max_iteration: u16,
+    ) -> PixelIntensity {
         let mut x: f64 = 0.0;
         let mut y: f64 = 0.0;
         let mut num_iterations = 0;
