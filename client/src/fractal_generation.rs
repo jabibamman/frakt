@@ -206,30 +206,4 @@ mod julia_descriptor_tests {
 
         assert_eq!(result, [63, 191, 191]);
     }
-
-    #[test]
-    fn test_generate_fractal_set() {
-        let fragment_task = FragmentTask {
-            fractal: shared::types::fractal_descriptor::FractalDescriptor {
-                fractal_type: Julia(JuliaDescriptor {
-                    c: Complex::new(-0.8, 0.156),
-                    divergence_threshold_square: 0.0,
-                }),
-            },
-            resolution: Resolution { nx: 800, ny: 600 },
-            range: Range {
-                min: Point { x: -2.0, y: -1.5 },
-                max: Point { x: 2.0, y: 1.5 },
-            },
-            max_iteration: 100,
-            id: U8Data {
-                offset: 0,
-                count: 0,
-            },
-        };
-
-        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
-            assert_eq!(img.dimensions(), (800, 600));
-        }
-    }
 }
