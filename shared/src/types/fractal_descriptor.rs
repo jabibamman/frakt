@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::types::complex::Complex;
 
 /// Represents the type of fractal to be generated.
@@ -7,12 +9,13 @@ use crate::types::complex::Complex;
 /// - `Mandelbrot(MandelbrotDescriptor)`: Represents a Mandelbrot fractal (currently commented out).
 /// - `BurningShip(BurningShipDescriptor)`: Represents a BurningShip fractal with its specific descriptor.
 /// - `...`: Placeholder for additional fractal types.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum FractalType {
     Julia(JuliaDescriptor),
     IteratedSinZ(IteratedSinZDescriptor),
-    //Mandelbrot(MandelbrotDescriptor),
-    //...
+    Mandelbrot(MandelbrotDescriptor),
+    NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor),
+    NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -25,7 +28,7 @@ pub enum BurningFractalType {
 /// Attributes:
 /// - `c`: A `Complex` number representing the constant parameter of the Julia set.
 /// - `divergence_threshold_square`: The square of the divergence threshold. Points whose magnitude square exceeds this threshold are considered to diverge.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JuliaDescriptor {
     pub c: Complex,
     pub divergence_threshold_square: f64,
@@ -36,11 +39,14 @@ pub struct JuliaDescriptor {
 /// Attributes:
 /// - `divergence_threshold_square`: The square of the divergence threshold. Points whose magnitude square exceeds this threshold are considered to diverge.
 /// - `max_iteration`: Maximum number of iterations to determine whether a point diverges.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IteratedSinZDescriptor {
     pub c: Complex,
 }
 
+/// Describes parameters specific to a Mandelbrot fractal.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct MandelbrotDescriptor {}
 /// Describes parameters specific to a BurningShip fractal.
 ///
 /// Attributes:
@@ -53,20 +59,24 @@ pub struct BurningShipDescriptor {
     pub divergence_threshold_square: f64,
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct MandelbrotDescriptor {
-    pub divergence_threshold_square: f64,
-    pub max_iteration: u16,
-}
 
 /// General descriptor for a fractal, encompassing different fractal types.
 ///
 /// Attributes:
 /// - `fractal_type`: A variant of `FractalType` specifying the type of fractal and its parameters.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FractalDescriptor {
+    #[serde(flatten)]
     pub fractal_type: FractalType,
 }
+
+/// Describes parameters specific to a Newton-Raphson z3 fractal.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct NewtonRaphsonZ3Descriptor {}
+
+/// Describes parameters specific to a Newton-Raphson z3 fractal.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct NewtonRaphsonZ4Descriptor {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct BurningShipFractalDescriptor {

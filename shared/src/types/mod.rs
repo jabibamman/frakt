@@ -1,4 +1,6 @@
+pub mod color;
 pub mod complex;
+pub mod error;
 pub mod filesystem;
 pub mod fractal_descriptor;
 pub mod messages;
