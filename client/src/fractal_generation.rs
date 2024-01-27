@@ -5,8 +5,10 @@ use log::info;
 use shared::types::color::{HSL, RGB};
 use shared::types::complex::Complex;
 use shared::types::error::FractalError;
-use shared::types::fractal_descriptor::FractalType::{BurningShip, IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4};
-use shared::types::messages::{FragmentTask};
+use shared::types::fractal_descriptor::FractalType::{
+    BurningShip, IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,
+};
+use shared::types::messages::FragmentTask;
 use shared::types::pixel_intensity::PixelIntensity;
 
 /// Generates an image of a Fractal Type based on the provided fragment task.
@@ -68,7 +70,6 @@ pub fn generate_fractal_set(
     Ok((img, pixel_data_vec, pixel_matrice_intensity))
 }
 
-
 ///Generates a color based on the provided pixel intensity.
 /// # Arguments
 /// * `pixel_intensity`: A `PixelIntensity` containing the number of iterations and the norm of the complex point.
@@ -125,7 +126,10 @@ mod julia_descriptor_tests {
     use complex::complex_operations::ComplexOperations;
     use shared::types::complex::Complex;
     use shared::types::fractal_descriptor::FractalType::Julia;
-    use shared::types::fractal_descriptor::{BurningShipDescriptor, IteratedSinZDescriptor, JuliaDescriptor, MandelbrotDescriptor, NewtonRaphsonZ3Descriptor, NewtonRaphsonZ4Descriptor};
+    use shared::types::fractal_descriptor::{
+        BurningShipDescriptor, IteratedSinZDescriptor, JuliaDescriptor, MandelbrotDescriptor,
+        NewtonRaphsonZ3Descriptor, NewtonRaphsonZ4Descriptor,
+    };
     use shared::types::messages::FragmentTask;
     use shared::types::point::Point;
     use shared::types::range::Range;
@@ -166,7 +170,7 @@ mod julia_descriptor_tests {
         let fragment_task = FragmentTask {
             fractal: shared::types::fractal_descriptor::FractalDescriptor {
                 fractal_type: IteratedSinZ(IteratedSinZDescriptor {
-                    c: Complex::new(-0.8, 0.156)
+                    c: Complex::new(-0.8, 0.156),
                 }),
             },
             resolution: Resolution { nx: 800, ny: 600 },
