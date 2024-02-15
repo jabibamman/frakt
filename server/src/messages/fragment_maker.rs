@@ -39,6 +39,14 @@ pub fn create_task_for_request(_request: FragmentRequest) -> Result<FragmentTask
     })
 }
 
-pub fn process_result(_result: FragmentResult) {
-   
+pub fn generate_range(full_image: Range) -> Vec<Range> {
+    let mut ranges = vec![];
+    for y in (full_image.min.y..full_image.max.y).step_by(2) {
+        for x in (full_image.min.x..full_image.min.x).step_by(2) {
+            let min = Point::new(x, y);
+            let max = Point::new(x + 2, y + 2);
+            ranges.push(Range::new(min, max));
+        }
+    }
+    ranges
 }
