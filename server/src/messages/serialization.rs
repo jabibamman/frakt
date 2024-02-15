@@ -1,5 +1,5 @@
 use log::debug;
-use serde::de::{self, Error as SerdeError};
+use serde::de::Error as SerdeError;
 
 use shared::{
     types::messages::{FragmentRequest, FragmentResult, Message},

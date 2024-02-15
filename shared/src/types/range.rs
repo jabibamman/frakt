@@ -12,3 +12,20 @@ pub struct Range {
     pub min: Point,
     pub max: Point,
 }
+
+impl Range {
+    /// Creates a new `Range` with the specified minimum and maximum points.
+    ///
+    /// # Arguments
+    ///
+    /// * `min` - A `Point` defining the minimum (bottom-left) corner of the range.
+    /// * `max` - A `Point` defining the maximum (top-right) corner of the range.
+    ///
+    /// # Returns
+    ///
+    /// A new `Range` with the specified minimum and maximum points.
+    pub fn new(min: Point, max: Point) -> Self {
+        Range { min, max }
+    }
+}
+

@@ -1,4 +1,5 @@
-use crate::{types::{color::{HSL, RGB}, pixel_intensity::PixelIntensity}, utils::type_of::type_of};
+use crate::{types::{color::{HSL, RGB}, pixel_intensity::PixelIntensity}}
+;
 
 ///Generates a color based on the provided pixel intensity.
 /// # Arguments
@@ -64,9 +65,9 @@ fn test_color() {
 
     let result = color(pixel_intensity);
 
-    let test0 = type_of(result[0]);
-    let test1 = type_of(result[1]);
-    let test2 = type_of(result[2]);
+    let test0 = crate::utils::type_of::type_of(result[0]);
+    let test1 = crate::utils::type_of::type_of(result[1]);
+    let test2 = crate::utils::type_of::type_of(result[2]);
 
     assert!(test0.eq("u8"));
     assert!(test1.eq("u8"));

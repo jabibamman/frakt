@@ -1,4 +1,3 @@
-use std::env;
 use std::error::Error;
 
 use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
@@ -13,40 +12,60 @@ use shared::types::{
 };
 use shared::utils::env_utils::get_env_var_as_u16;
 
-pub fn create_task_for_request(_request: FragmentRequest) -> Result<FragmentTask, Box<dyn Error>> {
+pub fn create_tasks() -> Result<Vec<FragmentTask>, Box<dyn Error>> {
     let width = get_env_var_as_u16("RESOLUTION_WIDTH")?;
     let height = get_env_var_as_u16("RESOLUTION_HEIGHT")?;
-    
-    Ok(FragmentTask {
-        id: U8Data {
-            offset: 0,
-            count: 16,
-        },
-        fractal: FractalDescriptor {
-            fractal_type: IteratedSinZ(IteratedSinZDescriptor {
-                c: Complex { re: 0.2, im: 1.0 },
-            }),
-        },
-        max_iteration: 64,
-        resolution: Resolution { nx: width, ny: height },
-        range: Range {
-            min: Point {
-                x: -2.0,
-                y: -3.55556,
+
+    let range = generate_range(Range::new(Point::new(-3.0, -3.0), Point::new(3.0, 3.0)), 2.0);
+    let mut tasks = vec![];
+
+    for r in range {
+        let task = FragmentTask {
+            id: U8Data {
+                offset: 0,
+                count: 16,
             },
-            max: Point { x: 2.0, y: 3.55556 },
-        },
-    })
+            fractal: FractalDescriptor {
+                fractal_type: IteratedSinZ(IteratedSinZDescriptor {
+                    c: Complex { re: 0.2, im: 1.0 },
+                }),
+            },
+            max_iteration: 64,
+            resolution: Resolution { nx: width, ny: height },
+            range: r,
+        };
+
+        tasks.push(task);
+    }
+
+    Ok(tasks)
+
 }
 
-pub fn generate_range(full_image: Range) -> Vec<Range> {
-    let mut ranges = vec![];
-    for y in (full_image.min.y..full_image.max.y).step_by(2) {
-        for x in (full_image.min.x..full_image.min.x).step_by(2) {
+pub fn process_result(_result: FragmentResult) {
+
+
+
+}
+
+    
+
+pub fn generate_range(full_image: Range, step: f64) -> Vec<Range> {
+    let mut ranges = Vec::new();
+    let y_step = step; 
+    let x_step = step; 
+
+    let mut y = full_image.min.y;
+    while y < full_image.max.y {
+        let mut x = full_image.min.x;
+        while x < full_image.max.x {
             let min = Point::new(x, y);
-            let max = Point::new(x + 2, y + 2);
+            let max = Point::new((x + x_step).min(full_image.max.x), (y + y_step).min(full_image.max.y));
             ranges.push(Range::new(min, max));
+            x += x_step;
         }
+        y += y_step;
     }
     ranges
 }
+
