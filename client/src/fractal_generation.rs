@@ -6,7 +6,7 @@ use shared::types::color::{HSL, RGB};
 use shared::types::complex::Complex;
 use shared::types::error::FractalError;
 use shared::types::fractal_descriptor::FractalType::{
-    IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,
+    BurningShip, IteratedSinZ, Julia, Mandelbrot, NewtonRaphsonZ3, NewtonRaphsonZ4,
 };
 use shared::types::messages::FragmentTask;
 use shared::types::pixel_intensity::PixelIntensity;
@@ -32,6 +32,7 @@ pub fn generate_fractal_set(
         Mandelbrot(mandelbrot_descriptor) => mandelbrot_descriptor,
         NewtonRaphsonZ3(newton_raphson_z3_descriptor) => newton_raphson_z3_descriptor,
         NewtonRaphsonZ4(newton_raphson_z4_descriptor) => newton_raphson_z4_descriptor,
+        BurningShip(burning_ship_descriptor) => burning_ship_descriptor,
     };
     let resolution = &fragment_task.resolution;
     let range = &fragment_task.range;
@@ -54,7 +55,11 @@ pub fn generate_fractal_set(
 
         let pixel_intensity =
             descriptor.compute_pixel_intensity(&complex_point, fragment_task.max_iteration);
-        *pixel = Rgb(color(pixel_intensity));
+        if pixel_intensity.count != 1.0 {
+            *pixel = Rgb(color(pixel_intensity));
+        } else {
+            *pixel = Rgb([0, 0, 0]);
+        }
 
         pixel_matrice_intensity.push(pixel_intensity);
         pixel_data_vec.push(pixel[0]);
@@ -121,7 +126,10 @@ mod julia_descriptor_tests {
     use complex::complex_operations::ComplexOperations;
     use shared::types::complex::Complex;
     use shared::types::fractal_descriptor::FractalType::Julia;
-    use shared::types::fractal_descriptor::JuliaDescriptor;
+    use shared::types::fractal_descriptor::{
+        BurningShipDescriptor, IteratedSinZDescriptor, JuliaDescriptor, MandelbrotDescriptor,
+        NewtonRaphsonZ3Descriptor, NewtonRaphsonZ4Descriptor,
+    };
     use shared::types::messages::FragmentTask;
     use shared::types::point::Point;
     use shared::types::range::Range;
@@ -158,32 +166,11 @@ mod julia_descriptor_tests {
     }
 
     #[test]
-    fn test_color() {
-        let pixel_intensity = PixelIntensity {
-            zn: 0.5,
-            count: 0.5,
-        };
-
-        let result = color(pixel_intensity);
-
-        let test0 = type_of(result[0]);
-        let test1 = type_of(result[1]);
-        let test2 = type_of(result[2]);
-
-        assert!(test0.eq("u8"));
-        assert!(test1.eq("u8"));
-        assert!(test2.eq("u8"));
-
-        assert_eq!(result, [63, 191, 191]);
-    }
-
-    #[test]
-    fn test_generate_fractal_set() {
+    fn test_generate_iterated_sin_z() {
         let fragment_task = FragmentTask {
             fractal: shared::types::fractal_descriptor::FractalDescriptor {
-                fractal_type: Julia(JuliaDescriptor {
+                fractal_type: IteratedSinZ(IteratedSinZDescriptor {
                     c: Complex::new(-0.8, 0.156),
-                    divergence_threshold_square: 0.0,
                 }),
             },
             resolution: Resolution { nx: 800, ny: 600 },
@@ -201,5 +188,120 @@ mod julia_descriptor_tests {
         if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
             assert_eq!(img.dimensions(), (800, 600));
         }
+    }
+
+    #[test]
+    fn test_generate_mandelbrot() {
+        let fragment_task = FragmentTask {
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: Mandelbrot(MandelbrotDescriptor {}),
+            },
+            resolution: Resolution { nx: 800, ny: 600 },
+            range: Range {
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
+            },
+            max_iteration: 100,
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
+        };
+
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (800, 600));
+        }
+    }
+
+    #[test]
+    fn test_generate_newton_raphson_z3() {
+        let fragment_task = FragmentTask {
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: NewtonRaphsonZ3(NewtonRaphsonZ3Descriptor {}),
+            },
+            resolution: Resolution { nx: 800, ny: 600 },
+            range: Range {
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
+            },
+            max_iteration: 100,
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
+        };
+
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (800, 600));
+        }
+    }
+
+    #[test]
+    fn test_generate_newton_raphson_z4() {
+        let fragment_task = FragmentTask {
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: NewtonRaphsonZ4(NewtonRaphsonZ4Descriptor {}),
+            },
+            resolution: Resolution { nx: 800, ny: 600 },
+            range: Range {
+                min: Point { x: -2.0, y: -1.5 },
+                max: Point { x: 2.0, y: 1.5 },
+            },
+            max_iteration: 100,
+            id: U8Data {
+                offset: 0,
+                count: 0,
+            },
+        };
+
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (800, 600));
+        }
+    }
+
+    #[test]
+    fn test_generate_burning_ship() {
+        let fragment_task: FragmentTask = FragmentTask {
+            id: U8Data {
+                offset: 0,
+                count: 16,
+            },
+            fractal: shared::types::fractal_descriptor::FractalDescriptor {
+                fractal_type: BurningShip(BurningShipDescriptor {
+                    c: Complex { re: 0.0, im: 0.0 },
+                    divergence_threshold_square: 4.0,
+                }),
+            },
+            max_iteration: 255,
+            resolution: Resolution { nx: 800, ny: 600 },
+            range: Range {
+                min: Point { x: -1.8, y: -0.08 },
+                max: Point { x: -1.7, y: 0.01 },
+            },
+        };
+
+        if let Ok((img, _, _)) = generate_fractal_set(fragment_task) {
+            assert_eq!(img.dimensions(), (800, 600));
+        }
+    }
+
+    #[test]
+    fn test_color() {
+        let pixel_intensity = PixelIntensity {
+            zn: 0.5,
+            count: 0.5,
+        };
+
+        let result = color(pixel_intensity);
+
+        let test0 = type_of(result[0]);
+        let test1 = type_of(result[1]);
+        let test2 = type_of(result[2]);
+
+        assert!(test0.eq("u8"));
+        assert!(test1.eq("u8"));
+        assert!(test2.eq("u8"));
+
+        assert_eq!(result, [63, 191, 191]);
     }
 }

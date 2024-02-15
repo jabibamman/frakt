@@ -1,3 +1,4 @@
+pub mod burning_ship_impl;
 pub mod complex_operations;
 pub mod fractal_operations;
 pub mod iterated_sinz_impl;
