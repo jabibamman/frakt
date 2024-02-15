@@ -63,6 +63,7 @@ pub struct BurningShipDescriptor {
     pub divergence_threshold_square: f64,
 }
 
+
 /// Describes parameters specific to a Newton-Raphson z3 fractal.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NewtonRaphsonZ3Descriptor {}
