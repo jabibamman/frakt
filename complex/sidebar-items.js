@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["complex_operations","fractal_operations","iterated_sinz_impl","julia_descriptor_impl","mandelbrot_descriptor_impl","newtonraphsonz_descriptor_impl"]};
+window.SIDEBAR_ITEMS = {"mod":["burning_ship_impl","complex_operations","fractal_operations","iterated_sinz_impl","julia_descriptor_impl","mandelbrot_descriptor_impl","newtonraphsonz_descriptor_impl"]};

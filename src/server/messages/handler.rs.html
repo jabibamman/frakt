@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `server/src/messages/handler.rs`."><title>handler.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="server" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `server/src/messages/handler.rs`."><title>handler.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="server" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -136,7 +137,7 @@
 /// - `stream`: A mutable reference to a `TcpStream`. This stream represents the connection with the client.
 ///
 /// ## Panics
-/// This function doesn&#39;t explicitly panic, but operations on `stream` (like `read`) might panic if they encounter irrecoverable errors.
+/// This function doesn't explicitly panic, but operations on `stream` (like `read`) might panic if they encounter irrecoverable errors.
 ///
 /// ## Example Usage
 /// Note: This example is a conceptual representation and may not work as-is.
@@ -144,7 +145,7 @@
 /// use std::net::{TcpListener, TcpStream};
 /// use server::messages::handler::handle_client;
 ///
-/// let listener = TcpListener::bind(&quot;127.0.0.1:8080&quot;).unwrap();
+/// let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
 /// for stream in listener.incoming() {
 ///     if let Ok(stream) = stream {
 ///         handle_client(stream);
@@ -152,43 +153,43 @@
 /// }
 /// ```
 </span><span class="kw">pub fn </span>handle_client(<span class="kw-2">mut </span>stream: TcpStream) -&gt; io::Result&lt;()&gt; {
-    <span class="macro">info!</span>(<span class="string">&quot;Handling client&quot;</span>);
+    <span class="macro">info!</span>(<span class="string">"Handling client"</span>);
     <span class="kw">match </span>stream.local_addr() {
-        <span class="prelude-val">Ok</span>(addr) =&gt; <span class="macro">info!</span>(<span class="string">&quot;Connection established {}&quot;</span>, addr),
-        <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">error!</span>(<span class="string">&quot;Failed to get local address: {}&quot;</span>, e),
+        <span class="prelude-val">Ok</span>(addr) =&gt; <span class="macro">info!</span>(<span class="string">"Connection established {}"</span>, addr),
+        <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">error!</span>(<span class="string">"Failed to get local address: {}"</span>, e),
     }
 
     <span class="kw">let </span><span class="kw-2">mut </span>total_size_buffer = [<span class="number">0</span>; <span class="number">4</span>];
     stream.read_exact(<span class="kw-2">&amp;mut </span>total_size_buffer)<span class="question-mark">?</span>;
     <span class="kw">let </span>total_size = u32::from_be_bytes(total_size_buffer) <span class="kw">as </span>usize;
-    <span class="macro">debug!</span>(<span class="string">&quot;Total size: {}&quot;</span>, total_size);
+    <span class="macro">debug!</span>(<span class="string">"Total size: {}"</span>, total_size);
 
     <span class="kw">let </span><span class="kw-2">mut </span>json_size_buffer = [<span class="number">0</span>; <span class="number">4</span>];
     stream.read_exact(<span class="kw-2">&amp;mut </span>json_size_buffer)<span class="question-mark">?</span>;
     <span class="kw">let </span>json_size = u32::from_be_bytes(json_size_buffer) <span class="kw">as </span>usize;
-    <span class="macro">debug!</span>(<span class="string">&quot;JSON size: {}&quot;</span>, json_size);
+    <span class="macro">debug!</span>(<span class="string">"JSON size: {}"</span>, json_size);
 
     <span class="kw">let </span><span class="kw-2">mut </span>buffer = <span class="macro">vec!</span>[<span class="number">0</span>; total_size];
     stream.read_exact(<span class="kw-2">&amp;mut </span>buffer)<span class="question-mark">?</span>;
 
     <span class="kw">let </span>json_str = std::str::from_utf8(<span class="kw-2">&amp;</span>buffer[<span class="number">0</span>..json_size]).map_err(|e| {
-        <span class="macro">error!</span>(<span class="string">&quot;Invalid UTF-8 sequence: {}&quot;</span>, e);
-        io::Error::new(io::ErrorKind::InvalidData, <span class="string">&quot;Invalid UTF-8&quot;</span>)
+        <span class="macro">error!</span>(<span class="string">"Invalid UTF-8 sequence: {}"</span>, e);
+        io::Error::new(io::ErrorKind::InvalidData, <span class="string">"Invalid UTF-8"</span>)
     })<span class="question-mark">?</span>;
 
-    <span class="macro">debug!</span>(<span class="string">&quot;Received JSON: {}&quot;</span>, json_str);
+    <span class="macro">debug!</span>(<span class="string">"Received JSON: {}"</span>, json_str);
     <span class="kw">let </span>data_str = <span class="kw">match </span>std::str::from_utf8(<span class="kw-2">&amp;</span>buffer) {
         <span class="prelude-val">Ok</span>(str) =&gt; str,
         <span class="prelude-val">Err</span>(e) =&gt; {
-            <span class="macro">error!</span>(<span class="string">&quot;Invalid UTF-8 sequence: {}&quot;</span>, e);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(io::Error::new(io::ErrorKind::InvalidData, <span class="string">&quot;Invalid UTF-8&quot;</span>));
+            <span class="macro">error!</span>(<span class="string">"Invalid UTF-8 sequence: {}"</span>, e);
+            <span class="kw">return </span><span class="prelude-val">Err</span>(io::Error::new(io::ErrorKind::InvalidData, <span class="string">"Invalid UTF-8"</span>));
         }
     };
 
-    <span class="macro">debug!</span>(<span class="string">&quot;Received data: {}&quot;</span>, data_str);
+    <span class="macro">debug!</span>(<span class="string">"Received data: {}"</span>, data_str);
 
     <span class="kw">let </span>message_result = deserialize_message(data_str);
-    <span class="macro">debug!</span>(<span class="string">&quot;Deserialized data {:?}&quot;</span>, message_result);
+    <span class="macro">debug!</span>(<span class="string">"Deserialized data {:?}"</span>, message_result);
 
     <span class="kw">match </span>message_result {
         <span class="prelude-val">Ok</span>(Message::FragmentRequest(request)) =&gt; {
@@ -196,12 +197,12 @@
             <span class="kw">let </span>serialized_task = <span class="kw">match </span>task.serialize() {
                 <span class="prelude-val">Ok</span>(serialized_task) =&gt; serialized_task,
                 <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(<span class="string">&quot;Error serializing task: {:?}&quot;</span>, e);
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(io::Error::new(io::ErrorKind::InvalidData, <span class="string">&quot;Invalid UTF-8&quot;</span>));
+                    <span class="macro">error!</span>(<span class="string">"Error serializing task: {:?}"</span>, e);
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(io::Error::new(io::ErrorKind::InvalidData, <span class="string">"Invalid UTF-8"</span>));
                 }
             };
             <span class="macro">info!</span>(
-                <span class="string">&quot;Sending serialized task to client at {}&quot;</span>,
+                <span class="string">"Sending serialized task to client at {}"</span>,
                 stream.peer_addr()<span class="question-mark">?
             </span>);
 
@@ -209,7 +210,7 @@
 
             <span class="kw">let </span>response = services::reader::get_response(<span class="kw-2">&amp;mut </span>stream)<span class="question-mark">?</span>;
 
-            <span class="macro">debug!</span>(<span class="string">&quot;Received response: {:?}&quot;</span>, response);
+            <span class="macro">debug!</span>(<span class="string">"Received response: {:?}"</span>, response);
         }
         <span class="prelude-val">Ok</span>(Message::FragmentTask(_task)) =&gt; {
             <span class="macro">todo!</span>()
@@ -218,7 +219,7 @@
             process_result(result);
         }
         <span class="prelude-val">Err</span>(e) =&gt; {
-            <span class="macro">error!</span>(<span class="string">&quot;Error deserializing request: {:?}&quot;</span>, e);
+            <span class="macro">error!</span>(<span class="string">"Error deserializing request: {:?}"</span>, e);
         }
     }
 

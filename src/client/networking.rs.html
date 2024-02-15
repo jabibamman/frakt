@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `client/src/networking.rs`."><title>networking.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="client" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `client/src/networking.rs`."><title>networking.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="client" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -263,12 +264,12 @@
 /// * `Result&lt;TcpStream, FractalError&gt;` - A `TcpStream` if the connection was successful, or a `FractalError` if the connection failed.
 ///
 </span><span class="kw">pub fn </span>connect_to_server(cli_args: <span class="kw-2">&amp;</span>CliClientArgs) -&gt; <span class="prelude-ty">Result</span>&lt;TcpStream, FractalError&gt; {
-    <span class="kw">let </span>address = <span class="macro">format!</span>(<span class="string">&quot;{}:{}&quot;</span>, cli_args.hostname, cli_args.port);
-    <span class="macro">info!</span>(<span class="string">&quot;Connecting to server at {}...&quot;</span>, address);
+    <span class="kw">let </span>address = <span class="macro">format!</span>(<span class="string">"{}:{}"</span>, cli_args.hostname, cli_args.port);
+    <span class="macro">info!</span>(<span class="string">"Connecting to server at {}..."</span>, address);
     <span class="kw">let </span>addrs = address
         .to_socket_addrs()<span class="question-mark">?
         </span>.next()
-        .ok_or_else(|| FractalError::ConnectionError(<span class="string">&quot;Unable to resolve address&quot;</span>.to_string()))<span class="question-mark">?</span>;
+        .ok_or_else(|| FractalError::ConnectionError(<span class="string">"Unable to resolve address"</span>.to_string()))<span class="question-mark">?</span>;
 
     <span class="kw">let </span>timeout_duration = Duration::from_secs(<span class="number">1</span>);
     TcpStream::connect_timeout(<span class="kw-2">&amp;</span>addrs, timeout_duration).map_err(FractalError::Io)
@@ -286,7 +287,7 @@
 /// * `Result&lt;(), io::Error&gt;` - An `io::Error` if the request could not be sent.
 ///
 </span><span class="kw">pub fn </span>send_request(stream: <span class="kw-2">&amp;mut </span>TcpStream, serialized_request: <span class="kw-2">&amp;</span>str) -&gt; io::Result&lt;()&gt; {
-    <span class="macro">info!</span>(<span class="string">&quot;Sending request to server...&quot;</span>);
+    <span class="macro">info!</span>(<span class="string">"Sending request to server..."</span>);
     write(stream, serialized_request)
 }
 
@@ -304,14 +305,14 @@
     stream: <span class="kw-2">&amp;mut </span>TcpStream,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(FragmentTask, Vec&lt;u8&gt;)&gt;, FractalError&gt; {
     <span class="kw">let </span>(fragment_task, data) = get_response(stream)<span class="question-mark">?</span>;
-    <span class="macro">debug!</span>(<span class="string">&quot;Received response: {}&quot;</span>, fragment_task);
-    <span class="macro">debug!</span>(<span class="string">&quot;Received data in receive fragment task: {:?}&quot;</span>, data);
+    <span class="macro">debug!</span>(<span class="string">"Received response: {}"</span>, fragment_task);
+    <span class="macro">debug!</span>(<span class="string">"Received data in receive fragment task: {:?}"</span>, data);
     <span class="kw">match </span>FragmentTask::deserialize(<span class="kw-2">&amp;</span>fragment_task) {
         <span class="prelude-val">Ok</span>(task) =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((task, data))),
         <span class="prelude-val">Err</span>(e) =&gt; {
-            <span class="macro">error!</span>(<span class="string">&quot;Deserialization error: {}&quot;</span>, e);
+            <span class="macro">error!</span>(<span class="string">"Deserialization error: {}"</span>, e);
             <span class="prelude-val">Err</span>(FractalError::TaskNotSet(<span class="macro">format!</span>(
-                <span class="string">&quot;Deserialization error: {}&quot;</span>,
+                <span class="string">"Deserialization error: {}"</span>,
                 e
             )))
         }
@@ -334,8 +335,8 @@
     img_path: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), FractalError&gt; {
     img.save(img_path).map_err(FractalError::Image)<span class="question-mark">?</span>;
-    <span class="macro">info!</span>(<span class="string">&quot;Image saved successfully&quot;</span>);
-    <span class="macro">debug!</span>(<span class="string">&quot;Image path {}&quot;</span>, img_path);
+    <span class="macro">info!</span>(<span class="string">"Image saved successfully"</span>);
+    <span class="macro">debug!</span>(<span class="string">"Image path {}"</span>, img_path);
     <span class="prelude-val">Ok</span>(())
 }
 
@@ -358,10 +359,10 @@
 ) -&gt; <span class="prelude-ty">Result</span>&lt;TcpStream, FractalError&gt; {
     <span class="kw">let </span>dir_path_buf = get_dir_path_buf()<span class="question-mark">?</span>;
 
-    <span class="kw">let </span>img_path = get_file_path(<span class="string">&quot;julia&quot;</span>, dir_path_buf, get_extension_str(FileExtension::PNG))<span class="question-mark">?</span>;
+    <span class="kw">let </span>img_path = get_file_path(<span class="string">"julia"</span>, dir_path_buf, get_extension_str(FileExtension::PNG))<span class="question-mark">?</span>;
     <span class="kw">let </span>(img, pixel_data_bytes, pixel_intensity_matrice) = generate_fractal_set(task.clone())<span class="question-mark">?</span>;
 
-    <span class="macro">debug!</span>(<span class="string">&quot;Pixel data bytes: {:?}&quot;</span>, pixel_data_bytes);
+    <span class="macro">debug!</span>(<span class="string">"Pixel data bytes: {:?}"</span>, pixel_data_bytes);
 
     <span class="kw">let </span>pixel_data = convert_to_pixel_data(pixel_data_bytes.clone(), task.clone());
 
@@ -372,7 +373,7 @@
         vec_data.extend(pixel_intensity_matrice[i].count.to_be_bytes());
     }
 
-    <span class="macro">debug!</span>(<span class="string">&quot;Vec data: {:?}&quot;</span>, vec_data);
+    <span class="macro">debug!</span>(<span class="string">"Vec data: {:?}"</span>, vec_data);
 
     <span class="kw">if </span>cli_args.save {
         save_fractal_image(img.clone(), <span class="kw-2">&amp;</span>img_path)<span class="question-mark">?</span>;
@@ -420,7 +421,7 @@
     <span class="kw">let </span>serialized = FragmentResult::serialize(<span class="kw-2">&amp;</span>fragment_result)<span class="question-mark">?</span>;
 
     <span class="kw">let </span><span class="kw-2">mut </span>new_stream = connect_to_server(cli_args)<span class="question-mark">?</span>;
-    <span class="macro">debug!</span>(<span class="string">&quot;Sending fragment result: {}&quot;</span>, serialized);
+    <span class="macro">debug!</span>(<span class="string">"Sending fragment result: {}"</span>, serialized);
     write_img(<span class="kw-2">&amp;mut </span>new_stream, <span class="kw-2">&amp;</span>serialized, data)<span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(new_stream)
