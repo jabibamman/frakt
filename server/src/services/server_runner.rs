@@ -1,4 +1,5 @@
 use log::{error, info};
+use shared::types::resolution::Resolution;
 
 use crate::messages::handler::handle_client;
 use std::net::TcpListener;

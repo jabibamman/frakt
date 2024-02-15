@@ -1,5 +1,9 @@
+pub mod colors_utils;
+pub mod env_utils;
 pub mod filesystem;
 pub mod fragment_request_impl;
 pub mod fragment_result_impl;
 pub mod fragment_task_impl;
+pub mod image;
 pub mod type_of;
+pub mod pixel_intensity_impl;

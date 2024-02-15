@@ -2,9 +2,10 @@ use std::{
     io::{self, Read},
     net::TcpStream,
 };
+use image::{GrayImage, ImageBuffer, Luma, Rgb};
 
 use log::{debug, error, info};
-use shared::{types::messages::Message, utils::fragment_task_impl::FragmentTaskOperation};
+use shared::{types::{color::{HSL, RGB}, messages::Message, pixel_intensity::{self, PixelIntensity}, resolution::Resolution}, utils::{colors_utils::color, fragment_task_impl::FragmentTaskOperation}};
 
 use super::{
     fragment_maker::{create_task_for_request, process_result},
@@ -55,7 +56,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
     let json_size = u32::from_be_bytes(json_size_buffer) as usize;
     debug!("JSON size: {}", json_size);
 
-    let mut buffer = vec![0; total_size];
+    let mut buffer = vec![0; json_size];
     stream.read_exact(&mut buffer)?;
 
     let json_str = std::str::from_utf8(&buffer[0..json_size]).map_err(|e| {
@@ -63,6 +64,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8")
     })?;
 
+    
     debug!("Received JSON: {}", json_str);
     let data_str = match std::str::from_utf8(&buffer) {
         Ok(str) => str,
@@ -72,6 +74,14 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         }
     };
 
+    let mut pixel_intensity = vec![];
+    if total_size - json_size > 0 {
+        let mut buffer = vec![0; total_size - json_size];
+        stream.read_exact(&mut buffer)?;
+        debug!("Received data: {:?}", buffer);
+        pixel_intensity = PixelIntensity::vec_data_to_pixel_intensity_matrix(buffer);        
+    }
+
     debug!("Received data: {}", data_str);
 
     let message_result = deserialize_message(data_str);
@@ -79,7 +89,14 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
 
     match message_result {
         Ok(Message::FragmentRequest(request)) => {
-            let task = create_task_for_request(request);
+            let task = match create_task_for_request(request) {
+                Ok(task) => task,
+                Err(e) => {
+                    error!("Error creating task: {:?}", e);
+                    return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
+                }
+            };
+            
             let serialized_task = match task.serialize() {
                 Ok(serialized_task) => serialized_task,
                 Err(e) => {
@@ -102,7 +119,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
             todo!()
         }
         Ok(Message::FragmentResult(result)) => {
-            process_result(result);
+           process_result(result);
         }
         Err(e) => {
             error!("Error deserializing request: {:?}", e);

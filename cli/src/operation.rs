@@ -36,6 +36,8 @@ mod operation_tests {
             port: args.port.clone(),
             verbose: args.verbose.clone(),
             debug: args.debug.clone(),
+            width: 1,
+            height: 1,
         };
 
         let address = format!("{}:{}", server_args.hostname, server_args.port);
