@@ -4,7 +4,7 @@ use shared::types::fractal_descriptor::FractalType::IteratedSinZ;
 use shared::types::{
     complex::Complex,
     fractal_descriptor::{FractalDescriptor, IteratedSinZDescriptor},
-    messages::{FragmentRequest, FragmentResult, FragmentTask},
+    messages::{FragmentResult, FragmentTask},
     point::Point,
     range::Range,
     resolution::Resolution,

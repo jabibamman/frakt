@@ -78,7 +78,6 @@ mod julia_descriptor_tests {
     use shared::types::range::Range;
     use shared::types::resolution::Resolution;
     use shared::types::u8data::U8Data;
-    use shared::utils::type_of::type_of;
 
     use super::*;
 

@@ -3,7 +3,7 @@ use std::env;
 use cli::parser::{CliServerArgs, Parser};
 use log::{error, info};
 use server::services::server_runner::run_server;
-use shared::types::{error::FractalError, resolution::Resolution};
+use shared::types::error::FractalError;
 
 fn main() -> Result<(), FractalError> {
     let cli_args: CliServerArgs = CliServerArgs::parse();
