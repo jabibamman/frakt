@@ -52,7 +52,7 @@ pub fn generate_fractal_set(
 
         let pixel_intensity =
             descriptor.compute_pixel_intensity(&complex_point, fragment_task.max_iteration);
-            
+
         *pixel = Rgb(color(pixel_intensity));
 
         pixel_matrice_intensity.push(pixel_intensity);
@@ -226,5 +226,4 @@ mod julia_descriptor_tests {
             assert_eq!(img.dimensions(), (800, 600));
         }
     }
-    
 }

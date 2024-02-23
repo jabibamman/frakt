@@ -3,7 +3,10 @@ use serde::de::Error as SerdeError;
 
 use shared::{
     types::messages::{FragmentRequest, FragmentResult, Message},
-    utils::{fragment_request_impl::FragmentRequestOperation, fragment_result_impl::FragmentResultOperation},
+    utils::{
+        fragment_request_impl::FragmentRequestOperation,
+        fragment_result_impl::FragmentResultOperation,
+    },
 };
 
 /// Deserializes a JSON string into a `Message` enum variant.

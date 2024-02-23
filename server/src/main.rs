@@ -10,7 +10,7 @@ fn main() -> Result<(), FractalError> {
     shared::logger::init_logger(cli_args.verbose, cli_args.debug)?;
     env::set_var("RESOLUTION_WIDTH", cli_args.width.to_string());
     env::set_var("RESOLUTION_HEIGHT", cli_args.height.to_string());
-    
+
     let address = format!("{}:{}", cli_args.hostname, cli_args.port);
     match run_server(address.as_str()) {
         Ok(_) => info!("Server stopped successfully!"),

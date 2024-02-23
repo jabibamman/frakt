@@ -4,9 +4,9 @@ use crate::types::{pixel_intensity::PixelIntensity, resolution::Resolution};
 
 use super::{colors_utils::color, env_utils::get_env_var_as_u16};
 
-
-
-pub fn image_from_pixel_intensity(pixel_intensity: Vec<PixelIntensity>) -> Result<ImageBuffer<Rgb<u8>, Vec<u8>>, Box<dyn std::error::Error>> {
+pub fn image_from_pixel_intensity(
+    pixel_intensity: Vec<PixelIntensity>,
+) -> Result<ImageBuffer<Rgb<u8>, Vec<u8>>, Box<dyn std::error::Error>> {
     let width = get_env_var_as_u16("RESOLUTION_WIDTH")?;
     let height = get_env_var_as_u16("RESOLUTION_HEIGHT")?;
 
