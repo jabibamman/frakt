@@ -13,9 +13,8 @@ pub fn image_from_pixel_intensity(pixel_intensity: Vec<PixelIntensity>) -> Resul
     let resolution = Resolution::new(width, height);
     let mut img = ImageBuffer::new(resolution.nx.into(), resolution.ny.into());
     for (i, pixel_intensity) in pixel_intensity.iter().enumerate() {
-        let x = (i % 250 as usize) as u32;
-        let y = (i / 250 as usize) as u32;
-    
+        let x = (i as u32) % resolution.nx as u32;
+        let y = (i as u32) / resolution.nx as u32;
         img.put_pixel(x, y, Rgb(color(*pixel_intensity)));
     }
 

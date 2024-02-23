@@ -135,7 +135,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
                }
            };
     
-           let img_path: String = match get_file_path("tondaronla", dir_path_buf, get_extension_str(FileExtension::PNG)) {
+           let img_path: String = match get_file_path("test-23_02_23", dir_path_buf, get_extension_str(FileExtension::PNG)) {
                Ok(img_path) => img_path,
                Err(e) => {
                    error!("Error getting file path: {:?}", e);
