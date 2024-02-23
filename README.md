@@ -144,7 +144,6 @@ To generate documentation for all packages including dependencies:
 cargo doc --open
 ```
 
-
 ## CLI Arguments
 
 Represents command line arguments the CLI application
