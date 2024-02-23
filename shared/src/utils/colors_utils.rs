@@ -1,5 +1,7 @@
-use crate::{types::{color::{HSL, RGB}, pixel_intensity::PixelIntensity}}
-;
+use crate::types::{
+    color::{HSL, RGB},
+    pixel_intensity::PixelIntensity,
+};
 
 ///Generates a color based on the provided pixel intensity.
 /// # Arguments

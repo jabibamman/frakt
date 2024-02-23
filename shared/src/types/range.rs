@@ -28,4 +28,3 @@ impl Range {
         Range { min, max }
     }
 }
-

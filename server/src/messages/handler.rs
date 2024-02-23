@@ -1,9 +1,19 @@
+use log::{debug, error, info};
+use shared::{
+    types::{
+        error::FractalError, filesystem::FileExtension, messages::Message,
+        pixel_intensity::PixelIntensity,
+    },
+    utils::{
+        filesystem::{get_dir_path_buf, get_extension_str, get_file_path},
+        fragment_task_impl::FragmentTaskOperation,
+        image::image_from_pixel_intensity,
+    },
+};
 use std::{
     io::{self, Read},
     net::TcpStream,
 };
-use log::{debug, error, info};
-use shared::{types::{error::FractalError, filesystem::FileExtension, messages::Message, pixel_intensity::PixelIntensity}, utils::{filesystem::{get_dir_path_buf, get_extension_str, get_file_path}, fragment_task_impl::FragmentTaskOperation, image::image_from_pixel_intensity}};
 
 use super::serialization::deserialize_message;
 use crate::{messages::fragment_maker::create_tasks, services};
@@ -59,7 +69,6 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8")
     })?;
 
-    
     debug!("Received JSON: {}", json_str);
     let data_str = match std::str::from_utf8(&buffer) {
         Ok(str) => str,
@@ -74,7 +83,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         let mut buffer = vec![0; total_size - json_size];
         stream.read_exact(&mut buffer)?;
         debug!("Received data: {:?}", buffer);
-        pixel_intensity = PixelIntensity::vec_data_to_pixel_intensity_matrix(buffer);        
+        pixel_intensity = PixelIntensity::vec_data_to_pixel_intensity_matrix(buffer);
     }
 
     debug!("Received data: {}", data_str);
@@ -93,7 +102,6 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
             };
 
             debug!("Task created: {:?}", task.clone());
-
 
             let serialized_task = match task.serialize() {
                 Ok(serialized_task) => serialized_task,
@@ -117,44 +125,46 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
             todo!()
         }
         Ok(Message::FragmentResult(_result)) => {
-           //process_result(result);
+            //process_result(result);
 
-           let img = match image_from_pixel_intensity(pixel_intensity) {
-               Ok(img) => img,
-               Err(e) => {
-                   error!("Error creating image from pixel intensity: {:?}", e);
-                   return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
-               }
-           };
+            let img = match image_from_pixel_intensity(pixel_intensity) {
+                Ok(img) => img,
+                Err(e) => {
+                    error!("Error creating image from pixel intensity: {:?}", e);
+                    return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
+                }
+            };
 
-           let dir_path_buf = match get_dir_path_buf() {
-               Ok(dir_path_buf) => dir_path_buf,
-               Err(e) => {
-                   error!("Error getting directory path: {:?}", e);
-                   return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
-               }
-           };
-    
-           let img_path: String = match get_file_path("test-23_02_23", dir_path_buf, get_extension_str(FileExtension::PNG)) {
-               Ok(img_path) => img_path,
-               Err(e) => {
-                   error!("Error getting file path: {:?}", e);
-                   return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
-               }
-           };
+            let dir_path_buf = match get_dir_path_buf() {
+                Ok(dir_path_buf) => dir_path_buf,
+                Err(e) => {
+                    error!("Error getting directory path: {:?}", e);
+                    return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
+                }
+            };
 
+            let img_path: String = match get_file_path(
+                "test-23_02_23",
+                dir_path_buf,
+                get_extension_str(FileExtension::PNG),
+            ) {
+                Ok(img_path) => img_path,
+                Err(e) => {
+                    error!("Error getting file path: {:?}", e);
+                    return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
+                }
+            };
 
-           match img.save(img_path.clone()).map_err(FractalError::Image) {
-               Ok(_) => {
-                   info!("Image saved successfully");
-                   debug!("Image path {}", img_path);
-               }
-               Err(e) => {
-                   error!("Error saving image: {:?}", e);
-                   return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
-               }
-           }
-       
+            match img.save(img_path.clone()).map_err(FractalError::Image) {
+                Ok(_) => {
+                    info!("Image saved successfully");
+                    debug!("Image path {}", img_path);
+                }
+                Err(e) => {
+                    error!("Error saving image: {:?}", e);
+                    return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
+                }
+            }
         }
         Err(e) => {
             error!("Error deserializing request: {:?}", e);

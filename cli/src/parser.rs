@@ -75,7 +75,7 @@ pub struct CliClientArgs {
 pub struct CliServerArgs {
     /// The hostname of the server.
     /// Default: "localhost"
-    #[clap( long = "hostname", default_value = "localhost")]
+    #[clap(long = "hostname", default_value = "localhost")]
     pub hostname: String,
 
     /// The port number the server listens on.
