@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":["Deserialize","Serialize"],"mod":["image","messages","services"],"trait":["Deserialize","Serialize"]};
+window.SIDEBAR_ITEMS = {"derive":["Deserialize","Serialize"],"mod":["messages","services"],"trait":["Deserialize","Serialize"]};

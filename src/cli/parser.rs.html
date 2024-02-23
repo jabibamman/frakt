@@ -104,6 +104,20 @@
 <a href="#103" id="103">103</a>
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
 </pre></div><pre class="rust"><code><span class="kw">pub use </span>clap::Parser;
 
 <span class="doccomment">/// Represents command line arguments for a client in a CLI application.
@@ -125,7 +139,7 @@
 </span><span class="kw">pub struct </span>CliClientArgs {
     <span class="doccomment">/// Optional: The hostname of the client.
     /// Default: "localhost"
-    </span><span class="attr">#[clap(short = <span class="string">'H'</span>, long = <span class="string">"hostname"</span>, default_value = <span class="string">"localhost"</span>)]
+    </span><span class="attr">#[clap(long = <span class="string">"hostname"</span>, default_value = <span class="string">"localhost"</span>)]
     </span><span class="kw">pub </span>hostname: String,
 
     <span class="doccomment">/// Optional: The port number to connect on.
@@ -167,6 +181,10 @@
 /// ## Fields
 /// - `hostname`: A string specifying the hostname. Defaults to "localhost".
 /// - `port`: A 16-bit unsigned integer specifying the port number. Defaults to 8787.
+/// - `verbose`: A boolean flag to enable/disable logging. Defaults to false.
+/// - `debug`: A boolean flag to enable/disable debug mode. Defaults to false.
+/// - `width`: A 16-bit unsigned integer specifying the width of the window. Defaults to 1200.
+/// - `height`: A 16-bit unsigned integer specifying the height of the window. Defaults to 1200.
 ///
 /// ## Example
 /// Command line usage for the server might be:
@@ -177,7 +195,7 @@
 </span><span class="kw">pub struct </span>CliServerArgs {
     <span class="doccomment">/// The hostname of the server.
     /// Default: "localhost"
-    </span><span class="attr">#[clap(short = <span class="string">'H'</span>, long = <span class="string">"hostname"</span>, default_value = <span class="string">"localhost"</span>)]
+    </span><span class="attr">#[clap(long = <span class="string">"hostname"</span>, default_value = <span class="string">"localhost"</span>)]
     </span><span class="kw">pub </span>hostname: String,
 
     <span class="doccomment">/// The port number the server listens on.
@@ -194,6 +212,16 @@
     /// Default: false
     </span><span class="attr">#[clap(short = <span class="string">'d'</span>, long = <span class="string">"debug"</span>, default_value = <span class="string">"false"</span>)]
     </span><span class="kw">pub </span>debug: bool,
+
+    <span class="doccomment">/// Optional: Add a flag to edit the width and height of the window.
+    /// Default: 1200
+    </span><span class="attr">#[clap(long = <span class="string">"width"</span>, default_value = <span class="string">"1200"</span>)]
+    </span><span class="kw">pub </span>width: u16,
+
+    <span class="doccomment">/// Optional: Add a flag to edit the width and height of the window.
+    /// Default: 1200
+    </span><span class="attr">#[clap(long = <span class="string">"height"</span>, default_value = <span class="string">"1200"</span>)]
+    </span><span class="kw">pub </span>height: u16,
 }
 
 <span class="doccomment">/// An enumeration representing the possible types of command line arguments.

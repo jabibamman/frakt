@@ -74,12 +74,9 @@
 <a href="#73" id="73">73</a>
 <a href="#74" id="74">74</a>
 <a href="#75" id="75">75</a>
-<a href="#76" id="76">76</a>
-<a href="#77" id="77">77</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     io::{<span class="self">self</span>, Read},
     net::TcpStream,
-    time::Duration,
 };
 
 <span class="kw">use </span>log::debug;
@@ -150,7 +147,6 @@
 }
 
 <span class="kw">pub fn </span>get_response(stream: <span class="kw-2">&amp;mut </span>TcpStream) -&gt; io::Result&lt;(String, Vec&lt;u8&gt;)&gt; {
-    stream.set_read_timeout(<span class="prelude-val">Some</span>(Duration::new(<span class="number">5</span>, <span class="number">0</span>)))<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(read_message(stream)<span class="question-mark">?</span>)
 }
 </code></pre></div></section></main></body></html>

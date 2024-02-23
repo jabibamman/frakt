@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["color","generate_fractal_set","hsl_to_rgb"]};
+window.SIDEBAR_ITEMS = {"fn":["generate_fractal_set"]};

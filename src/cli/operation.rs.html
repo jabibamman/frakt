@@ -43,6 +43,10 @@
 <a href="#42" id="42">42</a>
 <a href="#43" id="43">43</a>
 <a href="#44" id="44">44</a>
+<a href="#45" id="45">45</a>
+<a href="#46" id="46">46</a>
+<a href="#47" id="47">47</a>
+<a href="#48" id="48">48</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>operation_tests {
     <span class="kw">use </span><span class="kw">crate</span>::parser::{CliClientArgs, CliServerArgs};
@@ -53,6 +57,8 @@
             port: <span class="number">8787</span>,
             verbose: <span class="bool-val">false</span>,
             debug: <span class="bool-val">false</span>,
+            width: <span class="number">1</span>,
+            height: <span class="number">1</span>,
         }
     }
 
@@ -81,6 +87,8 @@
             port: args.port.clone(),
             verbose: args.verbose.clone(),
             debug: args.debug.clone(),
+            width: <span class="number">1</span>,
+            height: <span class="number">1</span>,
         };
 
         <span class="kw">let </span>address = <span class="macro">format!</span>(<span class="string">"{}:{}"</span>, server_args.hostname, server_args.port);

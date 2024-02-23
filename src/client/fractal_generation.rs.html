@@ -228,89 +228,10 @@
 <a href="#227" id="227">227</a>
 <a href="#228" id="228">228</a>
 <a href="#229" id="229">229</a>
-<a href="#230" id="230">230</a>
-<a href="#231" id="231">231</a>
-<a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
-<a href="#236" id="236">236</a>
-<a href="#237" id="237">237</a>
-<a href="#238" id="238">238</a>
-<a href="#239" id="239">239</a>
-<a href="#240" id="240">240</a>
-<a href="#241" id="241">241</a>
-<a href="#242" id="242">242</a>
-<a href="#243" id="243">243</a>
-<a href="#244" id="244">244</a>
-<a href="#245" id="245">245</a>
-<a href="#246" id="246">246</a>
-<a href="#247" id="247">247</a>
-<a href="#248" id="248">248</a>
-<a href="#249" id="249">249</a>
-<a href="#250" id="250">250</a>
-<a href="#251" id="251">251</a>
-<a href="#252" id="252">252</a>
-<a href="#253" id="253">253</a>
-<a href="#254" id="254">254</a>
-<a href="#255" id="255">255</a>
-<a href="#256" id="256">256</a>
-<a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a>
-<a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a>
-<a href="#306" id="306">306</a>
-<a href="#307" id="307">307</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>complex::complex_operations::ComplexOperations;
 <span class="kw">use </span>complex::fractal_operations::FractalOperations;
 <span class="kw">use </span>image::{ImageBuffer, Rgb};
 <span class="kw">use </span>log::info;
-<span class="kw">use </span>shared::types::color::{HSL, RGB};
 <span class="kw">use </span>shared::types::complex::Complex;
 <span class="kw">use </span>shared::types::error::FractalError;
 <span class="kw">use </span>shared::types::fractal_descriptor::FractalType::{
@@ -318,6 +239,7 @@
 };
 <span class="kw">use </span>shared::types::messages::FragmentTask;
 <span class="kw">use </span>shared::types::pixel_intensity::PixelIntensity;
+<span class="kw">use </span>shared::utils::colors_utils::color;
 
 <span class="doccomment">/// Generates an image of a Fractal Type based on the provided fragment task.
 ///
@@ -349,11 +271,8 @@
     <span class="kw">let </span>scale_y = (range.max.y - range.min.y) / resolution.ny <span class="kw">as </span>f64;
 
     <span class="kw">let </span><span class="kw-2">mut </span>img = ImageBuffer::new(resolution.nx.into(), resolution.ny.into());
-
     <span class="kw">let </span><span class="kw-2">mut </span>pixel_data_vec = Vec::new();
-
-    <span class="comment">// crée une matrice de pixel_intensity
-    </span><span class="kw">let </span><span class="kw-2">mut </span>pixel_matrice_intensity = Vec::new();
+    <span class="kw">let </span><span class="kw-2">mut </span>pixel_matrice_intensity = Vec::new();
 
     <span class="macro">info!</span>(<span class="string">"Generating fractal set..."</span>);
     <span class="kw">for </span>(x, y, pixel) <span class="kw">in </span>img.enumerate_pixels_mut() {
@@ -363,11 +282,8 @@
 
         <span class="kw">let </span>pixel_intensity =
             descriptor.compute_pixel_intensity(<span class="kw-2">&amp;</span>complex_point, fragment_task.max_iteration);
-        <span class="kw">if </span>pixel_intensity.count != <span class="number">1.0 </span>{
-            <span class="kw-2">*</span>pixel = Rgb(color(pixel_intensity));
-        } <span class="kw">else </span>{
-            <span class="kw-2">*</span>pixel = Rgb([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]);
-        }
+
+        <span class="kw-2">*</span>pixel = Rgb(color(pixel_intensity));
 
         pixel_matrice_intensity.push(pixel_intensity);
         pixel_data_vec.push(pixel[<span class="number">0</span>]);
@@ -376,57 +292,6 @@
     }
 
     <span class="prelude-val">Ok</span>((img, pixel_data_vec, pixel_matrice_intensity))
-}
-
-<span class="doccomment">///Generates a color based on the provided pixel intensity.
-/// # Arguments
-/// * `pixel_intensity`: A `PixelIntensity` containing the number of iterations and the norm of the complex point.
-///
-/// # Returns
-/// Returns an array containing the RGB values of the color.
-///
-</span><span class="kw">fn </span>color(pixel_intensity: PixelIntensity) -&gt; [u8; <span class="number">3</span>] {
-    <span class="kw">let </span>hsl = HSL {
-        h: pixel_intensity.count * <span class="number">360.0</span>,
-        s: <span class="number">0.5 </span>+ <span class="number">0.5 </span>* (pixel_intensity.zn * <span class="number">3.14</span>).cos(),
-        l: <span class="number">0.5</span>,
-    };
-
-    <span class="kw">let </span>color = hsl_to_rgb(hsl);
-
-    [color.r, color.g, color.b]
-}
-
-<span class="doccomment">/// Convert a color from HSL to RGB
-/// # Arguments
-/// * `hsl`: A `HSL` containing the HSL values of the color (Hue, Saturation, Lightness)
-///
-/// # Returns
-/// Returns a tuple containing the RGB values of the color
-///
-/// # Details
-/// This function is based on the algorithm found at https://www.rapidtables.com/convert/color/hsl-to-rgb.html
-///
-</span><span class="kw">fn </span>hsl_to_rgb(hsl: HSL) -&gt; RGB {
-    <span class="kw">let </span>c = (<span class="number">1.0 </span>- (<span class="number">2.0 </span>* hsl.l - <span class="number">1.0</span>).abs()) * hsl.s;
-    <span class="kw">let </span>h_prime = hsl.h / <span class="number">60.0</span>;
-    <span class="kw">let </span>x = c * (<span class="number">1.0 </span>- (h_prime % <span class="number">2.0 </span>- <span class="number">1.0</span>).abs());
-    <span class="kw">let </span>m = hsl.l - c / <span class="number">2.0</span>;
-
-    <span class="kw">let </span>(r_temp, g_temp, b_temp) = <span class="kw">match </span>h_prime.floor() <span class="kw">as </span>u8 {
-        <span class="number">0 </span>=&gt; (c, x, <span class="number">0.0</span>),
-        <span class="number">1 </span>=&gt; (x, c, <span class="number">0.0</span>),
-        <span class="number">2 </span>=&gt; (<span class="number">0.0</span>, c, x),
-        <span class="number">3 </span>=&gt; (<span class="number">0.0</span>, x, c),
-        <span class="number">4 </span>=&gt; (x, <span class="number">0.0</span>, c),
-        <span class="kw">_ </span>=&gt; (c, <span class="number">0.0</span>, x),
-    };
-
-    RGB {
-        r: ((r_temp + m) * <span class="number">255.0</span>) <span class="kw">as </span>u8,
-        g: ((g_temp + m) * <span class="number">255.0</span>) <span class="kw">as </span>u8,
-        b: ((b_temp + m) * <span class="number">255.0</span>) <span class="kw">as </span>u8,
-    }
 }
 
 <span class="attr">#[cfg(test)]
@@ -443,7 +308,6 @@
     <span class="kw">use </span>shared::types::range::Range;
     <span class="kw">use </span>shared::types::resolution::Resolution;
     <span class="kw">use </span>shared::types::u8data::U8Data;
-    <span class="kw">use </span>shared::utils::type_of::type_of;
 
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
@@ -591,26 +455,6 @@
         <span class="kw">if let </span><span class="prelude-val">Ok</span>((img, <span class="kw">_</span>, <span class="kw">_</span>)) = generate_fractal_set(fragment_task) {
             <span class="macro">assert_eq!</span>(img.dimensions(), (<span class="number">800</span>, <span class="number">600</span>));
         }
-    }
-
-    <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_color() {
-        <span class="kw">let </span>pixel_intensity = PixelIntensity {
-            zn: <span class="number">0.5</span>,
-            count: <span class="number">0.5</span>,
-        };
-
-        <span class="kw">let </span>result = color(pixel_intensity);
-
-        <span class="kw">let </span>test0 = type_of(result[<span class="number">0</span>]);
-        <span class="kw">let </span>test1 = type_of(result[<span class="number">1</span>]);
-        <span class="kw">let </span>test2 = type_of(result[<span class="number">2</span>]);
-
-        <span class="macro">assert!</span>(test0.eq(<span class="string">"u8"</span>));
-        <span class="macro">assert!</span>(test1.eq(<span class="string">"u8"</span>));
-        <span class="macro">assert!</span>(test2.eq(<span class="string">"u8"</span>));
-
-        <span class="macro">assert_eq!</span>(result, [<span class="number">63</span>, <span class="number">191</span>, <span class="number">191</span>]);
     }
 }
 </code></pre></div></section></main></body></html>

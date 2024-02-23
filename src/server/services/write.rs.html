@@ -200,14 +200,14 @@
 </span><span class="kw">pub fn </span>write_img(stream: <span class="kw-2">&amp;mut </span>TcpStream, message: <span class="kw-2">&amp;</span>str, img_data: Vec&lt;u8&gt;) -&gt; io::Result&lt;()&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>stream_clone = stream.try_clone()<span class="question-mark">?</span>;
 
-    <span class="kw">let </span>message_bytes = prepare_message(message);
+    <span class="kw">let </span>json_bytes = prepare_message(message);
     <span class="kw">let </span>json_size = (message.len() <span class="kw">as </span>u32).to_be_bytes();
     <span class="kw">let </span>message_length = message.len() + img_data.len();
     <span class="kw">let </span>total_size = (message_length <span class="kw">as </span>u32).to_be_bytes();
 
     stream_clone.write_all(<span class="kw-2">&amp;</span>total_size)<span class="question-mark">?</span>;
     stream_clone.write_all(<span class="kw-2">&amp;</span>json_size)<span class="question-mark">?</span>;
-    stream_clone.write_all(<span class="kw-2">&amp;</span>message_bytes)<span class="question-mark">?</span>;
+    stream_clone.write_all(<span class="kw-2">&amp;</span>json_bytes)<span class="question-mark">?</span>;
 
     <span class="kw">for </span>byte <span class="kw">in </span>img_data {
         stream_clone.write_all(<span class="kw-2">&amp;</span>[byte])<span class="question-mark">?</span>;

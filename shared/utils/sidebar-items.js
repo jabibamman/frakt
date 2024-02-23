@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["filesystem","fragment_request_impl","fragment_result_impl","fragment_task_impl","type_of"]};
+window.SIDEBAR_ITEMS = {"mod":["colors_utils","env_utils","filesystem","fragment_request_impl","fragment_result_impl","fragment_task_impl","image","pixel_intensity_impl","type_of"]};

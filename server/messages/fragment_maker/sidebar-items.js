@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["create_task_for_request","process_result"]};
+window.SIDEBAR_ITEMS = {"fn":["create_tasks","generate_range","process_result"]};
