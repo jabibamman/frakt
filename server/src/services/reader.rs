@@ -1,7 +1,6 @@
 use std::{
     io::{self, Read},
     net::TcpStream,
-    time::Duration,
 };
 
 use log::debug;
@@ -72,6 +71,5 @@ pub fn read_message(stream: &mut TcpStream) -> io::Result<(String, Vec<u8>)> {
 }
 
 pub fn get_response(stream: &mut TcpStream) -> io::Result<(String, Vec<u8>)> {
-    stream.set_read_timeout(Some(Duration::new(5, 0)))?;
     Ok(read_message(stream)?)
 }

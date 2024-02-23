@@ -133,7 +133,8 @@ pub fn process_fragment_task(
 ) -> Result<TcpStream, FractalError> {
     let dir_path_buf = get_dir_path_buf()?;
 
-    let img_path = get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG))?;
+    let img_path: String =
+        get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG))?;
     let (img, pixel_data_bytes, pixel_intensity_matrice) = generate_fractal_set(task.clone())?;
 
     debug!("Pixel data bytes: {:?}", pixel_data_bytes);

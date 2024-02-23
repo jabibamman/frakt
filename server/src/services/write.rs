@@ -74,14 +74,14 @@ pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
 pub fn write_img(stream: &mut TcpStream, message: &str, img_data: Vec<u8>) -> io::Result<()> {
     let mut stream_clone = stream.try_clone()?;
 
-    let message_bytes = prepare_message(message);
+    let json_bytes = prepare_message(message);
     let json_size = (message.len() as u32).to_be_bytes();
     let message_length = message.len() + img_data.len();
     let total_size = (message_length as u32).to_be_bytes();
 
     stream_clone.write_all(&total_size)?;
     stream_clone.write_all(&json_size)?;
-    stream_clone.write_all(&message_bytes)?;
+    stream_clone.write_all(&json_bytes)?;
 
     for byte in img_data {
         stream_clone.write_all(&[byte])?;

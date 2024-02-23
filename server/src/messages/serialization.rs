@@ -2,8 +2,11 @@ use log::debug;
 use serde::de::Error as SerdeError;
 
 use shared::{
-    types::messages::{FragmentRequest, Message},
-    utils::fragment_request_impl::FragmentRequestOperation,
+    types::messages::{FragmentRequest, FragmentResult, Message},
+    utils::{
+        fragment_request_impl::FragmentRequestOperation,
+        fragment_result_impl::FragmentResultOperation,
+    },
 };
 
 /// Deserializes a JSON string into a `Message` enum variant.
@@ -28,11 +31,9 @@ pub fn deserialize_message(response: &str) -> serde_json::Result<Message> {
             debug!("Deserializing FragmentRequest");
             FragmentRequest::deserialize(response).map(Message::FragmentRequest)
         }
-        Some(key) if key == "FragmentTask" => {
-            todo!()
-        }
         Some(key) if key == "FragmentResult" => {
-            todo!()
+            debug!("Deserializing FragmentResult");
+            FragmentResult::deserialize(response).map(Message::FragmentResult)
         }
         _ => Err(serde_json::Error::custom(
             "No recognizable message type found",
