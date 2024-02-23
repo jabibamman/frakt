@@ -19,7 +19,7 @@ pub use clap::Parser;
 pub struct CliClientArgs {
     /// Optional: The hostname of the client.
     /// Default: "localhost"
-    #[clap(short = 'H', long = "hostname", default_value = "localhost")]
+    #[clap(long = "hostname", default_value = "localhost")]
     pub hostname: String,
 
     /// Optional: The port number to connect on.
@@ -61,6 +61,10 @@ pub struct CliClientArgs {
 /// ## Fields
 /// - `hostname`: A string specifying the hostname. Defaults to "localhost".
 /// - `port`: A 16-bit unsigned integer specifying the port number. Defaults to 8787.
+/// - `verbose`: A boolean flag to enable/disable logging. Defaults to false.
+/// - `debug`: A boolean flag to enable/disable debug mode. Defaults to false.
+/// - `width`: A 16-bit unsigned integer specifying the width of the window. Defaults to 1200.
+/// - `height`: A 16-bit unsigned integer specifying the height of the window. Defaults to 1200.
 ///
 /// ## Example
 /// Command line usage for the server might be:
@@ -71,7 +75,7 @@ pub struct CliClientArgs {
 pub struct CliServerArgs {
     /// The hostname of the server.
     /// Default: "localhost"
-    #[clap(short = 'H', long = "hostname", default_value = "localhost")]
+    #[clap(long = "hostname", default_value = "localhost")]
     pub hostname: String,
 
     /// The port number the server listens on.
@@ -88,6 +92,16 @@ pub struct CliServerArgs {
     /// Default: false
     #[clap(short = 'd', long = "debug", default_value = "false")]
     pub debug: bool,
+
+    /// Optional: Add a flag to edit the width and height of the window.
+    /// Default: 1200
+    #[clap(long = "width", default_value = "1200")]
+    pub width: u16,
+
+    /// Optional: Add a flag to edit the width and height of the window.
+    /// Default: 1200
+    #[clap(long = "height", default_value = "1200")]
+    pub height: u16,
 }
 
 /// An enumeration representing the possible types of command line arguments.

@@ -144,6 +144,42 @@ To generate documentation for all packages including dependencies:
 cargo doc --open
 ```
 
+## CLI Arguments
+
+Represents command line arguments the CLI application
+
+### Client arguments
+
+```bash
+Usage: client [OPTIONS]
+
+Options:
+
+ --hostname <HOSTNAME>  Optional: The hostname of the client. Default: "localhost" [default: localhost]
+  -P, --port <PORT>          Optional: The port number to connect on. Default: 8787 [default: 8787]
+  -N, --name <WORKER_NAME>   Optional: The name of the worker. Default: "worker" [default: worker]
+  -v, --verbose              Optional: Add a flag to enable/disable logging. Default: false
+  -d, --debug                Optional: Add a flag to enable/disable debug mode. Default: false
+  -o, --open                 Optional: Add a flag to enable/disable opening the browser. Default: false
+  -s, --save                 Optional: Add a flag to save the image to a file. Default: false
+  -h, --help                 Print help (see more with '--help')
+```
+
+### Server arguments
+
+```bash
+Usage: server [OPTIONS]
+
+Options:
+      --hostname <HOSTNAME>  The hostname of the server. Default: "localhost" [default: localhost]
+  -P, --port <PORT>          The port number the server listens on. Default: 8787 [default: 8787]
+  -v, --verbose              Optional: Add a flag to enable/disable logging. Default: false
+  -d, --debug                Optional: Add a flag to enable/disable debug mode. Default: false
+      --width <WIDTH>        Optional: Add a flag to edit the width and height of the window. Default: 1200 [default: 1200]
+      --height <HEIGHT>      Optional: Add a flag to edit the width and height of the window. Default: 1200 [default: 1200]
+  -h, --help                 Print help (see more with '--help')
+```
+
 ## Contributing
 
 Contributions are welcome. Please follow standard contribution guidelines for pull requests.
