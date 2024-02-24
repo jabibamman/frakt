@@ -6,7 +6,7 @@ use std::{
 
 use cli::parser::CliClientArgs;
 use image::{ImageBuffer, Rgb};
-use log::{debug, error, info};
+use log::{debug, error, info, trace};
 use server::services::{
     reader::get_response,
     write::{write, write_img},
@@ -137,7 +137,7 @@ pub fn process_fragment_task(
         get_file_path("julia", dir_path_buf, get_extension_str(FileExtension::PNG))?;
     let (img, pixel_data_bytes, pixel_intensity_matrice) = generate_fractal_set(task.clone())?;
 
-    debug!("Pixel data bytes: {:?}", pixel_data_bytes);
+    trace!("Pixel data bytes: {:?}", pixel_data_bytes);
 
     let pixel_data = convert_to_pixel_data(pixel_data_bytes.clone(), task.clone());
 
@@ -148,7 +148,7 @@ pub fn process_fragment_task(
         vec_data.extend(pixel_intensity_matrice[i].count.to_be_bytes());
     }
 
-    debug!("Vec data: {:?}", vec_data);
+    trace!("Vec data: {:?}", vec_data);
 
     if cli_args.save {
         save_fractal_image(img.clone(), &img_path)?;

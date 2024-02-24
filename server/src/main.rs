@@ -7,7 +7,7 @@ use shared::types::error::FractalError;
 
 fn main() -> Result<(), FractalError> {
     let cli_args: CliServerArgs = CliServerArgs::parse();
-    shared::logger::init_logger(cli_args.verbose, cli_args.debug)?;
+    shared::logger::init_logger(cli_args.verbose, cli_args.debug, cli_args.trace)?;
     env::set_var("RESOLUTION_WIDTH", cli_args.width.to_string());
     env::set_var("RESOLUTION_HEIGHT", cli_args.height.to_string());
 

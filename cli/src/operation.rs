@@ -6,8 +6,9 @@ mod operation_tests {
         CliServerArgs {
             hostname: "127.0.0.1".to_string(),
             port: 8787,
-            verbose: false,
-            debug: false,
+            verbose: 0,
+            debug: 0,
+            trace: 0,
             width: 1,
             height: 1,
         }
@@ -22,6 +23,7 @@ mod operation_tests {
             worker_name: "worker".to_string(),
             verbose: args.verbose.clone(),
             debug: args.debug.clone(),
+            trace: args.trace.clone(),
             open: false,
             save: false,
         };
@@ -38,6 +40,7 @@ mod operation_tests {
             port: args.port.clone(),
             verbose: args.verbose.clone(),
             debug: args.debug.clone(),
+            trace: args.trace.clone(),
             width: 1,
             height: 1,
         };
