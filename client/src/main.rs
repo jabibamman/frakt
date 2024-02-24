@@ -1,4 +1,4 @@
-use log::{error, info};
+use log::{error, info, trace};
 use networking::{connect_to_server, process_fragment_task, receive_fragment_task, send_request};
 use shared::{types::error::FractalError, utils::fragment_request_impl::FragmentRequestOperation};
 
@@ -11,17 +11,19 @@ use shared::types::messages::FragmentRequest;
 
 fn main() -> Result<(), FractalError> {
     let cli_args: CliClientArgs = CliClientArgs::parse();
-    shared::logger::init_logger(cli_args.verbose, cli_args.debug)?;
+    shared::logger::init_logger(cli_args.verbose, cli_args.debug, cli_args.trace)?;
 
     let serialized_request =
         FragmentRequest::new(cli_args.worker_name.clone(), 1000).serialize()?;
 
     let mut stream = connect_to_server(&cli_args)?;
     send_request(&mut stream, &serialized_request)?;
+    log::trace!("Sent request to server");
 
     loop {
         match receive_fragment_task(&mut stream) {
             Ok(Some((fragment_task, data))) => {
+                trace!("Received fragment task: {:?}", fragment_task);
                 stream = process_fragment_task(fragment_task, data, &cli_args)?;
             }
             Ok(None) => {
