@@ -103,7 +103,6 @@ pub struct CliServerArgs {
     #[clap(short = 't', long = "trace", action = clap::ArgAction::Count)]
     pub trace: u8,
 
-
     /// Optional: Add a flag to edit the width and height of the window.
     /// Default: 1200
     #[clap(long = "width", default_value = "1200")]
