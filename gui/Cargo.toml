@@ -1,0 +1,13 @@
+[package]
+name = "gui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pixels = "0.10.0"
+winit = "0.26.0"
+image = "0.24.9"
+
+
+[lib]
+path = "src/lib.rs"

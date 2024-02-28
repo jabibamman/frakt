@@ -1,3 +1,4 @@
+use gui::create_window_and_display_image;
 use log::{debug, error, info};
 use shared::{
     types::{
@@ -11,10 +12,11 @@ use shared::{
     },
 };
 use std::{
-    io::{self, Read},
+    io::{self, Read, Write},
     net::TcpStream,
 };
 
+use tokio::task;
 use super::serialization::deserialize_message;
 use crate::{messages::fragment_maker::create_tasks, services};
 
@@ -126,7 +128,6 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         }
         Ok(Message::FragmentResult(_result)) => {
             //process_result(result);
-
             let img = match image_from_pixel_intensity(pixel_intensity) {
                 Ok(img) => img,
                 Err(e) => {
@@ -134,6 +135,14 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
                     return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8"));
                 }
             };
+
+            let img_clone = img.clone();
+
+            task::spawn_blocking(move || {
+                if let Err(e) = create_window_and_display_image(&img, 400, 400) {
+                    error!("Error creating window and displaying image: {:?}", e);
+                }
+            });            
 
             let dir_path_buf = match get_dir_path_buf() {
                 Ok(dir_path_buf) => dir_path_buf,
@@ -155,7 +164,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
                 }
             };
 
-            match img.save(img_path.clone()).map_err(FractalError::Image) {
+            match img_clone.save(img_path.clone()).map_err(FractalError::Image) {
                 Ok(_) => {
                     info!("Image saved successfully");
                     debug!("Image path {}", img_path);
