@@ -6,5 +6,6 @@ members = [
     "shared",
     "server",
     "complex",
-    "cli"
+    "cli",
+    "gui"
 ]

@@ -33,14 +33,19 @@ pub struct CliClientArgs {
     pub worker_name: String,
 
     /// Optional: Add a flag to enable/disable logging.
-    /// Default: false
-    #[clap(short = 'v', long = "verbose", default_value = "false")]
-    pub verbose: bool,
+    /// Default: 0
+    #[clap(short = 'v', long = "verbose",  action = clap::ArgAction::Count)]
+    pub verbose: u8,
 
     /// Optional: Add a flag to enable/disable debug mode.
-    /// Default: false
-    #[clap(short = 'd', long = "debug", default_value = "false")]
-    pub debug: bool,
+    /// Default: 0
+    #[clap(short = 'd', long = "debug", action = clap::ArgAction::Count)]
+    pub debug: u8,
+
+    /// Optional: Add a flag to enable/disable trace mode.
+    /// Default: 0
+    #[clap(short = 't', long = "trace", action = clap::ArgAction::Count)]
+    pub trace: u8,
 
     /// Optional: Add a flag to enable/disable opening the browser.
     /// Default: false
@@ -84,14 +89,19 @@ pub struct CliServerArgs {
     pub port: u16,
 
     /// Optional: Add a flag to enable/disable logging.
-    /// Default: false
-    #[clap(short = 'v', long = "verbose", default_value = "false")]
-    pub verbose: bool,
+    /// Default: 0
+    #[clap(short = 'v', long = "verbose",  action = clap::ArgAction::Count)]
+    pub verbose: u8,
 
     /// Optional: Add a flag to enable/disable debug mode.
-    /// Default: false
-    #[clap(short = 'd', long = "debug", default_value = "false")]
-    pub debug: bool,
+    /// Default: 0
+    #[clap(short = 'd', long = "debug", action = clap::ArgAction::Count)]
+    pub debug: u8,
+
+    /// Optional: Add a flag to enable/disable trace mode.
+    /// Default: 0
+    #[clap(short = 't', long = "trace", action = clap::ArgAction::Count)]
+    pub trace: u8,
 
     /// Optional: Add a flag to edit the width and height of the window.
     /// Default: 1200
