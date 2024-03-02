@@ -1,3 +1,4 @@
+#[cfg(target_os = "windows")]
 use pixels::{Pixels, SurfaceTexture};
 #[cfg(target_os = "windows")]
 use winit::{
