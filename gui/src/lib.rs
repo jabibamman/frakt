@@ -1,37 +1,15 @@
+use gio::prelude::*;
 use pixels::{Pixels, SurfaceTexture};
 use winit::{
-    platform::windows::EventLoopExtWindows, 
+    platform::windows::EventLoopExtWindows,
     dpi::LogicalSize, event::{Event, WindowEvent}, event_loop::{ControlFlow, EventLoop}, window::WindowBuilder
 };
+use gtk::prelude::*;
+use gtk::{Application, ApplicationWindow, Image};
+use gtk::gdk_pixbuf::{Colorspace, Pixbuf};
 use image::{ImageBuffer, Rgb};
-use std::{fs::File, io::{BufRead, BufReader}, path::Path};
 
-pub fn fill_image_buffer_from_file(image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, width: u32, height: u32, file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let file = File::open(Path::new(file_path))?;
-    let reader = BufReader::new(file);
-
-    for (y, line) in reader.lines().enumerate() {
-        let line = line?;
-        if let Some(rgb_values) = line.strip_prefix("Rgb(").and_then(|s| s.strip_suffix(")")) {
-            let rgb: Vec<u8> = rgb_values
-                .split(',')
-                .map(|s| s.trim().parse().unwrap_or(0))
-                .collect();
-
-            if rgb.len() == 3 {
-                let x = y as u32 % width;
-                let y = y as u32 / width;
-
-                if x < width && y < height {
-                    let pixel = image_buffer.get_pixel_mut(x, y);
-                    *pixel = Rgb([rgb[0], rgb[1], rgb[2]]);
-                }
-            }
-        }
-    }
-
-    Ok(())
-}
+//WINDOWS
 
 pub fn create_window_and_display_image(image_buffer: &ImageBuffer<Rgb<u8>, Vec<u8>>, width: u32, height: u32) -> Result<(), Box<dyn std::error::Error>> {
     let event_loop: EventLoop<winit::event::VirtualKeyCode> = EventLoop::new_any_thread();
@@ -84,3 +62,55 @@ pub fn create_window_and_display_image(image_buffer: &ImageBuffer<Rgb<u8>, Vec<u
 
 
 
+
+
+// LINUX
+
+pub fn create_window_and_display_image(image_buffer: &ImageBuffer<Rgb<u8>, Vec<u8>>, width: u32, height: u32) {
+    let application = Application::builder()
+        .application_id("frakt")
+        .build();
+
+    application.connect_activate(|app| {
+        let window = ApplicationWindow::builder()
+            .application(app)
+            .title("Fractal Image")
+            .default_width(600)
+            .default_height(600)
+            .build();
+
+        let image_container = gtk::Box::new(gtk::Orientation::Vertical, 0);
+
+        let image = convert_image_buffer_to_pixbuf(image_buffer, width, height);
+        let image_widget = Image::new_from_pixbuf(Some(&image));
+        image_container.add(&image_widget);
+
+        window.set_child(Some(&image_container));
+
+        window.show();
+    });
+
+    application.run();
+}
+
+fn convert_image_buffer_to_pixbuf(image_buffer: &ImageBuffer<Rgb<u8>, Vec<u8>>, width: u32, height: u32) -> Pixbuf {
+    let mut pixbuf = Pixbuf::new(
+        Colorspace::Rgb,
+        false,
+        8,
+        width as i32,
+        height as i32,
+    )
+        .unwrap();
+    pixbuf.fill(0);
+
+    for y in 0..height {
+        for x in 0..width {
+            let pixel = image_buffer.get_pixel(x, y);
+            let (r, g, b) = (pixel[0], pixel[1], pixel[2]);
+            pixbuf.put_pixel(x, y, r, g, b, 255);
+        }
+    }
+
+    pixbuf
+}

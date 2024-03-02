@@ -12,7 +12,7 @@ use shared::{
     },
 };
 use std::{
-    io::{self, Read, Write},
+    io::{self, Read},
     net::TcpStream,
 };
 
@@ -142,7 +142,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
                 if let Err(e) = create_window_and_display_image(&img, 400, 400) {
                     error!("Error creating window and displaying image: {:?}", e);
                 }
-            });            
+            });
 
             let dir_path_buf = match get_dir_path_buf() {
                 Ok(dir_path_buf) => dir_path_buf,
