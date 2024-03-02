@@ -1,3 +1,4 @@
+#[cfg(target_os = "windows")]
 use pixels::{Pixels, SurfaceTexture};
 #[cfg(target_os = "windows")]
 use winit::{
@@ -5,15 +6,9 @@ use winit::{
     dpi::LogicalSize, event::{Event, WindowEvent}, event_loop::{ControlFlow, EventLoop}, window::WindowBuilder
 };
 
+#[cfg(target_os = "windows")]
 use shared::utils::env_utils::get_env_var_as_u16;
-
-#[cfg(target_os = "linux")]
-use gtk::prelude::*;
-#[cfg(target_os = "linux")]
-use gtk::{Application, ApplicationWindow, Image};
-#[cfg(target_os = "linux")]
-use gtk::gdk_pixbuf::{Colorspace, Pixbuf};
-
+#[cfg(target_os = "windows")]
 use image::{ImageBuffer, Rgb};
 
 /// Function for creating a window and displaying an image on Windows.
@@ -79,65 +74,4 @@ pub fn create_window_and_display_image(image_buffer: &ImageBuffer<Rgb<u8>, Vec<u
             }
         }
     });
-}
-
-/// Function for creating a window and displaying an image on Linux.
-/// 
-/// # Arguments
-/// * `image_buffer` - A reference to the buffer containing the image data in RGB format.
-/// * `width` - The width of the window and the image to display.
-/// * `height` - The height of the window and the image to display.
-/// 
-/// This function does not return a value but directly runs the GTK application loop to create the window and display the image.
-///
-///
-#[cfg(target_os = "linux")]
-pub fn create_window_and_display_image(image_buffer: &ImageBuffer<Rgb<u8>, Vec<u8>>, width: u32, height: u32) {
-    let application = Application::builder()
-        .application_id("frakt")
-        .build();
-
-    application.connect_activate(|app| {
-        let window = ApplicationWindow::builder()
-            .application(app)
-            .title("Fractal Image")
-            .default_width(600)
-            .default_height(600)
-            .build();
-
-        let image_container = gtk::Box::new(gtk::Orientation::Vertical, 0);
-
-        let image = convert_image_buffer_to_pixbuf(image_buffer, width, height);
-        let image_widget = Image::new_from_pixbuf(Some(&image));
-        image_container.add(&image_widget);
-
-        window.set_child(Some(&image_container));
-
-        window.show();
-    });
-
-    application.run();
-}
-
-#[cfg(target_os = "linux")]
-fn convert_image_buffer_to_pixbuf(image_buffer: &ImageBuffer<Rgb<u8>, Vec<u8>>, width: u32, height: u32) -> Pixbuf {
-    let mut pixbuf = Pixbuf::new(
-        Colorspace::Rgb,
-        false,
-        8,
-        width as i32,
-        height as i32,
-    )
-        .unwrap();
-    pixbuf.fill(0);
-
-    for y in 0..height {
-        for x in 0..width {
-            let pixel = image_buffer.get_pixel(x, y);
-            let (r, g, b) = (pixel[0], pixel[1], pixel[2]);
-            pixbuf.put_pixel(x, y, r, g, b, 255);
-        }
-    }
-
-    pixbuf
 }
