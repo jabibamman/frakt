@@ -124,7 +124,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
             debug!("Received response: {:?}", response);
         }
         Ok(Message::FragmentTask(_task)) => {
-            error!("Received unexpected message type: FragmentTask");
+            return Err(io::Error::new(io::ErrorKind::InvalidData, "Server can't handle FragmentTask"));
         }
         Ok(Message::FragmentResult(_result)) => {
             let img = match image_from_pixel_intensity(pixel_intensity) {
