@@ -1,4 +1,6 @@
+#[cfg(target_os = "windows")]
 use gui::create_window_and_display_image;
+
 use log::{debug, error, info};
 use shared::{
     types::{
@@ -6,9 +8,7 @@ use shared::{
         pixel_intensity::PixelIntensity,
     },
     utils::{
-        filesystem::{get_dir_path_buf, get_extension_str, get_file_path},
-        fragment_task_impl::FragmentTaskOperation,
-        image::image_from_pixel_intensity,
+        filesystem::{get_dir_path_buf, get_extension_str, get_file_path}, fragment_task_impl::FragmentTaskOperation, image::image_from_pixel_intensity
     },
 };
 use std::{
@@ -124,10 +124,9 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
             debug!("Received response: {:?}", response);
         }
         Ok(Message::FragmentTask(_task)) => {
-            todo!()
+            error!("Received unexpected message type: FragmentTask");
         }
         Ok(Message::FragmentResult(_result)) => {
-            //process_result(result);
             let img = match image_from_pixel_intensity(pixel_intensity) {
                 Ok(img) => img,
                 Err(e) => {
@@ -138,8 +137,9 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
 
             let img_clone = img.clone();
 
+            #[cfg(target_os = "windows")]
             task::spawn_blocking(move || {
-                if let Err(e) = create_window_and_display_image(&img, 400, 400) {
+                if let Err(e) = create_window_and_display_image(&img) {
                     error!("Error creating window and displaying image: {:?}", e);
                 }
             });
