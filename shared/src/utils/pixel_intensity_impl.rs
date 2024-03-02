@@ -17,21 +17,17 @@ impl PixelIntensity {
         let mut pixel_intensity_matrix = Vec::new();
         let mut i = 0;
 
-        // Assurez-vous que i + la taille de zn + la taille de count n'est pas hors limite
         while i + 8 + 4 <= vec_data.len() {
-            // Extraire zn
             let zn_bytes =
                 <[u8; 4]>::try_from(&vec_data[i..i + 4]).expect("slice with incorrect length");
             let zn = f32::from_be_bytes(zn_bytes);
             i += 4;
 
-            // Extraire count
             let count_bytes =
                 <[u8; 4]>::try_from(&vec_data[i..i + 4]).expect("slice with incorrect length");
             let count = f32::from_be_bytes(count_bytes);
             i += 4;
 
-            // Ajouter à la matrice
             pixel_intensity_matrix.push(PixelIntensity { zn, count });
         }
 

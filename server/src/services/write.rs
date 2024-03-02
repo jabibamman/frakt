@@ -1,6 +1,8 @@
-use std::io;
+use std::io::{self, BufWriter};
 use std::io::Write;
 use std::net::TcpStream;
+
+use log::{debug, trace};
 
 /// Prepare a message for sending.
 ///
@@ -72,20 +74,25 @@ pub fn write(stream: &mut TcpStream, message: &str) -> io::Result<()> {
 ///
 /// This function takes a string slice and converts it into a vector of bytes. It formats the message by calling `format!` macro with the provided message and converts the formatted message into bytes using `as_bytes()` method. The resulting bytes are then converted into a vector using `to_vec()` method and returned.
 pub fn write_img(stream: &mut TcpStream, message: &str, img_data: Vec<u8>) -> io::Result<()> {
-    let mut stream_clone = stream.try_clone()?;
-
+    let mut writer = BufWriter::new(stream);
+    
     let json_bytes = prepare_message(message);
     let json_size = (message.len() as u32).to_be_bytes();
     let message_length = message.len() + img_data.len();
     let total_size = (message_length as u32).to_be_bytes();
 
-    stream_clone.write_all(&total_size)?;
-    stream_clone.write_all(&json_size)?;
-    stream_clone.write_all(&json_bytes)?;
+    let mut buffer = Vec::new();
+    buffer.extend_from_slice(&total_size);
+    buffer.extend_from_slice(&json_size);
+    buffer.extend_from_slice(&json_bytes);
+    buffer.extend_from_slice(&img_data);
 
-    for byte in img_data {
-        stream_clone.write_all(&[byte])?;
+    for byte in buffer {
+        writer.write_all(&[byte])?;
+        trace!("Writing byte: {}", byte);
     }
+    writer.flush()?;
+    debug!("Données envoyées");
 
     Ok(())
 }
