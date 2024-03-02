@@ -3,7 +3,7 @@ use std::{
     net::TcpStream,
 };
 
-use log::debug;
+use log::{debug, error};
 
 /// Reads a message from a TCP stream, parsing and returning the JSON component.
 ///
@@ -41,13 +41,18 @@ use log::debug;
 /// ```
 pub fn read_message(stream: &mut TcpStream) -> io::Result<(String, Vec<u8>)> {
     let mut total_message = [0; 4];
-    let mut json_message = [0; 4];
-
     stream.read_exact(&mut total_message)?;
+
+    let mut json_message = [0; 4];
     stream.read_exact(&mut json_message)?;
 
     let json_size = u32::from_be_bytes(json_message) as usize;
     let total_size = u32::from_be_bytes(total_message) as usize;
+
+    if total_size < json_size {
+        error!("Total size is less than JSON size.");
+        return Err(io::Error::new(io::ErrorKind::InvalidData, "Total size is less than JSON size."));
+    }
 
     let mut json_buffer = vec![0; json_size];
     stream.read_exact(&mut json_buffer)?;
@@ -57,13 +62,11 @@ pub fn read_message(stream: &mut TcpStream) -> io::Result<(String, Vec<u8>)> {
         Err(e) => return Err(io::Error::new(io::ErrorKind::InvalidData, e)),
     };
 
-    debug!("Réponse String message du serveur: {}", json_str);
+    debug!("Réponse (JSON) du serveur: {}", json_str);
 
-    // donnée supplémentaire en binaire
     let binary_data_size = total_size - json_size;
-    let mut data = Vec::new();
+    let mut data = vec![0; binary_data_size];
     if binary_data_size > 0 {
-        data = vec![0; binary_data_size];
         stream.read_exact(&mut data)?;
     }
 
