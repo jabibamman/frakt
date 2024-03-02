@@ -16,6 +16,7 @@ use std::{
     net::TcpStream,
 };
 
+#[cfg(target_os = "windows")]
 use tokio::task;
 use super::serialization::deserialize_message;
 use crate::{messages::fragment_maker::create_tasks, services};
@@ -124,7 +125,7 @@ pub fn handle_client(mut stream: TcpStream) -> io::Result<()> {
             debug!("Received response: {:?}", response);
         }
         Ok(Message::FragmentTask(_task)) => {
-            error!("Received unexpected message type: FragmentTask");
+            return Err(io::Error::new(io::ErrorKind::InvalidData, "Server can't handle FragmentTask"));
         }
         Ok(Message::FragmentResult(_result)) => {
             let img = match image_from_pixel_intensity(pixel_intensity) {
