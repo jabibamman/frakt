@@ -74,12 +74,15 @@
 <a href="#73" id="73">73</a>
 <a href="#74" id="74">74</a>
 <a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     io::{<span class="self">self</span>, Read},
     net::TcpStream,
 };
 
-<span class="kw">use </span>log::debug;
+<span class="kw">use </span>log::{debug, error};
 
 <span class="doccomment">/// Reads a message from a TCP stream, parsing and returning the JSON component.
 ///
@@ -117,13 +120,18 @@
 /// ```
 </span><span class="kw">pub fn </span>read_message(stream: <span class="kw-2">&amp;mut </span>TcpStream) -&gt; io::Result&lt;(String, Vec&lt;u8&gt;)&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>total_message = [<span class="number">0</span>; <span class="number">4</span>];
-    <span class="kw">let </span><span class="kw-2">mut </span>json_message = [<span class="number">0</span>; <span class="number">4</span>];
-
     stream.read_exact(<span class="kw-2">&amp;mut </span>total_message)<span class="question-mark">?</span>;
+
+    <span class="kw">let </span><span class="kw-2">mut </span>json_message = [<span class="number">0</span>; <span class="number">4</span>];
     stream.read_exact(<span class="kw-2">&amp;mut </span>json_message)<span class="question-mark">?</span>;
 
     <span class="kw">let </span>json_size = u32::from_be_bytes(json_message) <span class="kw">as </span>usize;
     <span class="kw">let </span>total_size = u32::from_be_bytes(total_message) <span class="kw">as </span>usize;
+
+    <span class="kw">if </span>total_size &lt; json_size {
+        <span class="macro">error!</span>(<span class="string">"Total size is less than JSON size."</span>);
+        <span class="kw">return </span><span class="prelude-val">Err</span>(io::Error::new(io::ErrorKind::InvalidData, <span class="string">"Total size is less than JSON size."</span>));
+    }
 
     <span class="kw">let </span><span class="kw-2">mut </span>json_buffer = <span class="macro">vec!</span>[<span class="number">0</span>; json_size];
     stream.read_exact(<span class="kw-2">&amp;mut </span>json_buffer)<span class="question-mark">?</span>;
@@ -133,13 +141,11 @@
         <span class="prelude-val">Err</span>(e) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(io::Error::new(io::ErrorKind::InvalidData, e)),
     };
 
-    <span class="macro">debug!</span>(<span class="string">"Réponse String message du serveur: {}"</span>, json_str);
+    <span class="macro">debug!</span>(<span class="string">"Réponse (JSON) du serveur: {}"</span>, json_str);
 
-    <span class="comment">// donnée supplémentaire en binaire
-    </span><span class="kw">let </span>binary_data_size = total_size - json_size;
-    <span class="kw">let </span><span class="kw-2">mut </span>data = Vec::new();
+    <span class="kw">let </span>binary_data_size = total_size - json_size;
+    <span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[<span class="number">0</span>; binary_data_size];
     <span class="kw">if </span>binary_data_size &gt; <span class="number">0 </span>{
-        data = <span class="macro">vec!</span>[<span class="number">0</span>; binary_data_size];
         stream.read_exact(<span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>;
     }
 

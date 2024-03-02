@@ -233,7 +233,7 @@
 
 <span class="kw">use </span>cli::parser::CliClientArgs;
 <span class="kw">use </span>image::{ImageBuffer, Rgb};
-<span class="kw">use </span>log::{debug, error, info};
+<span class="kw">use </span>log::{debug, error, info, trace};
 <span class="kw">use </span>server::services::{
     reader::get_response,
     write::{write, write_img},
@@ -364,7 +364,7 @@
         get_file_path(<span class="string">"julia"</span>, dir_path_buf, get_extension_str(FileExtension::PNG))<span class="question-mark">?</span>;
     <span class="kw">let </span>(img, pixel_data_bytes, pixel_intensity_matrice) = generate_fractal_set(task.clone())<span class="question-mark">?</span>;
 
-    <span class="macro">debug!</span>(<span class="string">"Pixel data bytes: {:?}"</span>, pixel_data_bytes);
+    <span class="macro">trace!</span>(<span class="string">"Pixel data bytes: {:?}"</span>, pixel_data_bytes);
 
     <span class="kw">let </span>pixel_data = convert_to_pixel_data(pixel_data_bytes.clone(), task.clone());
 
@@ -375,7 +375,7 @@
         vec_data.extend(pixel_intensity_matrice[i].count.to_be_bytes());
     }
 
-    <span class="macro">debug!</span>(<span class="string">"Vec data: {:?}"</span>, vec_data);
+    <span class="macro">trace!</span>(<span class="string">"Vec data: {:?}"</span>, vec_data);
 
     <span class="kw">if </span>cli_args.save {
         save_fractal_image(img.clone(), <span class="kw-2">&amp;</span>img_path)<span class="question-mark">?</span>;

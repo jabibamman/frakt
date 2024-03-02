@@ -124,9 +124,18 @@
 <a href="#123" id="123">123</a>
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::io;
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::io::{<span class="self">self</span>, BufWriter};
 <span class="kw">use </span>std::io::Write;
 <span class="kw">use </span>std::net::TcpStream;
+
+<span class="kw">use </span>log::{debug, trace};
 
 <span class="doccomment">/// Prepare a message for sending.
 ///
@@ -198,20 +207,25 @@
 ///
 /// This function takes a string slice and converts it into a vector of bytes. It formats the message by calling `format!` macro with the provided message and converts the formatted message into bytes using `as_bytes()` method. The resulting bytes are then converted into a vector using `to_vec()` method and returned.
 </span><span class="kw">pub fn </span>write_img(stream: <span class="kw-2">&amp;mut </span>TcpStream, message: <span class="kw-2">&amp;</span>str, img_data: Vec&lt;u8&gt;) -&gt; io::Result&lt;()&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>stream_clone = stream.try_clone()<span class="question-mark">?</span>;
-
+    <span class="kw">let </span><span class="kw-2">mut </span>writer = BufWriter::new(stream);
+    
     <span class="kw">let </span>json_bytes = prepare_message(message);
     <span class="kw">let </span>json_size = (message.len() <span class="kw">as </span>u32).to_be_bytes();
     <span class="kw">let </span>message_length = message.len() + img_data.len();
     <span class="kw">let </span>total_size = (message_length <span class="kw">as </span>u32).to_be_bytes();
 
-    stream_clone.write_all(<span class="kw-2">&amp;</span>total_size)<span class="question-mark">?</span>;
-    stream_clone.write_all(<span class="kw-2">&amp;</span>json_size)<span class="question-mark">?</span>;
-    stream_clone.write_all(<span class="kw-2">&amp;</span>json_bytes)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>buffer = Vec::new();
+    buffer.extend_from_slice(<span class="kw-2">&amp;</span>total_size);
+    buffer.extend_from_slice(<span class="kw-2">&amp;</span>json_size);
+    buffer.extend_from_slice(<span class="kw-2">&amp;</span>json_bytes);
+    buffer.extend_from_slice(<span class="kw-2">&amp;</span>img_data);
 
-    <span class="kw">for </span>byte <span class="kw">in </span>img_data {
-        stream_clone.write_all(<span class="kw-2">&amp;</span>[byte])<span class="question-mark">?</span>;
+    <span class="kw">for </span>byte <span class="kw">in </span>buffer {
+        writer.write_all(<span class="kw-2">&amp;</span>[byte])<span class="question-mark">?</span>;
+        <span class="macro">trace!</span>(<span class="string">"Writing byte: {}"</span>, byte);
     }
+    writer.flush()<span class="question-mark">?</span>;
+    <span class="macro">debug!</span>(<span class="string">"Données envoyées"</span>);
 
     <span class="prelude-val">Ok</span>(())
 }

@@ -38,7 +38,9 @@
 <a href="#37" id="37">37</a>
 <a href="#38" id="38">38</a>
 <a href="#39" id="39">39</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>log::{error, info};
+<a href="#40" id="40">40</a>
+<a href="#41" id="41">41</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>log::{error, info, trace};
 <span class="kw">use </span>networking::{connect_to_server, process_fragment_task, receive_fragment_task, send_request};
 <span class="kw">use </span>shared::{types::error::FractalError, utils::fragment_request_impl::FragmentRequestOperation};
 
@@ -51,17 +53,19 @@
 
 <span class="kw">fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;(), FractalError&gt; {
     <span class="kw">let </span>cli_args: CliClientArgs = CliClientArgs::parse();
-    shared::logger::init_logger(cli_args.verbose, cli_args.debug)<span class="question-mark">?</span>;
+    shared::logger::init_logger(cli_args.verbose, cli_args.debug, cli_args.trace)<span class="question-mark">?</span>;
 
     <span class="kw">let </span>serialized_request =
         FragmentRequest::new(cli_args.worker_name.clone(), <span class="number">1000</span>).serialize()<span class="question-mark">?</span>;
 
     <span class="kw">let </span><span class="kw-2">mut </span>stream = connect_to_server(<span class="kw-2">&amp;</span>cli_args)<span class="question-mark">?</span>;
     send_request(<span class="kw-2">&amp;mut </span>stream, <span class="kw-2">&amp;</span>serialized_request)<span class="question-mark">?</span>;
+    <span class="macro">log::trace!</span>(<span class="string">"Sent request to server"</span>);
 
     <span class="kw">loop </span>{
         <span class="kw">match </span>receive_fragment_task(<span class="kw-2">&amp;mut </span>stream) {
             <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((fragment_task, data))) =&gt; {
+                <span class="macro">trace!</span>(<span class="string">"Received fragment task: {:?}"</span>, fragment_task);
                 stream = process_fragment_task(fragment_task, data, <span class="kw-2">&amp;</span>cli_args)<span class="question-mark">?</span>;
             }
             <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) =&gt; {

@@ -174,16 +174,27 @@
 <a href="#173" id="173">173</a>
 <a href="#174" id="174">174</a>
 <a href="#175" id="175">175</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>log::{debug, error, info};
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+</pre></div><pre class="rust"><code><span class="attr">#[cfg(target_os = <span class="string">"windows"</span>)]
+</span><span class="kw">use </span>gui::create_window_and_display_image;
+
+<span class="kw">use </span>log::{debug, error, info};
 <span class="kw">use </span>shared::{
     types::{
         error::FractalError, filesystem::FileExtension, messages::Message,
         pixel_intensity::PixelIntensity,
     },
     utils::{
-        filesystem::{get_dir_path_buf, get_extension_str, get_file_path},
-        fragment_task_impl::FragmentTaskOperation,
-        image::image_from_pixel_intensity,
+        filesystem::{get_dir_path_buf, get_extension_str, get_file_path}, fragment_task_impl::FragmentTaskOperation, image::image_from_pixel_intensity
     },
 };
 <span class="kw">use </span>std::{
@@ -191,6 +202,8 @@
     net::TcpStream,
 };
 
+<span class="attr">#[cfg(target_os = <span class="string">"windows"</span>)]
+</span><span class="kw">use </span>tokio::task;
 <span class="kw">use </span><span class="kw">super</span>::serialization::deserialize_message;
 <span class="kw">use crate</span>::{messages::fragment_maker::create_tasks, services};
 
@@ -298,18 +311,25 @@
             <span class="macro">debug!</span>(<span class="string">"Received response: {:?}"</span>, response);
         }
         <span class="prelude-val">Ok</span>(Message::FragmentTask(_task)) =&gt; {
-            <span class="macro">todo!</span>()
+            <span class="kw">return </span><span class="prelude-val">Err</span>(io::Error::new(io::ErrorKind::InvalidData, <span class="string">"Server can't handle FragmentTask"</span>));
         }
         <span class="prelude-val">Ok</span>(Message::FragmentResult(_result)) =&gt; {
-            <span class="comment">//process_result(result);
-
-            </span><span class="kw">let </span>img = <span class="kw">match </span>image_from_pixel_intensity(pixel_intensity) {
+            <span class="kw">let </span>img = <span class="kw">match </span>image_from_pixel_intensity(pixel_intensity) {
                 <span class="prelude-val">Ok</span>(img) =&gt; img,
                 <span class="prelude-val">Err</span>(e) =&gt; {
                     <span class="macro">error!</span>(<span class="string">"Error creating image from pixel intensity: {:?}"</span>, e);
                     <span class="kw">return </span><span class="prelude-val">Err</span>(io::Error::new(io::ErrorKind::InvalidData, <span class="string">"Invalid UTF-8"</span>));
                 }
             };
+
+            <span class="kw">let </span>img_clone = img.clone();
+
+            <span class="attr">#[cfg(target_os = <span class="string">"windows"</span>)]
+            </span>task::spawn_blocking(<span class="kw">move </span>|| {
+                <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = create_window_and_display_image(<span class="kw-2">&amp;</span>img) {
+                    <span class="macro">error!</span>(<span class="string">"Error creating window and displaying image: {:?}"</span>, e);
+                }
+            });
 
             <span class="kw">let </span>dir_path_buf = <span class="kw">match </span>get_dir_path_buf() {
                 <span class="prelude-val">Ok</span>(dir_path_buf) =&gt; dir_path_buf,
@@ -331,7 +351,7 @@
                 }
             };
 
-            <span class="kw">match </span>img.save(img_path.clone()).map_err(FractalError::Image) {
+            <span class="kw">match </span>img_clone.save(img_path.clone()).map_err(FractalError::Image) {
                 <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
                     <span class="macro">info!</span>(<span class="string">"Image saved successfully"</span>);
                     <span class="macro">debug!</span>(<span class="string">"Image path {}"</span>, img_path);
